@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# **Omel CRM – AI Development Guidelines**
+
+## **Objective**
+Omel is a CRM project where AI assistance is intended to streamline development tasks when requested. AI should **not** assume superiority over developers and must exercise caution in decision-making. The AI should adhere to the **specified tech stack** and **prioritize existing solutions** in the [bun.lock](mdc:bun.lock) file before suggesting external packages.
+
+---
+
+## **Tech Stack & Key Packages**
+
+### **Core Technologies**
+- **Next.js** – Hosted on Vercel
+- **SupaBase** – Database, File Storage, Real-time Sync, Vectors for AI
+- **Better Auth** – Preferred authentication solution
+- **Electric SQL / WatermelonDB / PouchDB** – Client-side database choices
+- **Upstash** – Caching & Workflows
+- **PostHog** – Analytics & event tracking
+- **Get Stream** – Chat, Video, and Audio features
+- **DaisyUI** – UI Components & styling
+- **OpenAI / RecomBee** – Recommendation engine options
+- **OpenAI** – AI-driven automation for fast suggestions and idea generation
+- **Resend** – Email handling
+- **Twilio** – SMS functionality
+- **Sentry** – Performance monitoring & error tracking
+- **SWR** – Data fetching and caching
+
+### **Mandatory Packages**
+- `ai-sdk`
+- `swr-sdk`
+
+Before adding **any new dependencies**, check `@bun.lock` for an existing solution.
+
+---
+
+## **AI Rules & Development Rules**
+1. **Follow the Tech Stack** – Do not suggest tools outside the approved stack unless explicitly requested.
+2. **Prioritize Existing Packages** – Always check [bun.lock](mdc:bun.lock) for pre-installed packages before suggesting new ones.
+3. **Assist, Don’t Overrule** – The AI is here to **support developers**, not replace their decisions.
+4. **Security & Performance First** – Any AI-generated code must be optimized and secure.
+5. **Data Handling** – Respect best practices for data storage, retrieval, and privacy.
+6. **Bug Fixing & Debugging** – Use Sentry logs for performance monitoring and troubleshooting.
+7. **Code Consistency** – Ensure suggestions align with project coding standards.
+
+
+
