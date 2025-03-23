@@ -1,3 +1,3 @@
 import { DashboardSidebar } from './SideBar';
-
-export { DashboardSidebar };
+import { DashboardBreadcrumb } from './Breadcrumb';
+export { DashboardSidebar, DashboardBreadcrumb };
