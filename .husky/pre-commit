@@ -1,4 +1,5 @@
-npm run format
-npm run lint --fix
+bun format
+bun lint --fix
 git add .
-npm run lint
+bun lint
+bun test
