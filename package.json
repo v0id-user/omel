@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -26,6 +29,7 @@
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.1",
     "eslint-config-prettier": "^10.1.1",
+    "husky": "^9.1.7",
     "lucide-react": "^0.483.0",
     "next": "15.2.3",
     "pg": "^8.14.1",
