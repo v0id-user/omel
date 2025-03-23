@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { PostHogProvider } from "./providers";
-
+import type { Metadata } from 'next';
+import './globals.css';
+import { PostHogProvider } from './providers';
 
 export const metadata: Metadata = {
-  title: "Omel CRM",
-  description: "خذ تجربة خدمة العملاء المثالية مع أوميل.",
+  title: 'Omel CRM',
+  description: 'خذ تجربة خدمة العملاء المثالية مع أوميل.',
 };
 
 export default function RootLayout({
@@ -15,12 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={` antialiased`}
-      >
-        <PostHogProvider>
-          {children}
-        </PostHogProvider>
+      <body className={`antialiased`} dir="rtl">
+        <PostHogProvider>{children}</PostHogProvider>
       </body>
     </html>
   );
