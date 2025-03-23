@@ -8,7 +8,7 @@ describe('Hello API Route', () => {
       throw new Error('Response is undefined');
     }
     const data = await response.json();
-
+    console.log(data);
     expect(response.status).toBe(200);
     expect(data).toEqual({ message: 'Hello World' });
   });
