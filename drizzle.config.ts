@@ -8,4 +8,8 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
+  schemaFilter: ['public'],
+  strict: false,
+  verbose: true,
+  tablesFilter: ['customers', 'contacts', 'interactions', 'deals', 'tasks'],
 });
