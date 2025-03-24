@@ -1,3 +1,3 @@
-import { Onboarding } from "./onboarding";
+import { Onboarding } from './onboarding';
 
 export type { Onboarding };
