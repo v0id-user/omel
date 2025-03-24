@@ -1,3 +1,4 @@
+import 'server-only';
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
  
@@ -19,4 +20,4 @@ export const auth = betterAuth({
         })
     },
     
-})
+});
