@@ -25,7 +25,7 @@ const SignUpForm = () => {
   return (
     <div className="w-full md:w-[450px]">
       <div className="mb-8">
-        <button className="w-full flex items-center justify-center gap-2 p-3 border border-gray-700 rounded-md hover:bg-gray-700/50 transition-colors">
+        <button className="w-full flex items-center justify-center gap-2 p-3 border cursor-pointer border-gray-700 rounded-md hover:bg-gray-200/50 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -115,8 +115,8 @@ const SignUpFooter = () => {
 export default function SignUp() {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow flex flex-col justify-center items-center p-4 md:p-6 lg:p-8">
-        <Image src="/logo_small.png" alt="logo" width={75} height={75} className="mb-6" />
+      <div className="flex-grow flex flex-col items-center p-4 md:p-6 lg:p-8">
+        <Image src="/logo_small.png" alt="logo" width={75} height={75} className="mb-16 mt-10" />
         <SignUpContainer>
           <div className="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-28 justify-center items-center">
             <SignUpForm />
