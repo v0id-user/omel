@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Phone } from 'lucide-react';
 import Link from 'next/link';
 
 enum FormStep {
@@ -15,7 +15,7 @@ interface UserInfo {
   email: string;
   password: string;
   personalInfo: {
-    name: string;
+    fullName: string;
     phone: string;
   };
   companyInfo: {
@@ -23,12 +23,13 @@ interface UserInfo {
     phone: string;
   };
 }
+
 export default function SignUpForm() {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     email: '',
     password: '',
     personalInfo: {
-      name: '',
+      fullName: '',
       phone: '',
     },
     companyInfo: {
@@ -42,8 +43,19 @@ export default function SignUpForm() {
   const ProcessFormStep = () => {
     switch (formStep) {
       case FormStep.AskForEmail:
+        //TODO: Validate email
         console.log(userInfo);
-        setFormStep(FormStep.AskForPassword);
+        // Increment form step after processing
+        setFormStep(formStep + 1);
+        break;
+      case FormStep.AskForPassword:
+        //TODO: Validate password
+        console.log(userInfo);
+        setFormStep(formStep + 1);
+        break;
+      case FormStep.AskForPersonalInfo:
+        //TODO: Validate personal info
+        console.log(userInfo);
         break;
     }
   };
@@ -97,8 +109,43 @@ export default function SignUpForm() {
             </div>
           </div>
         );
+      case FormStep.AskForPersonalInfo:
+        return (
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <input
+                onChange={e => setUserInfo({ ...userInfo, email: e.target.value })}
+                type="text"
+                value={userInfo.email}
+                placeholder="اسمك الأول"
+                className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                onChange={e => setUserInfo({ ...userInfo, email: e.target.value })}
+                type="text"
+                value={userInfo.email}
+                placeholder="اسمك الأخير"
+                className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="relative">
+              <input
+                onChange={e => setUserInfo({ ...userInfo, password: e.target.value })}
+                type="text"
+                value={userInfo.password}
+                placeholder="رقم الهاتف"
+                className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Phone
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
+          </div>
+        );
     }
   };
+
   return (
     <div className="w-full md:w-[450px]">
       <div className="mb-8">
@@ -139,7 +186,6 @@ export default function SignUpForm() {
       rounded-md hover:bg-gray-800 transition-colors"
         onClick={() => {
           ProcessFormStep();
-          setFormStep(formStep + 1);
         }}
       >
         استمر
