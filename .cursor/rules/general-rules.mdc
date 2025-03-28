@@ -14,7 +14,8 @@ Omel is a CRM project where AI assistance is intended to streamline development 
 
 ### **Core Technologies**
 - **Next.js** – Hosted on Vercel
-- **SupaBase** – Database, File Storage, Real-time Sync, Vectors for AI
+- **Bunny** – File Storage, CDN, Image Processing
+- **Neon** – Database serverless
 - **Better Auth** – Preferred authentication solution
 - **Electric SQL / WatermelonDB / PouchDB** – Client-side database choices
 - **Upstash** – Caching & Workflows
@@ -44,6 +45,5 @@ Before adding **any new dependencies**, check `@bun.lock` for an existing soluti
 5. **Data Handling** – Respect best practices for data storage, retrieval, and privacy.
 6. **Bug Fixing & Debugging** – Use Sentry logs for performance monitoring and troubleshooting.
 7. **Code Consistency** – Ensure suggestions align with project coding standards.
-
 
 
