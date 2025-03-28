@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Omel CRM
+
+A customer relationship management system built with Next.js and hosted on Vercel.
+
+## Tech Stack
+
+- **Next.js** – Framework
+- **Bunny** – File Storage, CDN, Image Processing
+- **Neon** – Database (serverless PostgreSQL)
+- **Better Auth** – Authentication solution
+- **Electric SQL / WatermelonDB / PouchDB** – Client-side database options
+- **Upstash** – Caching & Workflows
+- **PostHog** – Analytics & event tracking
+- **Get Stream** – Chat, Video, and Audio features
+- **DaisyUI** – UI Components & styling
+- **OpenAI / RecomBee** – Recommendation engine
+- **Resend** – Email handling
+- **Twilio** – SMS functionality
+- **Sentry** – Performance monitoring & error tracking
+- **SWR** – Data fetching and caching
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
+```
+
+3. Create a `.env` file with the required variables (see Environment Variables section)
+4. Run the development server:
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env` file in the root directory with the following variables:
 
-## Learn More
+```
+BETTER_AUTH_SECRET=your_secret_key
+BETTER_AUTH_URL=your_auth_url
+DATABASE_URL=your_neon_database_url
 
-To learn more about Next.js, take a look at the following resources:
+NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
+NEXT_PUBLIC_POSTHOG_HOST=your_posthog_host
+NEXT_PUBLIC_DEBUG=true_or_false
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development Guidelines
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Tech Stack Compliance**: Use only the approved technologies in the tech stack list.
+2. **Package Management**: Always check `bun.lock` for existing packages before adding new dependencies.
+3. **Mandatory Packages**: Ensure `ai-sdk` and `swr-sdk` are integrated.
+4. **Security & Performance**: Optimize code for security and performance.
+5. **Monitoring**: Use Sentry for performance monitoring and error tracking.
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The project is deployed on the Vercel platform.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+bun run build
+```

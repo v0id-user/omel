@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { PostHogProvider } from './providers';
+import { IBM_Plex_Sans_Arabic } from 'next/font/google';
+
+const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['arabic'],
+});
 
 export const metadata: Metadata = {
   title: 'Omel CRM',
@@ -14,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`} dir="rtl">
+      <body className={`antialiased ${ibmPlexSansArabic.className}`} dir="rtl">
         <PostHogProvider>{children}</PostHogProvider>
       </body>
     </html>

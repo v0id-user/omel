@@ -7,6 +7,4 @@ export interface Onboarding {
   companyDescription: string;
   companyLogo: string;
   companyBanner: string;
-
-  authorUserId: string;
 }

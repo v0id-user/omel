@@ -16,7 +16,7 @@ describe('Onboarding test', () => {
       companyWebsite: 'Test Website',
     };
 
-    const request = new NextRequest('/api/onboarding', {
+    const request = new NextRequest('http://localhost:3000/api/onboarding', {
       method: 'POST',
       body: JSON.stringify(onboarding),
     });
@@ -24,6 +24,6 @@ describe('Onboarding test', () => {
     const response = await POST(request);
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.message).toContain('ok');
+    expect(data.status).toContain('ok');
   });
 });

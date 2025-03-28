@@ -14,7 +14,7 @@ export const customers = pgTable(
   table => {
     return [uniqueIndex('email_idx').on(table.email)];
   }
-).enableRLS();
+);
 
 export const contacts = pgTable('contacts', {
   id: bigint('id', { mode: 'bigint' }).primaryKey().notNull(),
@@ -24,7 +24,7 @@ export const contacts = pgTable('contacts', {
   contactType: text('contact_type').notNull(),
   contactValue: text('contact_value').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}).enableRLS();
+});
 
 export const interactions = pgTable('interactions', {
   id: bigint('id', { mode: 'bigint' }).primaryKey().notNull(),
@@ -34,7 +34,7 @@ export const interactions = pgTable('interactions', {
   interactionType: text('interaction_type').notNull(),
   interactionDate: timestamp('interaction_date', { withTimezone: true }).defaultNow().notNull(),
   notes: text('notes'),
-}).enableRLS();
+});
 
 export const deals = pgTable('deals', {
   id: bigint('id', { mode: 'bigint' }).primaryKey().notNull(),
@@ -45,7 +45,7 @@ export const deals = pgTable('deals', {
   dealValue: numeric('deal_value').notNull(),
   status: text('status').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}).enableRLS();
+});
 
 export const tasks = pgTable('tasks', {
   id: bigint('id', { mode: 'bigint' }).primaryKey().notNull(),
@@ -56,4 +56,4 @@ export const tasks = pgTable('tasks', {
   dueDate: timestamp('due_date', { withTimezone: true }),
   status: text('status').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}).enableRLS();
+});

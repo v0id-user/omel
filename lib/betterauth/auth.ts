@@ -1,6 +1,7 @@
-import 'server-only';
 import { betterAuth } from 'better-auth';
 import { Pool } from 'pg';
+import { twoFactor } from 'better-auth/plugins';
+import { anonymous } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   database: new Pool({
@@ -19,4 +20,5 @@ export const auth = betterAuth({
       connectionString: process.env.DATABASE_URL,
     }),
   },
+  plugins: [twoFactor(), anonymous()],
 });
