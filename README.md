@@ -5,7 +5,8 @@ A customer relationship management system built with Next.js and hosted on Verce
 ## Tech Stack
 
 - **Next.js** – Framework
-- **Bunny** – File Storage, CDN, Image Processing
+- **Tigris Data** – Storage
+- **Bunny** – CDN, Image Processing
 - **Neon** – Database (serverless PostgreSQL)
 - **Better Auth** – Authentication solution
 - **Electric SQL / WatermelonDB / PouchDB** – Client-side database options

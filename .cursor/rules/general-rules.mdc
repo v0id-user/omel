@@ -14,7 +14,8 @@ Omel is a CRM project where AI assistance is intended to streamline development 
 
 ### **Core Technologies**
 - **Next.js** – Hosted on Vercel
-- **Bunny** – File Storage, CDN, Image Processing
+- **Tigris Data** – Storage
+- **Bunny** – CDN, Image Processing
 - **Neon** – Database serverless
 - **Better Auth** – Preferred authentication solution
 - **Electric SQL / WatermelonDB / PouchDB** – Client-side database choices
