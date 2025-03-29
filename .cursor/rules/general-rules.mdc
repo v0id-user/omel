@@ -28,11 +28,10 @@ Omel is a CRM project where AI assistance is intended to streamline development 
 - **Resend** – Email handling
 - **Twilio** – SMS functionality
 - **Sentry** – Performance monitoring & error tracking
-- **SWR** – Data fetching and caching
+- **TRPC** – Data fetching and EndToEnd Type Safety
 
 ### **Mandatory Packages**
 - `ai-sdk`
-- `swr-sdk`
 
 Before adding **any new dependencies**, check `@bun.lock` for an existing solution.
 

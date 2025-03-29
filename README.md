@@ -18,7 +18,7 @@ A customer relationship management system built with Next.js and hosted on Verce
 - **Resend** – Email handling
 - **Twilio** – SMS functionality
 - **Sentry** – Performance monitoring & error tracking
-- **SWR** – Data fetching and caching
+- **TRPC** – Data fetching and EndToEnd Type Safety
 
 ## Getting Started
 
@@ -56,9 +56,8 @@ NEXT_PUBLIC_DEBUG=true_or_false
 
 1. **Tech Stack Compliance**: Use only the approved technologies in the tech stack list.
 2. **Package Management**: Always check `bun.lock` for existing packages before adding new dependencies.
-3. **Mandatory Packages**: Ensure `ai-sdk` and `swr-sdk` are integrated.
-4. **Security & Performance**: Optimize code for security and performance.
-5. **Monitoring**: Use Sentry for performance monitoring and error tracking.
+3. **Security & Performance**: Optimize code for security and performance.
+4. **Monitoring**: Use Sentry for performance monitoring and error tracking.
 
 ## Deployment
 
