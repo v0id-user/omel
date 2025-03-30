@@ -12,7 +12,6 @@ describe('Onboarding test', () => {
       companyDescription: 'Test Description',
       companyLogo: 'test-logo.png',
       companyBanner: 'test-banner.png',
-      authorUserId: 'test-user-id',
       companyWebsite: 'Test Website',
     };
 

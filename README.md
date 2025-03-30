@@ -9,7 +9,7 @@ A customer relationship management system built with Next.js and hosted on Verce
 - **Bunny** – CDN, Image Processing
 - **Neon** – Database (serverless PostgreSQL)
 - **Better Auth** – Authentication solution
-- **Electric SQL / WatermelonDB / PouchDB** – Client-side database options
+- **WatermelonDB / PouchDB** – Client-side database options
 - **Upstash** – Caching & Workflows
 - **PostHog** – Analytics & event tracking
 - **Get Stream** – Chat, Video, and Audio features

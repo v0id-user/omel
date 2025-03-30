@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { PostHogProvider } from './providers';
 import { IBM_Plex_Sans_Arabic } from 'next/font/google';
-
+import { TRPCProvider } from '@/trpc/client';
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ['400', '500', '600', '700'],
   subsets: ['arabic'],
@@ -21,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased ${ibmPlexSansArabic.className}`} dir="rtl">
-        <PostHogProvider>{children}</PostHogProvider>
+        <TRPCProvider>
+          <PostHogProvider>{children}</PostHogProvider>
+        </TRPCProvider>
       </body>
     </html>
   );

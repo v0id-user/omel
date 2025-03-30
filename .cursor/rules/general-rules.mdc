@@ -18,7 +18,7 @@ Omel is a CRM project where AI assistance is intended to streamline development 
 - **Bunny** – CDN, Image Processing
 - **Neon** – Database serverless
 - **Better Auth** – Preferred authentication solution
-- **Electric SQL / WatermelonDB / PouchDB** – Client-side database choices
+- **WatermelonDB / PouchDB** – Client-side database choices
 - **Upstash** – Caching & Workflows
 - **PostHog** – Analytics & event tracking
 - **Get Stream** – Chat, Video, and Audio features
