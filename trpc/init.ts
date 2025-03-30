@@ -1,7 +1,9 @@
 import { auth } from '@/lib/betterauth/auth';
+import { ratelimit } from '@/lib/ratelimt';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
+
 import superjson from 'superjson';
 
 export const createTRPCContext = cache(async () => {
@@ -33,6 +35,7 @@ const t = initTRPC.context<TRPCContext>().create({
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
+
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({
@@ -40,5 +43,15 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
       message: 'You must be logged in to access this resource.',
     });
   }
+
+  // Ratelimit the user
+  const { success } = await ratelimit.limit(ctx.session.user.id);
+  if (!success) {
+    throw new TRPCError({
+      code: 'TOO_MANY_REQUESTS',
+      message: 'You have made too many requests. Please try again later.',
+    });
+  }
+
   return next({ ctx: { ...ctx, session: ctx.session } });
 });
