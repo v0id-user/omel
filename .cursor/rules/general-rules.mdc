@@ -47,3 +47,7 @@ Before adding **any new dependencies**, check `@bun.lock` for an existing soluti
 7. **Code Consistency** – Ensure suggestions align with project coding standards.
 
 
+### Never Dos
+- Don't ever remove any comments
+- Don't add any new comments only explain in chat-box
+

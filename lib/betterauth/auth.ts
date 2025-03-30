@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { Pool } from 'pg';
 import { twoFactor } from 'better-auth/plugins';
 import { anonymous } from 'better-auth/plugins';
+import { nextCookies } from 'better-auth/next-js';
 
 export const auth = betterAuth({
   database: new Pool({
@@ -20,5 +21,11 @@ export const auth = betterAuth({
       connectionString: process.env.DATABASE_URL,
     }),
   },
-  plugins: [twoFactor(), anonymous()],
+  plugins: [
+    twoFactor(),
+    anonymous(),
+
+    // This must be the last plugin
+    nextCookies(),
+  ],
 });
