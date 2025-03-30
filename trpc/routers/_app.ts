@@ -9,6 +9,8 @@ export const appRouter = createTRPCRouter({
       })
     )
     .query(opts => {
+      const { session } = opts.ctx;
+      console.log(`session: ${session}`);
       return {
         greeting: `hello ${opts.input.text}`,
       };
