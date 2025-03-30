@@ -1,6 +1,8 @@
 import { bigint, numeric, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 import { pgTable } from 'drizzle-orm/pg-core';
 
+//TODO: Convert all id to text and use CUIDs
+
 export const customers = pgTable(
   'customers',
   {
