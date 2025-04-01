@@ -1,9 +1,10 @@
-import { z } from 'zod';
-import { baseProcedure, createTRPCRouter } from '../init';
+import { createTRPCRouter } from '../init';
 import { testsRouter } from './tests/proc';
+import { validationsRouter } from './validations/proc';
 
 export const appRouter = createTRPCRouter({
   tests: testsRouter,
+  validations: validationsRouter,
 });
 
 // export type definition of API

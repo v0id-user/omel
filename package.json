@@ -20,7 +20,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@sentry/nextjs": "9",
-    "@tanstack/react-form": "^1.1.0",
+    "@tanstack/react-form": "^1.2.3",
     "@tanstack/react-query": "^5.70.0",
     "@trpc/client": "^11.0.1",
     "@trpc/react-query": "^11.0.1",
