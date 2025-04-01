@@ -64,20 +64,20 @@ export default function SignUpForm() {
     switch (formStep) {
       case FormStep.AskForEmail:
         // TODO: Not like that
-        if (!userInfo.defaultValues.email) {
-          setFormState({
-            buttonText: 'استمر',
-            isProcessing: false,
-            errorText: 'يجب إدخال بريد العمل الخاص بك',
-          });
-          return;
-        }
+        // if (!userInfo.defaultValues.email) {
+        //   setFormState({
+        //     buttonText: 'استمر',
+        //     isProcessing: false,
+        //     errorText: 'يجب إدخال بريد العمل الخاص بك',
+        //   });
+        //   return;
+        // }
 
-        // setFormState({
-        //   buttonText: 'التحقق من البريد الإلكتروني...',
-        //   isProcessing: true,
-        //   errorText: null,
-        // });
+        setFormState({
+          buttonText: 'التحقق من البريد الإلكتروني...',
+          isProcessing: true,
+          errorText: null,
+        });
         // console.log(userInfo);
 
         // TODO: Validate email
@@ -85,6 +85,7 @@ export default function SignUpForm() {
         // Using TRPC to validate email
 
         // Increment form step after processing
+        console.log(userInfo);
         setFormStep(formStep + 1);
         break;
       case FormStep.AskForPassword:
