@@ -1,17 +1,12 @@
 'use client';
 
 import { signUp } from '@/lib/betterauth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function BetterAuthSignUpTest() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('test@gmail.com');
   const [password, setPassword] = useState('test123123');
-
-  if (process.env.NEXT_PUBLIC_ENV !== 'dev') {
-    return null;
-  }
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -26,6 +21,14 @@ export default function BetterAuthSignUpTest() {
       alert('Sign up failed. Please check your information.');
     }
   };
+
+  useEffect(() => {
+    console.log('signUp', JSON.stringify(signUp, null, 2));
+  }, []);
+
+  if (process.env.NEXT_PUBLIC_ENV !== 'dev') {
+    return null;
+  }
 
   return (
     <div className="p-6 max-w-sm mx-auto">
