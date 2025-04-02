@@ -1,63 +1,18 @@
 'use client';
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Lock, Phone } from 'lucide-react';
 import Link from 'next/link';
-import { formOptions, useForm } from '@tanstack/react-form';
-
-enum FormStep {
-  AskForEmail = 0,
-  AskForPassword = 1,
-  AskForPersonalInfo = 2,
-  AskForCompanyInfo = 3,
-}
-
-interface UserInfo {
-  email: string;
-  password: string;
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-  };
-  companyInfo: {
-    name: string;
-    phone: string;
-  };
-}
-
-interface FormState {
-  buttonText: string;
-  isProcessing: boolean;
-  errorText: string | null;
-}
+import { EmailInput, NameFields, PasswordInput, PhoneField } from './form-inputs';
+import { FormState } from './interfaces';
+import { FormStep } from './enums';
+import { userInfo } from './form-inputs';
 
 export default function SignUpForm() {
-  const userInfo = formOptions({
-    defaultValues: {
-      email: '',
-      password: '',
-      personalInfo: {
-        firstName: '',
-        lastName: '',
-        phone: '',
-      },
-      companyInfo: {
-        name: '',
-        phone: '',
-      },
-    } as UserInfo,
-  });
-
   const [formStep, setFormStep] = useState(FormStep.AskForEmail);
   const [formState, setFormState] = useState<FormState>({
     buttonText: 'استمر',
     isProcessing: false,
     errorText: null,
-  });
-
-  const form = useForm({
-    ...userInfo,
   });
 
   const ProcessFormStep = async () => {
@@ -103,127 +58,20 @@ export default function SignUpForm() {
   const RenderFormStep = () => {
     switch (formStep) {
       case FormStep.AskForEmail:
-        return (
-          <div className="relative">
-            <form.Field name="email">
-              {field => (
-                <>
-                  <input
-                    type="email"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={e => field.handleChange(e.target.value)}
-                    placeholder="ادخل بريد العمل الخاص بك"
-                    className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <Mail
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                </>
-              )}
-            </form.Field>
-          </div>
-        );
+        return <EmailInput />;
       case FormStep.AskForPassword:
         return (
           <div className="space-y-4">
-            <div className="relative">
-              {/* TODO: We reapet render the feild find a better way to do this */}
-              <form.Field name="email">
-                {field => (
-                  <>
-                    <input
-                      type="email"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value)}
-                      placeholder="ادخل بريد العمل الخاص بك"
-                      className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Mail
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
-                  </>
-                )}
-              </form.Field>
-            </div>
-            <div className="relative">
-              <form.Field name="password">
-                {field => (
-                  <>
-                    <input
-                      type="password"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value)}
-                      placeholder="ادخل كلمة المرور"
-                      className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Lock
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
-                  </>
-                )}
-              </form.Field>
-            </div>
+            {/* TODO: We reapet render the feild find a better way to do this */}
+            <EmailInput />
+            <PasswordInput />
           </div>
         );
       case FormStep.AskForPersonalInfo:
         return (
           <div className="space-y-4">
-            <div className="flex gap-4">
-              <form.Field name="personalInfo.firstName">
-                {field => (
-                  <>
-                    <input
-                      type="text"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value)}
-                      placeholder="اسمك الأول"
-                      className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </>
-                )}
-              </form.Field>
-              <form.Field name="personalInfo.lastName">
-                {field => (
-                  <>
-                    <input
-                      type="text"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value)}
-                      placeholder="اسمك الأخير"
-                      className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </>
-                )}
-              </form.Field>
-            </div>
-            <div className="relative">
-              <form.Field name="personalInfo.phone">
-                {field => (
-                  <>
-                    <input
-                      type="text"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value)}
-                      placeholder="رقم الهاتف"
-                      className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Phone
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
-                  </>
-                )}
-              </form.Field>
-            </div>
+            <NameFields />
+            <PhoneField />
           </div>
         );
     }
