@@ -19,6 +19,34 @@ export const userInfo = formOptions({
     },
   } as UserInfo,
 });
+import { ReactNode } from 'react';
+
+interface FormInputProps {
+  type: string;
+  value: string;
+  onBlur: () => void;
+  onChange: (value: string) => void;
+  placeholder: string;
+  icon: ReactNode;
+}
+const FormInput = ({ type, value, onBlur, onChange, placeholder, icon }: FormInputProps) => {
+  return (
+    <div className="relative">
+      <input
+        type={type}
+        value={value}
+        onBlur={onBlur}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full p-3 pl-10 bg-transparent border rounded-md text-black placeholder-gray-400 
+        focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
+        aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
+        transition-all duration-200 ease-in-out shadow-sm hover:shadow-md"
+      />
+      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">{icon}</div>
+    </div>
+  );
+};
 
 export const EmailField = () => {
   const form = useForm({
@@ -42,20 +70,14 @@ export const EmailField = () => {
     >
       {field => (
         <>
-          <div className="relative">
-            <input
-              type="email"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={e => field.handleChange(e.target.value)}
-              placeholder="ادخل بريد العمل الخاص بك"
-              className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-            <Mail
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-          </div>
+          <FormInput
+            type="email"
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={field.handleChange}
+            placeholder="ادخل بريد العمل الخاص بك"
+            icon={<Mail size={20} />}
+          />
           {field.state.meta.errors && (
             <em className="text-red-500 text-sm block mt-1">
               {field.state.meta.errors.join(', ')}
@@ -80,20 +102,14 @@ export const PasswordField = () => {
     >
       {field => (
         <>
-          <div className="relative">
-            <input
-              type="password"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={e => field.handleChange(e.target.value)}
-              placeholder="ادخل كلمة المرور"
-              className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Lock
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-          </div>
+          <FormInput
+            type="password"
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={field.handleChange}
+            placeholder="ادخل كلمة المرور"
+            icon={<Lock size={18} />}
+          />
           {field.state.meta.errors && (
             <em className="text-red-500 text-sm block mt-1">
               {field.state.meta.errors.join(', ')}
@@ -114,13 +130,13 @@ export const NameFields = () => {
       <form.Field name="personalInfo.firstName">
         {field => (
           <>
-            <input
+            <FormInput
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={e => field.handleChange(e.target.value)}
+              onChange={field.handleChange}
               placeholder="اسمك الأول"
-              className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              icon={<></>}
             />
           </>
         )}
@@ -128,13 +144,13 @@ export const NameFields = () => {
       <form.Field name="personalInfo.lastName">
         {field => (
           <>
-            <input
+            <FormInput
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={e => field.handleChange(e.target.value)}
+              onChange={field.handleChange}
               placeholder="اسمك الأخير"
-              className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              icon={<></>}
             />
           </>
         )}
@@ -151,20 +167,14 @@ export const PhoneField = () => {
     <form.Field name="personalInfo.phone">
       {field => (
         <>
-          <div className="relative">
-            <input
-              type="text"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={e => field.handleChange(e.target.value)}
-              placeholder="رقم الهاتف"
-              className="w-full p-3 pl-10 bg-transparent border border-gray-700 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Phone
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-          </div>
+          <FormInput
+            type="text"
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={field.handleChange}
+            placeholder="رقم الهاتف"
+            icon={<Phone size={18} />}
+          />
         </>
       )}
     </form.Field>
