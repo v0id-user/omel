@@ -20,7 +20,6 @@ export const userInfo = formOptions({
   } as UserInfo,
 });
 
-// TODO: Fix, use any and add an expection for it
 export const EmailInput = () => {
   const form = useForm({
     ...userInfo,
