@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
-import { EmailInput, NameFields, PasswordInput, PhoneField } from './form-inputs';
+import { EmailField, NameFields, PasswordField, PhoneField } from './form-inputs';
 import { FormState } from './interfaces';
 import { FormStep } from './enums';
 import { userInfo } from './form-inputs';
@@ -58,13 +58,13 @@ export default function SignUpForm() {
   const RenderFormStep = () => {
     switch (formStep) {
       case FormStep.AskForEmail:
-        return <EmailInput />;
+        return <EmailField />;
       case FormStep.AskForPassword:
         return (
           <div className="space-y-4">
             {/* TODO: We reapet render the feild find a better way to do this */}
-            <EmailInput />
-            <PasswordInput />
+            <EmailField />
+            <PasswordField />
           </div>
         );
       case FormStep.AskForPersonalInfo:

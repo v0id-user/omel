@@ -20,7 +20,7 @@ export const userInfo = formOptions({
   } as UserInfo,
 });
 
-export const EmailInput = () => {
+export const EmailField = () => {
   const form = useForm({
     ...userInfo,
   });
@@ -67,7 +67,7 @@ export const EmailInput = () => {
   );
 };
 
-export const PasswordInput = () => {
+export const PasswordField = () => {
   const form = useForm({
     ...userInfo,
   });
