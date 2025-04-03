@@ -1,28 +1,14 @@
-import { formOptions, useForm } from '@tanstack/react-form';
+import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
-import { UserInfo } from './interfaces';
 import { Mail, Lock, Phone } from 'lucide-react';
 import { clientValidatePasswordInput } from './validations';
 import FormInput from '@/components/auth/FormInput';
-export const userInfo = formOptions({
-  defaultValues: {
-    email: '',
-    password: '',
-    personalInfo: {
-      firstName: '',
-      lastName: '',
-      phone: '',
-    },
-    companyInfo: {
-      name: '',
-      phone: '',
-    },
-  } as UserInfo,
-});
+import { useSignUpStore } from './store';
 
 export const EmailField = () => {
+  const { userInfo } = useSignUpStore();
   const form = useForm({
-    ...userInfo,
+    defaultValues: userInfo,
   });
   return (
     <form.Field
@@ -62,8 +48,9 @@ export const EmailField = () => {
 };
 
 export const PasswordField = () => {
+  const { userInfo } = useSignUpStore();
   const form = useForm({
-    ...userInfo,
+    defaultValues: userInfo,
   });
   return (
     <form.Field
@@ -94,8 +81,9 @@ export const PasswordField = () => {
 };
 
 export const NameFields = () => {
+  const { userInfo } = useSignUpStore();
   const form = useForm({
-    ...userInfo,
+    defaultValues: userInfo,
   });
   return (
     <div className="flex gap-4">
@@ -132,8 +120,9 @@ export const NameFields = () => {
 };
 
 export const PhoneField = () => {
+  const { userInfo } = useSignUpStore();
   const form = useForm({
-    ...userInfo,
+    defaultValues: userInfo,
   });
   return (
     <form.Field name="personalInfo.phone">
