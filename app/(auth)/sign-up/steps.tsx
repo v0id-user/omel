@@ -1,50 +1,41 @@
+'use client';
+
 import { useSignUpStore } from './store';
 import { FormStep } from './enums';
 import { EmailField, PasswordField, NameFields, PhoneField } from './form-inputs';
 
-export const ProcessFormStep = () => {
+function useProcessForm() {
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
-  switch (formStep) {
-    case FormStep.AskForEmail:
-      // TODO: Not like that
-      // if (!userInfo.defaultValues.email) {
-      //   setFormState({
-      //     buttonText: 'استمر',
-      //     isProcessing: false,
-      //     errorText: 'يجب إدخال بريد العمل الخاص بك',
-      //   });
-      //   return;
-      // }
 
-      setFormState({
-        buttonText: 'التحقق من البريد الإلكتروني...',
-        isProcessing: true,
-        errorText: null,
-      });
-      // console.log(userInfo);
+  const processStep = () => {
+    switch (formStep) {
+      case FormStep.AskForEmail:
+        setFormState({
+          buttonText: 'التحقق من البريد الإلكتروني...',
+          isProcessing: true,
+          errorText: null,
+        });
+        // TODO: Validate email
+        console.log(userInfo);
+        setFormStep(formStep + 1);
+        break;
+      case FormStep.AskForPassword:
+        //TODO: Validate password
+        console.log(userInfo);
+        setFormStep(formStep + 1);
+        break;
+      case FormStep.AskForPersonalInfo:
+        //TODO: Validate personal info
+        console.log(userInfo);
+        setFormStep(formStep + 1);
+        break;
+    }
+  };
 
-      // TODO: Validate email
+  return processStep;
+}
 
-      // Using TRPC to validate email
-
-      // Increment form step after processing
-      console.log(userInfo);
-      setFormStep(formStep + 1);
-      break;
-    case FormStep.AskForPassword:
-      //TODO: Validate password
-      console.log(userInfo);
-      setFormStep(formStep + 1);
-      break;
-    case FormStep.AskForPersonalInfo:
-      //TODO: Validate personal info
-      console.log(userInfo);
-      setFormStep(formStep + 1);
-      break;
-  }
-};
-
-export const RenderFormStep = () => {
+function RenderFormStep() {
   const { formStep } = useSignUpStore();
   switch (formStep) {
     case FormStep.AskForEmail:
@@ -65,4 +56,6 @@ export const RenderFormStep = () => {
         </div>
       );
   }
-};
+}
+
+export { useProcessForm, RenderFormStep };
