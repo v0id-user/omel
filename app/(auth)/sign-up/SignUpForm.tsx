@@ -8,7 +8,7 @@ import { FormStep } from './enums';
 
 export default function SignUpForm() {
   const { formStep, formState } = useSignUpStore();
-  const processStep = useProcessForm();
+  const { processStep, isLoading } = useProcessForm();
   return (
     <div className="w-full md:w-[450px]">
       {/* Google Login Button */}
@@ -51,7 +51,7 @@ export default function SignUpForm() {
       <button
         className="w-full bg-black text-white cursor-pointer py-3 px-4 
       rounded-md hover:bg-gray-800 transition-colors"
-        disabled={formState.isProcessing}
+        disabled={isLoading}
         onClick={processStep}
       >
         {formState.buttonText}

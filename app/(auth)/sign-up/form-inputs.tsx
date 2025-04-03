@@ -1,7 +1,6 @@
 import { useForm } from '@tanstack/react-form';
-import { z } from 'zod';
 import { Mail, Lock, Phone } from 'lucide-react';
-import { clientValidatePasswordInput } from './validations';
+import { clientValidateEmailInput, clientValidatePasswordInput } from '@/utils/client/validators';
 import FormInput from '@/components/auth/FormInput';
 import { useSignUpStore } from './store';
 
@@ -14,16 +13,7 @@ export const EmailField = () => {
     <form.Field
       name="email"
       validators={{
-        onChange: ({ value }) => {
-          if (!value) {
-            return 'يجب إدخال بريد العمل الخاص بك';
-          }
-
-          if (!z.string().email().safeParse(value).success) {
-            return 'بريد العمل الإلكتروني غير صالح';
-          }
-          return undefined;
-        },
+        onBlur: ({ value }) => clientValidateEmailInput(value),
       }}
     >
       {field => (

@@ -3,36 +3,36 @@
 import { useSignUpStore } from './store';
 import { FormStep } from './enums';
 import { EmailField, PasswordField, NameFields, PhoneField } from './form-inputs';
+import { useClientValidations } from '@/hooks/validators';
 
 function useProcessForm() {
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
-
+  const { isLoading } = useClientValidations();
   const processStep = () => {
     switch (formStep) {
       case FormStep.AskForEmail:
         setFormState({
           buttonText: 'التحقق من البريد الإلكتروني...',
-          isProcessing: true,
           errorText: null,
         });
         // TODO: Validate email
         console.log(userInfo);
-        setFormStep(formStep + 1);
         break;
       case FormStep.AskForPassword:
         //TODO: Validate password
         console.log(userInfo);
-        setFormStep(formStep + 1);
         break;
       case FormStep.AskForPersonalInfo:
         //TODO: Validate personal info
         console.log(userInfo);
-        setFormStep(formStep + 1);
         break;
     }
+
+    // If there is an error, it must be an early return
+    setFormStep(formStep + 1);
   };
 
-  return processStep;
+  return { processStep, isLoading };
 }
 
 function RenderFormStep() {

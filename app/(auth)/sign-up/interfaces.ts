@@ -14,7 +14,6 @@ interface UserInfo {
 
 interface FormState {
   buttonText: string;
-  isProcessing: boolean;
   errorText: string | null;
 }
 
