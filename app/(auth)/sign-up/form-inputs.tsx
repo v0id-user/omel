@@ -6,7 +6,7 @@ import FormInput from '@/components/auth/FormInput';
 import { useSignUpStore } from './store';
 
 export const EmailField = () => {
-  const { userInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useSignUpStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -32,7 +32,10 @@ export const EmailField = () => {
             type="email"
             value={field.state.value}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={email => {
+              field.handleChange(email);
+              setUserInfo({ ...userInfo, email });
+            }}
             placeholder="ادخل بريد العمل الخاص بك"
             icon={<Mail size={20} />}
           />
@@ -48,7 +51,7 @@ export const EmailField = () => {
 };
 
 export const PasswordField = () => {
-  const { userInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useSignUpStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -65,7 +68,10 @@ export const PasswordField = () => {
             type="password"
             value={field.state.value}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={password => {
+              field.handleChange(password);
+              setUserInfo({ ...userInfo, password });
+            }}
             placeholder="ادخل كلمة المرور"
             icon={<Lock size={18} />}
           />
@@ -81,7 +87,7 @@ export const PasswordField = () => {
 };
 
 export const NameFields = () => {
-  const { userInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useSignUpStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -94,7 +100,10 @@ export const NameFields = () => {
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={field.handleChange}
+              onChange={firstName => {
+                field.handleChange(firstName);
+                setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, firstName } });
+              }}
               placeholder="اسمك الأول"
               icon={<></>}
             />
@@ -108,7 +117,10 @@ export const NameFields = () => {
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={field.handleChange}
+              onChange={lastName => {
+                field.handleChange(lastName);
+                setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, lastName } });
+              }}
               placeholder="اسمك الأخير"
               icon={<></>}
             />
@@ -120,7 +132,7 @@ export const NameFields = () => {
 };
 
 export const PhoneField = () => {
-  const { userInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useSignUpStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -132,7 +144,10 @@ export const PhoneField = () => {
             type="text"
             value={field.state.value}
             onBlur={field.handleBlur}
-            onChange={field.handleChange}
+            onChange={phone => {
+              field.handleChange(phone);
+              setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, phone } });
+            }}
             placeholder="رقم الهاتف"
             icon={<Phone size={18} />}
           />
