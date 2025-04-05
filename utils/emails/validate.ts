@@ -41,6 +41,6 @@ export async function validateEmail(email: string): Promise<boolean> {
 const emailSchema = z.string().email();
 
 function basicEmailValidation(email: string): boolean {
-  // TODO: Add validation for disposable emails
+  // TODO: Add validation for disposable emails and more validations
   return emailSchema.safeParse(email).success;
 }

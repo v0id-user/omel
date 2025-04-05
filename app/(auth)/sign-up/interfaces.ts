@@ -7,14 +7,15 @@ interface UserInfo {
     phone: string;
   };
   companyInfo: {
-    name: string;
-    phone: string;
+    // Can be optional if the user is not a company
+    name?: string;
+    // Can be optional if the user is not a company
+    phone?: string;
   };
 }
 
 interface FormState {
   buttonText: string;
-  errorText: string | null;
 }
 
 export { type UserInfo, type FormState };

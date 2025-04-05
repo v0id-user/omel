@@ -3,6 +3,7 @@ import './globals.css';
 import { PostHogProvider } from './providers';
 import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { TRPCProvider } from '@/trpc/client';
+import { Toaster } from 'react-hot-toast';
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ['400', '500', '600', '700'],
   subsets: ['arabic'],
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased ${ibmPlexSansArabic.className}`} dir="rtl">
+        <Toaster />
         <TRPCProvider>
           <PostHogProvider>{children}</PostHogProvider>
         </TRPCProvider>
