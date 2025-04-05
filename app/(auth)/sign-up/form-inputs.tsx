@@ -1,8 +1,46 @@
 import { useForm } from '@tanstack/react-form';
 import { Mail, Lock, Phone } from 'lucide-react';
-import { clientValidateEmailInput, clientValidatePasswordInput } from '@/utils/client/validators';
+import {
+  clientValidateEmailInput,
+  clientValidatePasswordInput,
+  clientValidatePhoneInput,
+} from '@/utils/client/validators';
 import FormInput from '@/components/auth/FormInput';
 import { useSignUpStore } from './store';
+import { useState, useCallback, useRef } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { allowedRegions } from './countryCodes';
+
+// Custom FormInput for phone field to match Select height
+const PhoneFormInput = (props: React.ComponentProps<typeof FormInput>) => {
+  return (
+    <div className="relative h-[42px]">
+      <input
+        type={props.type}
+        value={props.value}
+        onBlur={props.onBlur}
+        onChange={e => props.onChange(e.target.value)}
+        onKeyDown={props.onKeyDown}
+        ref={props.inputRef}
+        placeholder={props.placeholder}
+        className="w-full h-full p-3 pl-10 bg-transparent border rounded-md text-black placeholder-gray-400 
+          focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
+          aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
+          transition-all duration-200 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={props.disabled}
+      />
+      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+        {props.icon}
+      </div>
+    </div>
+  );
+};
 
 export const EmailField = () => {
   const { userInfo, setUserInfo } = useSignUpStore();
@@ -81,9 +119,23 @@ export const NameFields = () => {
   const form = useForm({
     defaultValues: userInfo,
   });
+  const lastNameInputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div className="flex gap-4">
-      <form.Field name="personalInfo.firstName">
+    <div className="flex gap-2 items-center">
+      <form.Field
+        name="personalInfo.firstName"
+        validators={{
+          onChange: ({ value }) => {
+            if (!value) {
+              return 'اسمك الأول مطلوب';
+            }
+            if (value.includes(' ')) {
+              return 'لا يمكن إضافة مسافات في الاسم الأول';
+            }
+          },
+        }}
+      >
         {field => (
           <>
             <FormInput
@@ -91,16 +143,43 @@ export const NameFields = () => {
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={firstName => {
-                field.handleChange(firstName);
-                setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, firstName } });
+                const sanitizedName = firstName.replace(/\s/g, '');
+                field.handleChange(sanitizedName);
+                setUserInfo({
+                  ...userInfo,
+                  personalInfo: { ...userInfo.personalInfo, firstName: sanitizedName },
+                });
+              }}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === ' ' && lastNameInputRef.current) {
+                  e.preventDefault();
+                  lastNameInputRef.current.focus();
+                }
               }}
               placeholder="اسمك الأول"
               icon={<></>}
             />
+            {field.state.meta.errors && (
+              <em className="text-red-500 text-sm block mt-1">
+                {field.state.meta.errors.join(', ')}
+              </em>
+            )}
           </>
         )}
       </form.Field>
-      <form.Field name="personalInfo.lastName">
+      <form.Field
+        name="personalInfo.lastName"
+        validators={{
+          onChange: ({ value }) => {
+            if (!value) {
+              return 'اسمك الأخير مطلوب';
+            }
+            if (value.includes(' ')) {
+              return 'لا يمكن إضافة مسافات في الاسم الأخير';
+            }
+          },
+        }}
+      >
         {field => (
           <>
             <FormInput
@@ -108,12 +187,22 @@ export const NameFields = () => {
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={lastName => {
-                field.handleChange(lastName);
-                setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, lastName } });
+                const sanitizedName = lastName.replace(/\s/g, '');
+                field.handleChange(sanitizedName);
+                setUserInfo({
+                  ...userInfo,
+                  personalInfo: { ...userInfo.personalInfo, lastName: sanitizedName },
+                });
               }}
+              inputRef={lastNameInputRef}
               placeholder="اسمك الأخير"
               icon={<></>}
             />
+            {field.state.meta.errors && (
+              <em className="text-red-500 text-sm block mt-1">
+                {field.state.meta.errors.join(', ')}
+              </em>
+            )}
           </>
         )}
       </form.Field>
@@ -121,26 +210,118 @@ export const NameFields = () => {
   );
 };
 
+const PhoneSelect = ({
+  value,
+  onValueChange,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+}) => {
+  return (
+    <Select dir="rtl" value={value} onValueChange={onValueChange}>
+      <SelectTrigger
+        className="w-[140px] h-[42px] text-xs font-medium text-gray-700 bg-white border rounded-md
+        focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
+        aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
+        transition-all duration-200 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed
+        px-2 flex items-center"
+      >
+        <SelectValue placeholder="اختر الدولة" className="text-xs" />
+      </SelectTrigger>
+      <SelectContent className="w-[200px] max-h-[300px] overflow-y-auto text-sm font-medium bg-white border rounded-md shadow-lg z-[999]">
+        {allowedRegions.map(region => (
+          <SelectItem key={region.code} value={region.phoneCode} className="relative" dir="rtl">
+            <div className="flex w-full items-center gap-2">
+              <span className="text-gray-500 text-xs font-mono">{region.phoneCode}</span>
+              <span className="text-sm">{region.name}</span>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
 export const PhoneField = () => {
   const { userInfo, setUserInfo } = useSignUpStore();
+  const [selectedDialCode, setSelectedDialCode] = useState<string>('+966'); // Default to Saudi Arabia
+  const [rawNumber, setRawNumber] = useState<string>('');
   const form = useForm({
     defaultValues: userInfo,
   });
+
+  const validateAndUpdatePhone = useCallback(
+    (number: string, dialCode: string) => {
+      const fullPhoneNumber = `${dialCode}${number}`;
+      const phoneNumber = clientValidatePhoneInput(fullPhoneNumber);
+
+      if (phoneNumber) {
+        setUserInfo({
+          ...userInfo,
+          personalInfo: {
+            ...userInfo.personalInfo,
+            phone: fullPhoneNumber,
+          },
+        });
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [userInfo, setUserInfo]
+  );
+
   return (
-    <form.Field name="personalInfo.phone">
+    <form.Field
+      name="personalInfo.phone"
+      validators={{
+        onChange: ({ value }) => {
+          const phoneNumber = clientValidatePhoneInput(value);
+          if (!phoneNumber) {
+            return 'رقم الهاتف غير صحيح';
+          }
+        },
+      }}
+    >
       {field => (
         <>
-          <FormInput
-            type="text"
-            value={field.state.value}
-            onBlur={field.handleBlur}
-            onChange={phone => {
-              field.handleChange(phone);
-              setUserInfo({ ...userInfo, personalInfo: { ...userInfo.personalInfo, phone } });
-            }}
-            placeholder="رقم الهاتف"
-            icon={<Phone size={18} />}
-          />
+          <div className="flex gap-4 items-center">
+            <div className="flex flex-col">
+              <PhoneSelect
+                value={selectedDialCode}
+                onValueChange={value => {
+                  setSelectedDialCode(value);
+                  validateAndUpdatePhone(rawNumber, value);
+                }}
+              />
+            </div>
+            <div className="flex-1">
+              <PhoneFormInput
+                type="tel"
+                value={rawNumber}
+                onBlur={() => {
+                  field.handleBlur();
+                  validateAndUpdatePhone(rawNumber, selectedDialCode);
+                }}
+                onChange={number => {
+                  const cleanNumber = number.replace(/[^\d]/g, '');
+                  setRawNumber(cleanNumber);
+
+                  const fullPhoneNumber = `${selectedDialCode}${cleanNumber}`;
+                  field.handleChange(fullPhoneNumber);
+
+                  validateAndUpdatePhone(cleanNumber, selectedDialCode);
+                }}
+                placeholder="أدخل رقم هاتفك"
+                icon={<Phone className="h-5 w-5 text-gray-400" />}
+              />
+            </div>
+          </div>
+          {field.state.meta.errors && (
+            <em className="text-destructive text-sm block mt-1 text-right">
+              {field.state.meta.errors.join(', ')}
+            </em>
+          )}
         </>
       )}
     </form.Field>

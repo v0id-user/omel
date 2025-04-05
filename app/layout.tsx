@@ -5,7 +5,7 @@ import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { TRPCProvider } from '@/trpc/client';
 import { Toaster } from 'react-hot-toast';
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  weight: ['400', '500', '600', '700'],
+  weight: ['100', '200', '300', '400', '500', '600', '700'],
   subsets: ['arabic'],
 });
 

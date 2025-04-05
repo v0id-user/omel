@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, Ref } from 'react';
 
 interface FormInputProps {
   type: string;
@@ -6,19 +6,33 @@ interface FormInputProps {
   onBlur: () => void;
   onChange: (value: string) => void;
   placeholder: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   disabled?: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  inputRef?: Ref<HTMLInputElement>;
 }
-function FormInput({ type, value, onBlur, onChange, placeholder, icon, disabled }: FormInputProps) {
+function FormInput({
+  type,
+  value,
+  onBlur,
+  onChange,
+  placeholder,
+  icon,
+  disabled,
+  onKeyDown,
+  inputRef,
+}: FormInputProps) {
   return (
-    <div className="relative">
+    <div className="relative h-[42px]">
       <input
         type={type}
         value={value}
         onBlur={onBlur}
         onChange={e => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
+        ref={inputRef}
         placeholder={placeholder}
-        className="w-full p-3 pl-10 bg-transparent border rounded-md text-black placeholder-gray-400 
+        className="w-full h-full p-3 pl-10 bg-transparent border rounded-md text-black placeholder-gray-400 
           focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
           aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
           transition-all duration-200 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"

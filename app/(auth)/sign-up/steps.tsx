@@ -19,6 +19,7 @@ function useProcessForm() {
         setFormState({
           buttonText: 'التحقق من البريد الإلكتروني...',
         });
+
         console.log(userInfo);
 
         const isValid = await validator(ValidationType.Email, userInfo.email);
@@ -73,7 +74,10 @@ function useProcessForm() {
         return true;
       },
     };
-
+    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+      setFormStep(formStep + 1);
+      return true;
+    }
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
     if (!canProcess) return;
