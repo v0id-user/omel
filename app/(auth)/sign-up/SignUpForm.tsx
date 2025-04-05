@@ -59,8 +59,8 @@ export default function SignUpForm() {
 
       {/* Process Form Button */}
       <button
-        className="w-full bg-black text-white cursor-pointer py-3 px-4 
-      rounded-md hover:bg-gray-800 transition-colors"
+        className={`w-full bg-black text-white py-3 px-4 rounded-md transition-colors
+        ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-800'}`}
         disabled={isLoading}
         onClick={processStep}
       >

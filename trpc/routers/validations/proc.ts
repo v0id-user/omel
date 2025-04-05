@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { validateEmail } from '@/utils/emails';
 import { createTRPCRouter, baseProcedure } from '@/trpc/init';
 import { clientValidatePhoneInput } from '@/utils/client/validators';
+import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 
 const arabRegions = [
   'SA',
@@ -29,11 +30,17 @@ export const validationsRouter = createTRPCRouter({
     return await validateEmail(input);
   }),
   validatePhone: baseProcedure.input(z.string()).mutation(async ({ input }) => {
+    // TODO: This is not good, refactor it
     const phone = clientValidatePhoneInput(input);
-    if (!phone) return false;
+    if (phone !== undefined) return false;
+
+    const parsedPhone = parsePhoneNumberFromString(input);
+    if (!parsedPhone?.country) return false;
+
     // For now we only support arab countries
     for (const region of arabRegions) {
-      if (phone.country === region) {
+      console.log(parsedPhone.country, region);
+      if (parsedPhone.country === region) {
         return true;
       }
     }

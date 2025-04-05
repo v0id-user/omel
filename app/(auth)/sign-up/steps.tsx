@@ -38,34 +38,47 @@ function useProcessForm() {
         return true;
       },
       [FormStep.AskForPassword]: async () => {
-        console.log(userInfo);
-        // TODO: Add password validation
         const isValidPassword = clientValidatePasswordInput(userInfo.password);
-        if (!isValidPassword) {
+        if (isValidPassword !== undefined) {
           toast.error('كلمة المرور غير صالحة');
           return false;
         }
         return true;
       },
       [FormStep.AskForPersonalInfo]: async () => {
-        console.log(userInfo);
+        console.log(userInfo.personalInfo);
+        setFormState({
+          buttonText: 'التحقق من رقم الهاتف...',
+        });
         // TODO: Add personal info validation
         // for now only check if the name is not empty
         if (!userInfo.personalInfo.firstName || !userInfo.personalInfo.lastName) {
+          setFormState({
+            buttonText: 'استمر',
+          });
           toast.error('الاسم غير صالح');
           return false;
         }
 
         if (!userInfo.personalInfo.phone) {
+          setFormState({
+            buttonText: 'استمر',
+          });
           toast.error('رقم الهاتف غير صالح');
           return false;
         }
         const isValidPhone = await validator(ValidationType.Phone, userInfo.personalInfo.phone);
         if (!isValidPhone) {
+          console.log(isValidPhone, 'validator says not valid');
+          setFormState({
+            buttonText: 'استمر',
+          });
           toast.error('رقم الهاتف غير صالح');
           return false;
         }
-
+        setFormState({
+          buttonText: 'استمر',
+        });
         return true;
       },
       [FormStep.AskForCompanyInfo]: async () => {
@@ -74,10 +87,12 @@ function useProcessForm() {
         return true;
       },
     };
-    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
-      setFormStep(formStep + 1);
-      return true;
-    }
+
+    // if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+    //   setFormStep(formStep + 1);
+    //   return true;
+    // }
+
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
     if (!canProcess) return;

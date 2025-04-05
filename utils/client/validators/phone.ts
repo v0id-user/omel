@@ -1,7 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 
-// List of allowed Arab country codes
-const ALLOWED_ARAB_COUNTRIES = [
+const ALLOWED_COUNTRIES = [
   'SA', // Saudi Arabia
   'AE', // UAE
   'EG', // Egypt
@@ -23,26 +22,40 @@ const ALLOWED_ARAB_COUNTRIES = [
 ];
 
 function clientValidatePhoneInput(phone: string) {
-  if (!phone) return null;
+  console.log('Validating phone number:', phone);
+
+  if (!phone) {
+    return 'يجب إدخال رقم الهاتف';
+  }
 
   try {
     const phoneNumber = parsePhoneNumberFromString(phone);
+    console.log('Parsed phone number:', phoneNumber);
 
-    if (!phoneNumber) return null;
+    if (!phoneNumber) {
+      return 'يجب إدخال رقم الهاتف';
+    }
 
     // Check if the phone number is valid and belongs to an allowed country
-    if (
-      phoneNumber.isValid() &&
-      phoneNumber.country &&
-      ALLOWED_ARAB_COUNTRIES.includes(phoneNumber.country)
-    ) {
-      return phoneNumber;
+    const isValid = phoneNumber.isValid();
+    const country = phoneNumber.country;
+    const isAllowedCountry = country && ALLOWED_COUNTRIES.includes(country);
+
+    console.log('Phone validation results:', {
+      isValid,
+      country,
+      isAllowedCountry,
+    });
+
+    if (isValid && country && isAllowedCountry) {
+      return undefined;
     }
   } catch (error) {
     console.error('Phone validation error:', error);
   }
 
-  return null;
+  console.log('Phone number is invalid');
+  return 'يجب إدخال رقم الهاتف بشكل صالح';
 }
 
-export { clientValidatePhoneInput, ALLOWED_ARAB_COUNTRIES };
+export { clientValidatePhoneInput, ALLOWED_COUNTRIES };
