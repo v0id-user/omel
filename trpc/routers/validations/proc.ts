@@ -39,7 +39,6 @@ export const validationsRouter = createTRPCRouter({
 
     // For now we only support arab countries
     for (const region of arabRegions) {
-      console.log(parsedPhone.country, region);
       if (parsedPhone.country === region) {
         return true;
       }

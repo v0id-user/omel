@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { FormStep } from './enums';
 import { FormState } from './interfaces';
-import { UserInfo } from './interfaces';
+import { NewCRMUserInfo as UserInfo } from '@/interfaces/crm';
 interface SignUpStore {
   formStep: FormStep;
   setFormStep: (formStep: FormStep) => void;

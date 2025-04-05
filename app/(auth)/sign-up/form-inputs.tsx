@@ -327,3 +327,220 @@ export const PhoneField = () => {
     </form.Field>
   );
 };
+
+export const CompanyNameField = () => {
+  const { userInfo, setUserInfo } = useSignUpStore();
+  const form = useForm({
+    defaultValues: userInfo,
+  });
+  return (
+    <form.Field
+      name="companyInfo.name"
+      validators={{
+        onChange: ({ value }) => {
+          if (!value) {
+            return 'اسم الشركة مطلوب';
+          }
+        },
+      }}
+    >
+      {field => (
+        <>
+          <FormInput
+            type="text"
+            value={field.state.value || ''}
+            onBlur={field.handleBlur}
+            onChange={name => {
+              field.handleChange(name);
+              setUserInfo({
+                ...userInfo,
+                companyInfo: { ...userInfo.companyInfo, name },
+              });
+            }}
+            placeholder="اسم الشركة"
+            icon={<></>}
+          />
+          {field.state.meta.errors && (
+            <em className="text-red-500 text-sm block mt-1">
+              {field.state.meta.errors.join(', ')}
+            </em>
+          )}
+        </>
+      )}
+    </form.Field>
+  );
+};
+
+export const CompanyAddressField = () => {
+  const { userInfo, setUserInfo } = useSignUpStore();
+  const form = useForm({
+    defaultValues: userInfo,
+  });
+  return (
+    <form.Field
+      name="companyInfo.address"
+      validators={{
+        onChange: ({ value }) => {
+          if (!value) {
+            return 'عنوان الشركة مطلوب';
+          }
+        },
+      }}
+    >
+      {field => (
+        <>
+          <FormInput
+            type="text"
+            value={field.state.value || ''}
+            onBlur={field.handleBlur}
+            onChange={address => {
+              field.handleChange(address);
+              setUserInfo({
+                ...userInfo,
+                companyInfo: { ...userInfo.companyInfo, address },
+              });
+            }}
+            placeholder="عنوان الشركة"
+            icon={<></>}
+          />
+          {field.state.meta.errors && (
+            <em className="text-red-500 text-sm block mt-1">
+              {field.state.meta.errors.join(', ')}
+            </em>
+          )}
+        </>
+      )}
+    </form.Field>
+  );
+};
+
+export const CompanyWebsiteField = () => {
+  const { userInfo, setUserInfo } = useSignUpStore();
+  const form = useForm({
+    defaultValues: userInfo,
+  });
+  return (
+    <form.Field
+      name="companyInfo.website"
+      validators={{
+        onChange: ({ value }) => {
+          if (value && !value.match(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/)) {
+            return 'الموقع الإلكتروني غير صالح';
+          }
+        },
+      }}
+    >
+      {field => (
+        <>
+          <FormInput
+            type="text"
+            value={field.state.value || ''}
+            onBlur={field.handleBlur}
+            onChange={website => {
+              field.handleChange(website);
+              setUserInfo({
+                ...userInfo,
+                companyInfo: { ...userInfo.companyInfo, website },
+              });
+            }}
+            placeholder="الموقع الإلكتروني للشركة (اختياري)"
+            icon={<></>}
+          />
+          {field.state.meta.errors && (
+            <em className="text-red-500 text-sm block mt-1">
+              {field.state.meta.errors.join(', ')}
+            </em>
+          )}
+        </>
+      )}
+    </form.Field>
+  );
+};
+
+export const CompanySizeField = () => {
+  const { userInfo, setUserInfo } = useSignUpStore();
+  const form = useForm({
+    defaultValues: userInfo,
+  });
+
+  const sizeOptions = [
+    { value: '10-99', label: '10-99 موظف' },
+    { value: '100-499', label: '100-499 موظف' },
+    { value: '500-999', label: '500-999 موظف' },
+    { value: '1000-4999', label: '1000-4999 موظف' },
+    { value: '5000+', label: '5000+ موظف' },
+  ];
+
+  return (
+    <form.Field
+      name="companyInfo.size"
+      validators={{
+        onChange: ({ value }) => {
+          if (!value) {
+            return 'حجم الشركة مطلوب';
+          }
+        },
+      }}
+    >
+      {field => (
+        <>
+          <Select
+            dir="rtl"
+            value={field.state.value || ''}
+            onValueChange={(size: '10-99' | '100-499' | '500-999' | '1000-4999' | '5000+') => {
+              field.handleChange(size);
+              setUserInfo({
+                ...userInfo,
+                companyInfo: { ...userInfo.companyInfo, size },
+              });
+            }}
+          >
+            <SelectTrigger
+              className="w-full h-[42px] text-xs font-medium text-gray-700 bg-white border rounded-md
+              focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
+              aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
+              transition-all duration-200 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed
+              px-2 flex items-center"
+            >
+              <SelectValue placeholder="اختر حجم الشركة" className="text-xs" />
+            </SelectTrigger>
+            <SelectContent className="w-full max-h-[300px] overflow-y-auto text-sm font-medium bg-white border rounded-md shadow-lg z-[999]">
+              {sizeOptions.map(option => (
+                <SelectItem key={option.value} value={option.value} className="relative" dir="rtl">
+                  <div className="flex w-full items-center gap-2">
+                    <span className="text-sm">{option.label}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {field.state.meta.errors && (
+            <em className="text-red-500 text-sm block mt-1">
+              {field.state.meta.errors.join(', ')}
+            </em>
+          )}
+        </>
+      )}
+    </form.Field>
+  );
+};
+
+// Component to render all company fields in a better layout
+export const CompanyFields = () => {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          <h3 className="text-xs font-light text-right text-gray-400">*معلومات الشركة الأساسية</h3>
+          <CompanyNameField />
+          <CompanyAddressField />
+        </div>
+        <div className="space-y-4">
+          <h3 className="text-xs font-light text-right text-gray-400">*معلومات إضافية</h3>
+          <CompanySizeField />
+          <CompanyWebsiteField />
+        </div>
+      </div>
+    </div>
+  );
+};

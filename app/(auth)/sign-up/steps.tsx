@@ -2,7 +2,7 @@
 
 import { useSignUpStore } from './store';
 import { FormStep } from './enums';
-import { EmailField, PasswordField, NameFields, PhoneField } from './form-inputs';
+import { EmailField, PasswordField, NameFields, PhoneField, CompanyFields } from './form-inputs';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
@@ -83,15 +83,41 @@ function useProcessForm() {
       },
       [FormStep.AskForCompanyInfo]: async () => {
         console.log(userInfo);
-        // TODO: Add company info validation, for now skip it
+        // Validate company info
+        if (!userInfo.companyInfo.name) {
+          toast.error('اسم الشركة مطلوب');
+          return false;
+        }
+
+        if (!userInfo.companyInfo.address) {
+          toast.error('عنوان الشركة مطلوب');
+          return false;
+        }
+
+        if (!userInfo.companyInfo.size) {
+          toast.error('حجم الشركة مطلوب');
+          return false;
+        }
+
+        // Website is optional, but if provided, validate it
+        if (
+          userInfo.companyInfo.website &&
+          !userInfo.companyInfo.website.match(
+            /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
+          )
+        ) {
+          toast.error('الموقع الإلكتروني غير صالح');
+          return false;
+        }
+
         return true;
       },
     };
 
-    // if (process.env.NEXT_PUBLIC_ENV === 'dev') {
-    //   setFormStep(formStep + 1);
-    //   return true;
-    // }
+    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+      setFormStep(formStep + 1);
+      return true;
+    }
 
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
@@ -122,6 +148,12 @@ function RenderFormStep() {
         <div className="space-y-4">
           <NameFields />
           <PhoneField />
+        </div>
+      );
+    case FormStep.AskForCompanyInfo:
+      return (
+        <div className="space-y-4">
+          <CompanyFields />
         </div>
       );
   }
