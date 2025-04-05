@@ -5,12 +5,22 @@ import Link from 'next/link';
 import { RenderFormStep, useProcessForm } from './steps';
 import { useSignUpStore } from './store';
 import { FormStep } from './enums';
+import { ArrowRight } from 'lucide-react';
 
 export default function SignUpForm() {
-  const { formStep, formState } = useSignUpStore();
+  const { setFormStep, formStep, formState } = useSignUpStore();
   const { processStep, isLoading } = useProcessForm();
   return (
     <div className="w-full md:w-[450px]">
+      {/** Go Back Button to change form data if needed */}
+      {formStep !== FormStep.AskForEmail && (
+        <ArrowRight
+          className="w-5 h-5 mb-8 text-gray-400 cursor-pointer"
+          onClick={() => {
+            setFormStep(formStep - 1);
+          }}
+        />
+      )}
       {/* Google Login Button */}
       <div className="mb-8">
         <button className="w-full flex items-center justify-center gap-2 p-3 border cursor-pointer border-gray-700 rounded-md hover:bg-gray-200/50 transition-colors">
@@ -57,15 +67,17 @@ export default function SignUpForm() {
         {formState.buttonText}
       </button>
 
-      <p className="text-xs text-gray-400 mt-8 text-right">
-        بإدخال بريدك الإلكتروني، فإنك توافق على تواصل أوميل معك بخصوص منتجاتنا وخدماتنا. يمكنك إلغاء
-        الاشتراك في أي وقت بالنقر على إلغاء الاشتراك في رسائلنا الإلكترونية. اعرف المزيد حول كيفية
-        استخدامنا للبيانات في{' '}
-        <Link href="/privacy-policy" className="underline">
-          سياسة الخصوصية
-        </Link>
-        .
-      </p>
+      {formStep === FormStep.AskForEmail && (
+        <p className="text-xs text-gray-400 mt-8 text-right">
+          بإدخال بريدك الإلكتروني، فإنك توافق على تواصل أوميل معك بخصوص منتجاتنا وخدماتنا. يمكنك
+          إلغاء الاشتراك في أي وقت بالنقر على إلغاء الاشتراك في رسائلنا الإلكترونية. اعرف المزيد حول
+          كيفية استخدامنا للبيانات في{' '}
+          <Link href="/privacy-policy" className="underline">
+            سياسة الخصوصية
+          </Link>
+          .
+        </p>
+      )}
     </div>
   );
 }
