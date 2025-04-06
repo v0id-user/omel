@@ -60,13 +60,14 @@ export default function SignUpForm() {
       {/* Process Form Button */}
       <button
         className={`w-full bg-black text-white py-3 px-4 rounded-md transition-colors
-        ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-800'}`}
+        ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-800'}`}
         disabled={isLoading}
         onClick={processStep}
       >
         {formState.buttonText}
       </button>
 
+      {/* For testing purposes use Hero UI spinner here on the last step */}
       {formStep === FormStep.AskForEmail && (
         <p className="text-xs text-gray-400 mt-8 text-right">
           بإدخال بريدك الإلكتروني، فإنك توافق على تواصل أوميل معك بخصوص منتجاتنا وخدماتنا. يمكنك

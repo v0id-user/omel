@@ -1,6 +1,6 @@
 import { createTRPCRouter, baseProcedure } from '@/trpc/init';
 import { z } from 'zod';
-import { createNewCRM } from './createNewCRM';
+import { createNewCRM } from '../../../../services/crm/createNewCRM';
 import { NewCRMUserInfo } from '@/interfaces/crm';
 
 export const CRMRouter = createTRPCRouter({
