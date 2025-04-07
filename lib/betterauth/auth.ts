@@ -1,12 +1,14 @@
 import { betterAuth } from 'better-auth';
-import { Pool } from 'pg';
 import { twoFactor } from 'better-auth/plugins';
-import { anonymous } from 'better-auth/plugins';
 import { nextCookies } from 'better-auth/next-js';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { db } from '@/database/db';
+import { NeonDialect } from 'kysely-neon';
+import { emailHarmony } from 'better-auth-harmony';
 
 export const auth = betterAuth({
-  database: new Pool({
-    connectionString: process.env.DATABASE_URL,
+  database: drizzleAdapter(db, {
+    provider: 'pg',
   }),
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
@@ -17,13 +19,13 @@ export const auth = betterAuth({
     limit: 10,
     window: 10000,
     storage: 'database',
-    database: new Pool({
+    database: new NeonDialect({
       connectionString: process.env.DATABASE_URL,
     }),
   },
   plugins: [
+    emailHarmony(),
     twoFactor(),
-    anonymous(),
 
     // This must be the last plugin
     nextCookies(),
