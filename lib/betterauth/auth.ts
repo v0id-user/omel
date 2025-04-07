@@ -24,6 +24,17 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async session => {
+          // All users must be in an organization
+          // Get the user's organization and assign it to the session
+          console.log('session', session);
+        },
+      },
+    },
+  },
   rateLimit: {
     enabled: true,
     limit: 10,

@@ -285,7 +285,7 @@ export const PhoneField = () => {
     >
       {field => (
         <>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center px-2">
             <div className="flex flex-col">
               <PhoneSelect
                 value={selectedDialCode}

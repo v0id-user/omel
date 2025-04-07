@@ -15,7 +15,9 @@ export default function SignUpForm() {
       {/** Go Back Button to change form data if needed */}
       {formStep !== FormStep.AskForEmail && (
         <ArrowRight
-          className="w-5 h-5 mb-8 text-gray-400 cursor-pointer"
+          className="w-7 h-7 mb-8 text-gray-400 hover:text-gray-500 cursor-pointer 
+                     transition-all rounded-full hover:bg-gray-200/50 p-1
+                     ease-in-out duration-400"
           onClick={() => {
             setFormStep(formStep - 1);
           }}
@@ -59,8 +61,12 @@ export default function SignUpForm() {
 
       {/* Process Form Button */}
       <button
-        className={`w-full bg-black text-white py-3 px-4 rounded-md transition-colors
-        ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-800'}`}
+        className={`w-full bg-gradient-to-b border border-[#6c7688] 
+                  from-[#303236] to-[#1D1E21] text-[#f3f4f6] 
+                  hover:from-[#303236] hover:to-gray-600
+                  font-medium py-2 px-4 rounded-lg transition-colors
+                  ease-in-out duration-300 hover:drop-shadow-2xs
+        ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         disabled={isLoading}
         onClick={processStep}
       >
