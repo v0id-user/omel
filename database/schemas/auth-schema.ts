@@ -30,8 +30,16 @@ export const session = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    // All users must be in an organization
+    activeOrganizationId: text('active_organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
   },
-  table => [index('token_index').on(table.token), index('user_id_index').on(table.userId)]
+  table => [
+    index('token_index').on(table.token),
+    index('user_id_index').on(table.userId),
+    index('active_organization_id_index').on(table.activeOrganizationId),
+  ]
 );
 
 export const account = pgTable(
@@ -55,6 +63,41 @@ export const account = pgTable(
   },
   table => [index('user_id_index').on(table.userId)]
 );
+
+export const organization = pgTable('organization', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').unique(),
+  logo: text('logo'),
+  createdAt: timestamp('created_at').notNull(),
+  metadata: text('metadata'),
+});
+
+export const member = pgTable('member', {
+  id: text('id').primaryKey(),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organization.id, { onDelete: 'cascade' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  role: text('role').notNull(),
+  createdAt: timestamp('created_at').notNull(),
+});
+
+export const invitation = pgTable('invitation', {
+  id: text('id').primaryKey(),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organization.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  role: text('role'),
+  status: text('status').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  inviterId: text('inviter_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+});
 
 export const verification = pgTable(
   'verification',
