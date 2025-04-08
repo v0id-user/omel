@@ -65,7 +65,7 @@ export default function SignUpForm() {
                   from-[#303236] to-[#1D1E21] text-[#f3f4f6] 
                   hover:from-[#303236] hover:to-gray-600
                   font-medium py-2 px-4 rounded-lg transition-colors
-                  ease-in-out duration-300 hover:drop-shadow-2xs
+                  ease-in-out duration-450 hover:drop-shadow-2xs
         ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         disabled={isLoading}
         onClick={processStep}
