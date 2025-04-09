@@ -1,8 +1,7 @@
 import { text, timestamp } from 'drizzle-orm/pg-core';
 import { pgTable } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
-
-// TODO: Create relations between tables
+import { users, organizations } from '@/database/schemas/auth-schema';
 
 export const contacts = pgTable('contacts', {
   id: text('id').primaryKey().default(createId()),
@@ -11,6 +10,15 @@ export const contacts = pgTable('contacts', {
   phone: text('phone'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  updatedBy: text('updated_by')
+    .notNull()
+    .references(() => users.id),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organizations.id),
 });
 
 export const categories = pgTable('categories', {
@@ -18,6 +26,15 @@ export const categories = pgTable('categories', {
   name: text('name').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  updatedBy: text('updated_by')
+    .notNull()
+    .references(() => users.id),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organizations.id),
 });
 
 export const tasks = pgTable('tasks', {
@@ -27,4 +44,13 @@ export const tasks = pgTable('tasks', {
   category: text('category'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  updatedBy: text('updated_by')
+    .notNull()
+    .references(() => users.id),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organizations.id),
 });

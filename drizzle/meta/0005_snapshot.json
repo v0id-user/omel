@@ -1,6 +1,6 @@
 {
-  "id": "379961f1-02eb-4942-b946-2ffa430f483d",
-  "prevId": "d1db7c78-233b-419f-af76-23c59c0588f4",
+  "id": "d1db7c78-233b-419f-af76-23c59c0588f4",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -13,7 +13,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'l6g1m62jx4ta054lolz306dg'"
+          "default": "'s50ep9rp22bxtji06sno6si7'"
         },
         "account_id": {
           "name": "account_id",
@@ -326,7 +326,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'c463po4sbrh6fgii7m9lthhm'"
+          "default": "'utxz5aq851on6vlu70cn1ohi'"
         },
         "key": {
           "name": "key",
@@ -380,7 +380,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'uco5vh8coxziav373df78oe8'"
+          "default": "'fqn1fos667iau21w4f7wewb7'"
         },
         "expires_at": {
           "name": "expires_at",
@@ -521,7 +521,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'x2rnqqte2ow71pfhenot98b4'"
+          "default": "'l0pxtmq6w35m7lpdtc1r787g'"
         },
         "secret": {
           "name": "secret",
@@ -600,7 +600,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'ckt43n5bf4kliwc695euzn1s'"
+          "default": "'z6xz6i0njqqlfljqo3rlgrmr'"
         },
         "name": {
           "name": "name",
@@ -697,7 +697,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'wweaf9xe5bceoc2y4zf0rrr4'"
+          "default": "'qzjz2mpvl1wt8bgco7s17ky9'"
         },
         "identifier": {
           "name": "identifier",
@@ -765,7 +765,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'bmm9s83agi4sz13aocjq5h15'"
+          "default": "'mkceatd317f3vgg65dr7s07z'"
         },
         "name": {
           "name": "name",
@@ -851,7 +851,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'nst4q6lu2jonph8i4yig0x76'"
+          "default": "'t3q7k6p91j0xcu9gaz0t8hdv'"
         },
         "name": {
           "name": "name",
@@ -949,7 +949,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'ibzbx2grsnlomg2mac4fo75w'"
+          "default": "'rs2peh45a8zpxnpwhblaisub'"
         },
         "name": {
           "name": "name",

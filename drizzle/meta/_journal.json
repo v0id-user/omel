@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1742803061853,
-      "tag": "0000_rapid_nightshade",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742803271972,
-      "tag": "0001_common_pete_wisdom",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1743195810971,
-      "tag": "0002_pretty_surge",
+      "when": 1744223150906,
+      "tag": "0000_gray_pride",
       "breakpoints": true
     }
   ]
