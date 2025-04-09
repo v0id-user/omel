@@ -6,10 +6,11 @@ import { EmailField, PasswordField, NameFields, PhoneField, CompanyFields } from
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
+import { trpc } from '@/trpc/client';
 
 function useProcessForm() {
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
-
+  const createCRMRpc = trpc.crm.new.create.useMutation();
   //TODO: Complete this, validate the eamil first then the rest of the steps.
   const { validator, isLoading } = useClientValidations();
 
@@ -112,12 +113,23 @@ function useProcessForm() {
 
         return true;
       },
+      [FormStep.FinalStep]: async () => {
+        // TODO: Create the user and organization
+        setFormState({
+          buttonText: 'يتم إنشاء تجربتك...',
+        });
+
+        const createCRMResponse = await createCRMRpc.mutateAsync(userInfo);
+        console.log(createCRMResponse);
+        return true;
+      },
     };
 
-    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
-      setFormStep(formStep + 1);
-      return true;
-    }
+    // Skip when needed just uncomment this, bad? yeah it need a UI debug, but working for now
+    // if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+    //   setFormStep(formStep + 1);
+    //   return true;
+    // }
 
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
