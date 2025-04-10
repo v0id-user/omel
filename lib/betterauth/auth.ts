@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { twoFactor, organization } from 'better-auth/plugins';
+import { twoFactor, organization, phoneNumber } from 'better-auth/plugins';
 import { nextCookies } from 'better-auth/next-js';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '@/database/db';
@@ -45,6 +45,7 @@ export const auth = betterAuth({
     }),
   },
   plugins: [
+    phoneNumber(),
     emailHarmony(),
     twoFactor(),
     organization(),

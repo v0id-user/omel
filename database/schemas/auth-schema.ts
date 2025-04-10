@@ -13,6 +13,8 @@ export const users = pgTable(
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     normalizedEmail: text('normalized_email').unique(),
     twoFactorEnabled: boolean('two_factor_enabled'),
+    phoneNumber: text('phone_number').unique(),
+    phoneNumberVerified: boolean('phone_number_verified'),
   },
   table => [index('user_email_idx').on(table.email)]
 );
