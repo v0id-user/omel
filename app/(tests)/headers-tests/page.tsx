@@ -26,10 +26,10 @@ export default function HeadersSetting() {
     });
 
     setHeader({
-      name: 'user-agent',
+      name: 'x-user-agent',
       value: 'test-value',
     });
-  }, []);
+  }, [setCookie, setHeader]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">

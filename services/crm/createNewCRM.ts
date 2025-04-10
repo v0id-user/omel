@@ -63,12 +63,11 @@ async function createNewCRM(input: NewCRMUserInfo) {
     orgName,
     user.id,
     proposedSlug,
-    metadata,
-    token
+    metadata
   );
 
   // Step 8: Format and return result
-  return formatResult(organization, proposedSlug, user.id, signUpHeaders, orgHeaders);
+  return formatResult(organization, proposedSlug, user.id, orgHeaders, signUpHeaders);
 }
 
 export { createNewCRM };

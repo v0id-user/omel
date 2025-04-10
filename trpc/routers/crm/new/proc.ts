@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 export const CRMRouter = createTRPCRouter({
   create: baseProcedure
     .input(z.custom<NewCRMUserInfo>())
-    .mutation(async ({ input: newUserInfo }) => {
+    .mutation(async ({ input: newUserInfo, ctx }) => {
       try {
         let { data, headers: betterAuthHeaders } = await createNewCRM(newUserInfo);
 
@@ -18,6 +18,10 @@ export const CRMRouter = createTRPCRouter({
         // for (const [key, value] of Object.entries(betterAuthHeaders)) {
         //   headerStore.set(key, value);
         // }
+
+        for (const [key, value] of Object.entries(betterAuthHeaders)) {
+          ctx.resHeaders.set(key, value);
+        }
 
         return data;
       } catch (error) {

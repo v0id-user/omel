@@ -47,7 +47,16 @@ const t = initTRPC.context<TRPCContext>().create({
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
-export const baseProcedure = t.procedure;
+export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.resHeaders) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Response headers not available',
+    });
+  }
+
+  return next({ ctx: { ...ctx, resHeaders: ctx.resHeaders } });
+});
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session) {

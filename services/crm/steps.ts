@@ -162,8 +162,7 @@ export async function createOrganization(
   orgName: string,
   userId: string,
   proposedSlug: string,
-  metadata: OrganizationMetadata,
-  token: string
+  metadata: OrganizationMetadata
 ) {
   console.log('Attempting to create organization with name:', orgName);
 
@@ -197,8 +196,8 @@ export function formatResult(
   org: any,
   proposedSlug: string,
   userId: string,
-  signUpHeaders: Headers,
-  orgHeaders: Headers
+  orgHeaders: Headers,
+  signUpHeaders: Headers
 ) {
   const result = {
     data: {
@@ -213,5 +212,8 @@ export function formatResult(
     },
   };
   console.log('Returning final result:', result);
+  console.log('Organization headers:', orgHeaders);
+  console.log('Sign up headers:', signUpHeaders);
+
   return result;
 }
