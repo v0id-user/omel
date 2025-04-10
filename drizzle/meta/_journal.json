@@ -15,6 +15,13 @@
       "when": 1744269501307,
       "tag": "0001_chubby_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744277043116,
+      "tag": "0002_sleepy_prowler",
+      "breakpoints": true
     }
   ]
 }

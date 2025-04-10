@@ -2,13 +2,14 @@
 
 import { signIn } from '@/lib/betterauth';
 import { useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 export default function BetterAuthSignInTest() {
   const [email, setEmail] = useState('test@gmail.com');
   const [password, setPassword] = useState('test123123');
 
+  const router = useRouter();
   if (process.env.NEXT_PUBLIC_ENV !== 'dev') {
-    return null;
+    router.push('/');
   }
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -7,6 +7,17 @@ import { NeonDialect } from 'kysely-neon';
 import { emailHarmony } from 'better-auth-harmony';
 import { polar } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
+import {
+  users,
+  sessions,
+  accounts,
+  organizations,
+  members,
+  invitations,
+  verifications,
+  twoFactors,
+  rateLimits,
+} from '@/database/schemas/auth-schema';
 
 const client = new Polar({
   accessToken: process.env.POLAR_SANDBOX_KEY,
@@ -19,15 +30,29 @@ const client = new Polar({
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: {
+      user: users,
+      session: sessions,
+      account: accounts,
+      organization: organizations,
+      member: members,
+      invitation: invitations,
+      verification: verifications,
+      twoFactor: twoFactors,
+      rateLimit: rateLimits,
+    },
   }),
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
+    minPasswordLength: 8,
   },
   databaseHooks: {
     session: {
       create: {
         before: async session => {
+          // TODO:
           // All users must be in an organization
           // Get the user's organization and assign it to the session
           console.log('session', session);

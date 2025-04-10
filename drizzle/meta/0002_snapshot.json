@@ -1,6 +1,6 @@
 {
-  "id": "0fa25f69-f936-40fe-a71a-87d8a40adbf6",
-  "prevId": "d1db7c78-233b-419f-af76-23c59c0588f4",
+  "id": "f853edb7-3031-4a7c-aafd-3ca76ed5d8c0",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -13,7 +13,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'bi4gusduti2sf7evf5dcsy3w'"
+          "default": "'u5hwp0omxtp7yd1a8hz4kw00'"
         },
         "account_id": {
           "name": "account_id",
@@ -326,7 +326,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'rygsn82ah3b83q7qyy9hpm3y'"
+          "default": "'tw4oqj60wf8s6smfg5lo6j22'"
         },
         "key": {
           "name": "key",
@@ -380,7 +380,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'y6y77rk6ipw7ots9olvv6al7'"
+          "default": "'bjpu2l9jgb5yx8fczwjxcxwq'"
         },
         "expires_at": {
           "name": "expires_at",
@@ -430,7 +430,7 @@
           "name": "active_organization_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -521,7 +521,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'oavdfupm6hu4gcq2yarwjgqs'"
+          "default": "'ta74hoshmxmcfuxx0dosnhwh'"
         },
         "secret": {
           "name": "secret",
@@ -600,7 +600,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'c4fwjtz03micfk4a64tuwrb1'"
+          "default": "'qet8kmxkzocc3xo5n7neyft7'"
         },
         "name": {
           "name": "name",
@@ -714,7 +714,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'hgo05pjf0xa1kpqi9ji5jzex'"
+          "default": "'e807ren49oa9z8p4ph4niczn'"
         },
         "identifier": {
           "name": "identifier",
@@ -782,7 +782,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'elsj8hus2c7x9kiiajapzzvw'"
+          "default": "'lqmqs7xu9o6vcbdppq1gk8bc'"
         },
         "name": {
           "name": "name",
@@ -868,7 +868,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'p2fl450bs1tzb8egy0xh4pe8'"
+          "default": "'n9wropqdwam6u3zdc8frx4jc'"
         },
         "name": {
           "name": "name",
@@ -966,7 +966,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "'t6zoxdb3fnjzisptf2vliru4'"
+          "default": "'n21sv49npyq6y2wzsfc70lhe'"
         },
         "name": {
           "name": "name",

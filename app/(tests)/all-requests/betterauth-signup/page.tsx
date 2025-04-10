@@ -1,6 +1,7 @@
 'use client';
 
 import { signUp } from '@/lib/betterauth';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function BetterAuthSignUpTest() {
@@ -26,8 +27,9 @@ export default function BetterAuthSignUpTest() {
     console.log('signUp', JSON.stringify(signUp, null, 2));
   }, []);
 
+  const router = useRouter();
   if (process.env.NEXT_PUBLIC_ENV !== 'dev') {
-    return null;
+    router.push('/');
   }
 
   return (

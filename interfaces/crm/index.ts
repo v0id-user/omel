@@ -11,7 +11,7 @@ interface NewCRMUserInfo {
     name?: string;
     address?: string;
     website?: string;
-    size?: '10-99' | '100-499' | '500-999' | '1000-4999' | '5000+';
+    size?: '1-9' | '10-99' | '100-499' | '500-999' | '1000-4999' | '5000+';
   };
 }
 
