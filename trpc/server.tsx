@@ -7,7 +7,16 @@ import { appRouter } from './routers/_app';
 // IMPORTANT: Create a stable getter for the query client that
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
-const caller = createCallerFactory(appRouter)(createTRPCContext);
+
+// Cache the context creation to ensure consistent context during SSR
+export const getContext = cache(async () => {
+  return createTRPCContext();
+});
+
+const caller = createCallerFactory(appRouter)(async () => {
+  return getContext();
+});
+
 export const { trpc, HydrateClient } = createHydrationHelpers<typeof appRouter>(
   caller,
   getQueryClient

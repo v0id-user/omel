@@ -3,21 +3,34 @@ import { ratelimit } from '@/lib/ratelimt';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
+import { NextRequest, NextResponse } from 'next/server';
 
 import superjson from 'superjson';
 
-export const createTRPCContext = cache(async () => {
+export type CreateContextOptions = {
+  req?: NextRequest;
+  resHeaders?: Headers;
+};
+
+export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
   /**
    * @see: https://trpc.io/docs/server/context
    */
 
+  // Get headers from request or from next/headers
+  const requestHeaders = opts.req?.headers || (await headers());
+
   // Just grab the user from the session and return it
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: requestHeaders,
   });
 
-  return { session };
-});
+  return {
+    session,
+    req: opts.req,
+    resHeaders: opts.resHeaders,
+  };
+};
 
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
 
