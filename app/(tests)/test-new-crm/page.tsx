@@ -3,6 +3,7 @@ import { NewCRMUserInfo } from '@/interfaces/crm';
 import { trpc } from '@/trpc/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { authClient } from '@/lib/betterauth/auth-client';
 
 export default function TestNewCRM() {
   const [newCRM, setNewCRM] = useState<NewCRMUserInfo>({
@@ -54,7 +55,7 @@ export default function TestNewCRM() {
     router.push('/');
   }
 
-  const { mutate: createCRM } = trpc.crm.new.create.useMutation();
+  const createCRM = trpc.crm.new.create.useMutation();
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold">Test New CRM</h1>
@@ -62,8 +63,14 @@ export default function TestNewCRM() {
         className="bg-black cursor-pointer text-white p-2 rounded-md"
         onClick={async () => {
           generateRandomData();
-          const result = await createCRM(newCRM);
+          const result = await createCRM.mutateAsync(newCRM);
           console.log(result);
+
+          // Set active organization
+          const data = await authClient.organization.setActive({
+            organizationId: result.organizationId,
+          });
+          console.log(data);
         }}
       >
         Create CRM

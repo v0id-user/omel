@@ -48,18 +48,6 @@ export const auth = betterAuth({
     autoSignIn: true,
     minPasswordLength: 8,
   },
-  databaseHooks: {
-    session: {
-      create: {
-        before: async session => {
-          // TODO:
-          // All users must be in an organization
-          // Get the user's organization and assign it to the session
-          console.log('session', session);
-        },
-      },
-    },
-  },
   rateLimit: {
     enabled: true,
     limit: 10,

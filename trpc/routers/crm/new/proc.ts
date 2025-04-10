@@ -11,14 +11,6 @@ export const CRMRouter = createTRPCRouter({
       try {
         let { data, headers: betterAuthHeaders } = await createNewCRM(newUserInfo);
 
-        // TODO: Set the cookies and headers on the response
-
-        // This should set the cookies on the response... I think so? lol
-        // const headerStore = await headers();
-        // for (const [key, value] of Object.entries(betterAuthHeaders)) {
-        //   headerStore.set(key, value);
-        // }
-
         for (const [key, value] of Object.entries(betterAuthHeaders)) {
           ctx.resHeaders.set(key, value);
         }
