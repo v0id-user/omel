@@ -8,8 +8,9 @@ import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
 import { trpc } from '@/trpc/client';
 import { TRPCClientError } from '@trpc/client';
-
+import { useRouter } from 'next/navigation';
 function useProcessForm() {
+  const router = useRouter();
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
   const createCRMRpc = trpc.crm.new.create.useMutation();
   //TODO: Complete this, validate the eamil first then the rest of the steps.
@@ -125,10 +126,10 @@ function useProcessForm() {
 
           toast.success('تم إنشاء حسابك بنجاح');
 
-          // TODO:
-          // window.location.href = '/dashboard';
+          router.push('/dashboard');
 
-          return true;
+          // We don't want to increment the step here because we want to wait for the user to be redirected
+          return false;
         } catch (error: unknown) {
           console.error('Error creating CRM:', error);
 
