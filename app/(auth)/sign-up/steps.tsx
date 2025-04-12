@@ -7,6 +7,7 @@ import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
 import { trpc } from '@/trpc/client';
+import { TRPCClientError } from '@trpc/client';
 
 function useProcessForm() {
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
@@ -114,15 +115,53 @@ function useProcessForm() {
         return true;
       },
       [FormStep.FinalStep]: async () => {
-        // TODO: Create the user and organization
-        // TODO: DO this
         setFormState({
           buttonText: 'يتم إنشاء تجربتك...',
         });
 
-        const createCRMResponse = await createCRMRpc.mutateAsync(userInfo);
-        console.log(createCRMResponse);
-        return true;
+        try {
+          const createCRMResponse = await createCRMRpc.mutateAsync(userInfo);
+          console.log('CRM created successfully:', createCRMResponse);
+
+          toast.success('تم إنشاء حسابك بنجاح');
+
+          // TODO:
+          // window.location.href = '/dashboard';
+
+          return true;
+        } catch (error: unknown) {
+          console.error('Error creating CRM:', error);
+
+          setFormState({
+            buttonText: 'استمر',
+          });
+
+          if (error instanceof TRPCClientError) {
+            // TRPC errors have cause and data properties
+            const errorData = error.data as { code?: string } | undefined;
+
+            if (errorData?.code) {
+              switch (errorData.code) {
+                case 'CONFLICT':
+                  toast.error('البريد الإلكتروني أو اسم المنظمة مستخدم بالفعل');
+                  break;
+                case 'BAD_REQUEST':
+                  toast.error('بيانات غير صالحة، يرجى التحقق من المعلومات المدخلة');
+                  break;
+                default:
+                  toast.error('حدث خطأ أثناء إنشاء الحساب');
+              }
+            } else {
+              toast.error('حدث خطأ أثناء إنشاء الحساب');
+            }
+          } else if (error instanceof Error) {
+            toast.error('حدث خطأ أثناء إنشاء الحساب');
+          } else {
+            toast.error('حدث خطأ أثناء إنشاء الحساب');
+          }
+
+          return false;
+        }
       },
     };
 

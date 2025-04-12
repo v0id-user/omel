@@ -2,8 +2,8 @@ import { createTRPCRouter, baseProcedure } from '@/trpc/init';
 import { z } from 'zod';
 import { createNewCRM } from '../../../../services/crm/createNewCRM';
 import { NewCRMUserInfo } from '@/interfaces/crm';
-import { headers } from 'next/headers';
 import { TRPCError } from '@trpc/server';
+
 export const CRMRouter = createTRPCRouter({
   create: baseProcedure
     .input(z.custom<NewCRMUserInfo>())
@@ -18,9 +18,38 @@ export const CRMRouter = createTRPCRouter({
         return data;
       } catch (error) {
         console.error('Error creating new CRM:', error);
+
+        if (error instanceof TRPCError) {
+          throw error;
+        }
+
+        if (error instanceof Error) {
+          const errorMessage = error.message;
+
+          if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
+            throw new TRPCError({
+              code: 'CONFLICT',
+              message: errorMessage || 'المستخدم أو المؤسسة موجودة بالفعل',
+            });
+          }
+
+          if (errorMessage.includes('validation')) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: errorMessage || 'بيانات غير صالحة',
+            });
+          }
+
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: errorMessage || 'فشل في إنشاء حساب جديد',
+          });
+        }
+
+        // Default error
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to create new CRM',
+          message: 'فشل في إنشاء حساب جديد',
         });
       }
     }),

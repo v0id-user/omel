@@ -25,7 +25,7 @@ export async function validateUserInput(input: NewCRMUserInfo) {
     console.log('Email validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid email',
+      message: 'Invalid email - validation failed',
     });
   }
   console.log('Email validation successful');
@@ -36,12 +36,21 @@ export async function validateUserInput(input: NewCRMUserInfo) {
     console.log('Phone validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid phone',
+      message: 'Invalid phone number - validation failed',
     });
   }
   console.log('Phone validation successful');
 
-  // TODO: Validate the password
+  // Validate the password
+  console.log('Validating password length');
+  if (input.password.length < 8) {
+    console.log('Password validation failed - too short');
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Password must be at least 8 characters long',
+    });
+  }
+  console.log('Password validation successful');
 
   return true;
 }
@@ -83,29 +92,52 @@ export function determineOrganizationName(input: NewCRMUserInfo) {
 
 export async function createUser(input: NewCRMUserInfo, name: string) {
   console.log('Attempting to create user with email:', input.email);
-  let { response: signUpResponse, headers: signUpHeaders } = await auth.api.signUpEmail({
-    body: {
-      email: input.email,
-      password: input.password,
-      name: name,
-      phoneNumber: input.personalInfo.phone,
-    },
-    returnHeaders: true,
-  });
-
-  if (!signUpResponse.user || !signUpResponse.token) {
-    console.log('User creation failed - no user or token returned');
-    throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Failed to create user',
+  try {
+    let { response: signUpResponse, headers: signUpHeaders } = await auth.api.signUpEmail({
+      body: {
+        email: input.email,
+        password: input.password,
+        name: name,
+        phoneNumber: input.personalInfo.phone,
+      },
+      returnHeaders: true,
     });
+
+    if (!signUpResponse.user || !signUpResponse.token) {
+      console.log('User creation failed - no user or token returned');
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create user - missing user data',
+      });
+    }
+    console.log('User created successfully');
+    return {
+      user: signUpResponse.user,
+      token: signUpResponse.token,
+      headers: signUpHeaders,
+    };
+  } catch (error) {
+    console.error('Error creating user:', error);
+
+    // Handle API-specific errors from BetterAuth
+    if (error instanceof Error) {
+      const message = error.message;
+
+      if (message.includes('already exists') || message.includes('already taken')) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'User with this email already exists',
+        });
+      }
+
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: message || 'Failed to create user',
+      });
+    }
+
+    throw error;
   }
-  console.log('User created successfully');
-  return {
-    user: signUpResponse.user,
-    token: signUpResponse.token,
-    headers: signUpHeaders,
-  };
 }
 
 export function generateSlug(orgName: string) {
@@ -132,13 +164,19 @@ export async function checkSlugAvailability(proposedSlug: string) {
 
 export async function deleteUser(token: string, password: string) {
   console.log('Deleting user with token');
-  await auth.api.deleteUser({
-    body: {
-      password: password,
-      ...(token && { token: token }),
-    },
-  });
-  console.log('User deleted successfully');
+  try {
+    await auth.api.deleteUser({
+      body: {
+        password: password,
+        ...(token && { token: token }),
+      },
+    });
+    console.log('User deleted successfully');
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    // We don't throw here as this is used in cleanup,
+    // and we want to continue even if deletion fails
+  }
 }
 
 export function createOrganizationMetadata(input: NewCRMUserInfo, userId: string) {
@@ -163,30 +201,52 @@ export async function createOrganization(
 ) {
   console.log('Attempting to create organization with name:', orgName);
 
-  let { response: orgResponse, headers: orgHeaders } = await auth.api.createOrganization({
-    body: {
-      name: orgName,
-      slug: proposedSlug,
-      userId: userId,
-      metadata,
-    },
-    returnHeaders: true,
-  });
-
-  if (!orgResponse) {
-    console.log('Organization creation failed');
-    throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Failed to create organization',
+  try {
+    let { response: orgResponse, headers: orgHeaders } = await auth.api.createOrganization({
+      body: {
+        name: orgName,
+        slug: proposedSlug,
+        userId: userId,
+        metadata,
+      },
+      returnHeaders: true,
     });
+
+    if (!orgResponse) {
+      console.log('Organization creation failed');
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create organization - no response',
+      });
+    }
+
+    console.log('Organization created successfully:', orgResponse);
+
+    return {
+      organization: orgResponse,
+      headers: orgHeaders,
+    };
+  } catch (error) {
+    console.error('Error creating organization:', error);
+
+    if (error instanceof Error) {
+      const message = error.message;
+
+      if (message.includes('already exists') || message.includes('already taken')) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Organization with this name already exists',
+        });
+      }
+
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: message || 'Failed to create organization',
+      });
+    }
+
+    throw error;
   }
-
-  console.log('Organization created successfully:', orgResponse);
-
-  return {
-    organization: orgResponse,
-    headers: orgHeaders,
-  };
 }
 
 export function formatResult(
