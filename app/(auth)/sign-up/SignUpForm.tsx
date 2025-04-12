@@ -59,7 +59,7 @@ export default function SignUpForm() {
         </div>
       </div>
 
-      {/* Process Form Button */}
+      {/* Process Form Button                                            */}
       <button
         className={`w-full bg-gradient-to-b border border-[#6c7688] 
                   from-[#303236] to-[#1D1E21] text-[#f3f4f6] 
@@ -73,7 +73,6 @@ export default function SignUpForm() {
         {formState.buttonText}
       </button>
 
-      {/* For testing purposes use Hero UI spinner here on the last step */}
       {formStep === FormStep.AskForEmail && (
         <p className="text-xs text-gray-400 mt-8 text-right">
           بإدخال بريدك الإلكتروني، فإنك توافق على تواصل أوميل معك بخصوص منتجاتنا وخدماتنا. يمكنك
