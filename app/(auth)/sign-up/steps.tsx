@@ -70,6 +70,7 @@ function useProcessForm() {
           toast.error('رقم الهاتف غير صالح');
           return false;
         }
+        console.log('Phone number', userInfo.personalInfo.phone);
         const isValidPhone = await validator(ValidationType.Phone, userInfo.personalInfo.phone);
         if (!isValidPhone) {
           console.log(isValidPhone, 'validator says not valid');
@@ -178,6 +179,7 @@ function useProcessForm() {
 
     // If there is an error, it must be an early return
     setFormStep(formStep + 1);
+    console.log('Form step', formStep);
   };
 
   return { processStep, isLoading };

@@ -255,7 +255,8 @@ export const PhoneField = () => {
       const fullPhoneNumber = `${dialCode}${number}`;
       const phoneNumber = clientValidatePhoneInput(fullPhoneNumber);
 
-      if (phoneNumber) {
+      if (phoneNumber === undefined) {
+        console.log('(validateAndUpdatePhone) Phone number is valid', fullPhoneNumber);
         setUserInfo({
           ...userInfo,
           personalInfo: {
@@ -263,8 +264,10 @@ export const PhoneField = () => {
             phone: fullPhoneNumber,
           },
         });
+        console.log('Updated personalInfo', userInfo.personalInfo);
         return true;
       } else {
+        console.log('(validateAndUpdatePhone) Phone number is invalid', fullPhoneNumber);
         return false;
       }
     },
@@ -277,7 +280,7 @@ export const PhoneField = () => {
       validators={{
         onChange: ({ value }) => {
           const phoneNumber = clientValidatePhoneInput(value);
-          if (!phoneNumber) {
+          if (phoneNumber !== undefined) {
             return 'رقم الهاتف غير صحيح';
           }
         },

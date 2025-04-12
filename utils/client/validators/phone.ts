@@ -48,13 +48,15 @@ function clientValidatePhoneInput(phone: string) {
     });
 
     if (isValid && country && isAllowedCountry) {
+      console.log('Phone number is valid', phone, phoneNumber);
       return undefined;
     }
+    console.log('Phone number is invalid', phone, phoneNumber);
   } catch (error) {
     console.error('Phone validation error:', error);
   }
 
-  console.log('Phone number is invalid');
+  console.log('Phone number is invalid', phone);
   return 'يجب إدخال رقم الهاتف بشكل صالح';
 }
 
