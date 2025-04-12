@@ -134,11 +134,8 @@ export async function deleteUser(token: string, password: string) {
   console.log('Deleting user with token');
   await auth.api.deleteUser({
     body: {
-      token: token,
       password: password,
-    },
-    query: {
-      token: token,
+      ...(token && { token: token }),
     },
   });
   console.log('User deleted successfully');
