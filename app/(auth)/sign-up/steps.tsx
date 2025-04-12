@@ -204,6 +204,8 @@ function RenderFormStep() {
         </div>
       );
     case FormStep.AskForCompanyInfo:
+    case FormStep.FinalStep:
+    default:
       return (
         <div className="space-y-4">
           <CompanyFields />
