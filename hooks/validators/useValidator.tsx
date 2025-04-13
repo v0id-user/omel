@@ -43,6 +43,7 @@ export function useClientValidations() {
 
   return {
     isLoading,
+    setIsLoading,
     validator,
   };
 }

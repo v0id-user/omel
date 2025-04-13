@@ -9,12 +9,13 @@ import { clientValidatePasswordInput } from '@/utils/client/validators';
 import { trpc } from '@/trpc/client';
 import { TRPCClientError } from '@trpc/client';
 import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/betterauth/auth-client';
 function useProcessForm() {
   const router = useRouter();
   const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
   const createCRMRpc = trpc.crm.new.create.useMutation();
   //TODO: Complete this, validate the eamil first then the rest of the steps.
-  const { validator, isLoading } = useClientValidations();
+  const { validator, isLoading, setIsLoading } = useClientValidations();
 
   const processStep = async () => {
     const processes = {
@@ -117,13 +118,24 @@ function useProcessForm() {
         return true;
       },
       [FormStep.FinalStep]: async () => {
-        setFormState({
-          buttonText: 'يتم إنشاء تجربتك...',
-        });
-
         try {
+          setIsLoading(true);
+          setFormState({
+            buttonText: 'يتم إنشاء تجربتك...',
+          });
           const createCRMResponse = await createCRMRpc.mutateAsync(userInfo);
           console.log('CRM created successfully:', createCRMResponse);
+
+          // Set active organization
+          const data = await authClient.organization.setActive({
+            organizationId: createCRMResponse.organizationId,
+          });
+
+          if (data.error) {
+            toast.error('حدث خطأ أثناء إنشاء الحساب');
+            setIsLoading(false);
+            return false;
+          }
 
           toast.success('تم إنشاء حسابك بنجاح');
 
@@ -133,7 +145,7 @@ function useProcessForm() {
           return false;
         } catch (error: unknown) {
           console.error('Error creating CRM:', error);
-
+          setIsLoading(false);
           setFormState({
             buttonText: 'استمر',
           });
