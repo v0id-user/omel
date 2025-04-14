@@ -22,6 +22,13 @@
       "when": 1744277043116,
       "tag": "0002_sleepy_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744589942343,
+      "tag": "0003_lumpy_fantastic_four",
+      "breakpoints": true
     }
   ]
 }

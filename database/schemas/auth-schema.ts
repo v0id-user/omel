@@ -32,10 +32,10 @@ export const sessions = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    // All users must be in an organization
     activeOrganizationId: text('active_organization_id').references(() => organizations.id, {
       onDelete: 'cascade',
     }),
+    metadata: text('metadata'),
   },
   table => [
     index('session_token_idx').on(table.token),

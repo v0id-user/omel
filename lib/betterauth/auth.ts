@@ -3,7 +3,6 @@ import { twoFactor, organization, phoneNumber } from 'better-auth/plugins';
 import { nextCookies } from 'better-auth/next-js';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '@/database/db';
-import { NeonDialect } from 'kysely-neon';
 import { emailHarmony } from 'better-auth-harmony';
 import { polar } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
@@ -42,6 +41,33 @@ export const auth = betterAuth({
       rateLimit: rateLimits,
     },
   }),
+  databaseHooks: {
+    session: {
+      create: {
+        async before(session, context) {
+          interface SessionMeta {
+            serverTime: string;
+            deviceInfo?: string;
+          }
+          const metadata: SessionMeta = {
+            serverTime: new Date().toISOString(),
+            // Safely access user-agent if available
+            deviceInfo: context?.request?.headers
+              ? typeof context.request.headers.get === 'function'
+                ? context.request.headers.get('user-agent') || undefined
+                : undefined
+              : undefined,
+          };
+          return {
+            data: {
+              ...session,
+              metadata: JSON.stringify(metadata),
+            },
+          };
+        },
+      },
+    },
+  },
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
@@ -50,18 +76,24 @@ export const auth = betterAuth({
   },
   rateLimit: {
     enabled: true,
-    limit: 10,
-    window: 10000,
+    max: 10,
+    window: 100,
     storage: 'database',
-    database: new NeonDialect({
-      connectionString: process.env.DATABASE_URL,
-    }),
+    customRules: {
+      '/two-factor/*': async request => {
+        console.log('Two factor request:', request);
+        return {
+          window: 10,
+          max: 3,
+        };
+      },
+    },
   },
   plugins: [
     phoneNumber(),
-    emailHarmony(),
     twoFactor(),
     organization(),
+    emailHarmony(),
     polar({
       client,
       // Enable automatic Polar Customer creation on signup
