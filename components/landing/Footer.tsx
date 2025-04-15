@@ -3,7 +3,7 @@ import { OButton } from '@/components/omel/Button';
 
 const Footer = () => {
   return (
-    <footer className="bg-secondary px-5 rounded-b-xl">
+    <footer className="bg-secondary px-5 rounded-t-4xl">
       <div className="container-custom pt-12 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div>
