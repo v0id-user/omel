@@ -1,6 +1,9 @@
+'use client';
+
 import { Check } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { OButton } from '@/components/omel/Button';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 const pricingPlans = [
   {
@@ -94,38 +97,47 @@ const Pricing = () => {
           {pricingPlans.map((plan, index) => (
             <div
               key={index}
-              className={`rounded-xl border ${plan.highlighted ? 'border-primary shadow-lg ring-1 ring-primary bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-500 ease-out ${
+              className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-500 ease-out ${
                 visibleItems.includes(index)
                   ? 'translate-y-0 opacity-100'
                   : 'translate-y-8 opacity-0'
               }`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
+              <GlowingEffect
+                spread={70}
+                glow={true}
+                disabled={false}
+                proximity={64}
+                inactiveZone={0.01}
+              />
               {plan.highlighted && (
                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 -translate-y-1/2 translate-x-1/4 rounded-full">
                   الأكثر شعبية
                 </div>
               )}
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold">{plan.name}</h3>
+              <div className="relative flex flex-col h-full">
+                <div className="mb-4">
+                  <h3 className="text-xl font-semibold">{plan.name}</h3>
+                </div>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold">{plan.price}</span>
+                  <span className="text-muted-foreground text-sm"> ريال / شهرياً</span>
+                </div>
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start">
+                      <Check className="h-5 w-5 text-primary shrink-0 ml-2 mt-0.5" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <OButton
+                  className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
+                >
+                  {plan.cta}
+                </OButton>
               </div>
-              <div className="mb-6">
-                <span className="text-4xl font-bold">{plan.price}</span>
-                <span className="text-muted-foreground text-sm"> ريال / شهرياً</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-start">
-                    <Check className="h-5 w-5 text-primary shrink-0 ml-2 mt-0.5" />
-                    <span className="text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <OButton
-                className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
-              >
-                {plan.cta}
-              </OButton>
             </div>
           ))}
         </div>

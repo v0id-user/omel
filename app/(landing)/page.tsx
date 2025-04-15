@@ -7,6 +7,8 @@ import Features from '@/components/landing/Features';
 import Testimonials from '@/components/landing/Testimonials';
 import Pricing from '@/components/landing/Pricing';
 import Footer from '@/components/landing/Footer';
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 const Index = () => {
   useEffect(() => {
@@ -40,15 +42,25 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="my-5 mx-10">
-        <Navbar />
+    <div className="relative min-h-screen bg-white dark:bg-black">
+      <div
+        className={cn(
+          'absolute inset-0',
+          '[background-size:50px_50px]',
+          '[background-image:linear-gradient(to_right,#ececec_1px,transparent_1px),linear-gradient(to_bottom,#ececec_1px,transparent_1px)]'
+        )}
+      />
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_5%,black)] dark:bg-black"></div>
+      <div className="relative z-20">
+        <div className="my-5 mx-10">
+          <Navbar />
+        </div>
+        <Hero />
+        <Features />
+        <Testimonials />
+        <Pricing />
+        <Footer />
       </div>
-      <Hero />
-      <Features />
-      <Testimonials />
-      <Pricing />
-      <Footer />
     </div>
   );
 };
