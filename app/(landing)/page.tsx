@@ -42,7 +42,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-white dark:bg-black">
+    <div className="relative min-h-screen min-w-screen bg-white bg-[radial-gradient(100%_50%_at_50%_0%,rgba(0,163,255,0.13)_0,rgba(0,163,255,0)_50%,rgba(0,163,255,0)_100%)] dark:bg-black">
       <div
         className={cn(
           'absolute inset-0',
@@ -51,10 +51,8 @@ const Index = () => {
         )}
       />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_5%,black)] dark:bg-black"></div>
-      <div className="relative z-20">
-        <div className="my-5 mx-10">
-          <Navbar />
-        </div>
+      <div className="relative inset-0">
+        <Navbar />
         <Hero />
         <Features />
         <Testimonials />

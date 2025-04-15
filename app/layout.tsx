@@ -20,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar">
       <body className={`antialiased ${ibmPlexSansArabic.className}`} dir="rtl">
-        <Toaster />
         <TRPCProvider>
-          <PostHogProvider>{children}</PostHogProvider>
+          <PostHogProvider>
+            <Toaster />
+            {children}
+          </PostHogProvider>
         </TRPCProvider>
       </body>
     </html>
