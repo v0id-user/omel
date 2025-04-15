@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useEffect, useState, useRef } from 'react';
+import { OButton } from '@/components/omel/Button';
 
 const pricingPlans = [
   {
@@ -121,11 +121,11 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <Button
+              <OButton
                 className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
               >
                 {plan.cta}
-              </Button>
+              </OButton>
             </div>
           ))}
         </div>

@@ -1,22 +1,22 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { OButton } from '@/components/omel/Button';
 
 const Footer = () => {
   return (
-    <footer className="bg-secondary">
-      <div className="container-custom pt-16 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+    <footer className="bg-secondary px-5 rounded-b-xl">
+      <div className="container-custom pt-12 pb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div>
-            <div className="text-xl font-semibold mb-4">أوميل</div>
-            <p className="text-muted-foreground text-sm mb-6">
+            <div className="text-xl font-semibold mb-3">أوميل</div>
+            <p className="text-muted-foreground text-sm mb-5">
               نظام إدارة علاقات العملاء الأمثل للشركات العربية. سهل الاستخدام. فعّال. موثوق.
             </p>
-            <div className="flex space-x-4 space-x-reverse">
+            <div className="flex space-x-3 space-x-reverse">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -30,8 +30,8 @@ const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -45,8 +45,8 @@ const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -62,8 +62,8 @@ const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -76,12 +76,15 @@ const Footer = () => {
                   <circle cx="4" cy="4" r="2"></circle>
                 </svg>
               </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                {' ' /*Empty */}
+              </a>
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold mb-4">روابط سريعة</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-sm font-semibold mb-3">روابط سريعة</h3>
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <a
                   href="#"
@@ -126,8 +129,8 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold mb-4">الدعم</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-sm font-semibold mb-3">الدعم</h3>
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <a
                   href="#"
@@ -172,20 +175,20 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold mb-4">النشرة البريدية</h3>
-            <p className="text-muted-foreground text-sm mb-4">
+            <h3 className="text-sm font-semibold mb-3">النشرة البريدية</h3>
+            <p className="text-muted-foreground text-sm mb-3">
               اشترك في نشرتنا البريدية للحصول على أحدث الأخبار والتحديثات
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Input placeholder="بريدك الإلكتروني" className="bg-white text-sm" />
-              <Button className="bg-primary text-primary-foreground whitespace-nowrap rounded-md">
+              <Input placeholder="بريدك الإلكتروني" className="bg-white text-sm rounded-md" />
+              <OButton className="bg-primary text-primary-foreground whitespace-nowrap rounded-md">
                 اشتراك
-              </Button>
+              </OButton>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border pt-6 text-center text-muted-foreground text-xs">
+        <div className="border-t border-border pt-5 text-center text-muted-foreground text-xs">
           <p>© {new Date().getFullYear()} أوميل. جميع الحقوق محفوظة.</p>
         </div>
       </div>

@@ -41,8 +41,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white my-5 mx-10">
-      <Navbar />
+    <div className="min-h-screen bg-white">
+      <div className="my-5 mx-10">
+        <Navbar />
+      </div>
       <Hero />
       <Features />
       <Testimonials />

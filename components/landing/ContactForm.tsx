@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'react-hot-toast';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { OButton } from '@/components/omel/Button';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -20,30 +20,26 @@ const ContactForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // This would be connected to a real form submission API in production
     console.log('Form submitted:', formData);
-    // TODO: Add API call here
-
     toast.success('تم إرسال الرسالة');
-    // Reset form
     setFormData({ name: '', email: '', company: '', message: '' });
   };
 
   return (
-    <section id="contact" className="section bg-secondary">
+    <section id="contact" className="section bg-secondary py-10 px-5">
       <div className="container-custom">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="title-medium mb-4">تواصل معنا</h2>
+        <div className="text-center mb-10 animate-fade-in">
+          <h2 className="title-medium mb-3">تواصل معنا</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             نحن هنا لمساعدتك. تواصل معنا لأي استفسار أو لطلب عرض توضيحي خاص بشركتك
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="animate-fade-in">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <label htmlFor="name" className="block text-sm font-medium mb-1">
                   الاسم
                 </label>
                 <Input
@@ -52,11 +48,11 @@ const ContactForm = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="bg-white border-border"
+                  className="bg-white border-border rounded-md"
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                <label htmlFor="email" className="block text-sm font-medium mb-1">
                   البريد الإلكتروني
                 </label>
                 <Input
@@ -66,11 +62,11 @@ const ContactForm = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="bg-white border-border"
+                  className="bg-white border-border rounded-md"
                 />
               </div>
               <div>
-                <label htmlFor="company" className="block text-sm font-medium mb-2">
+                <label htmlFor="company" className="block text-sm font-medium mb-1">
                   الشركة
                 </label>
                 <Input
@@ -78,11 +74,11 @@ const ContactForm = () => {
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="bg-white border-border"
+                  className="bg-white border-border rounded-md"
                 />
               </div>
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                <label htmlFor="message" className="block text-sm font-medium mb-1">
                   الرسالة
                 </label>
                 <Textarea
@@ -91,22 +87,22 @@ const ContactForm = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="bg-white border-border h-32"
+                  className="bg-white border-border h-28 rounded-md"
                 />
               </div>
-              <Button type="submit" className="w-full btn-primary">
+              <OButton type="submit" className="w-full rounded-md">
                 إرسال
-              </Button>
+              </OButton>
             </form>
           </div>
 
-          <div className="animate-fade-in space-y-8" style={{ animationDelay: '0.2s' }}>
-            <div className="bg-white p-6 rounded-lg border border-border">
-              <h3 className="text-lg font-semibold mb-6">معلومات التواصل</h3>
+          <div className="animate-fade-in space-y-6" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-white p-5 rounded-lg border border-border">
+              <h3 className="text-lg font-semibold mb-4">معلومات التواصل</h3>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-start">
-                  <Mail className="h-5 w-5 text-primary ml-4 mt-1" />
+                  <Mail className="h-5 w-5 text-primary ml-3 mt-1" />
                   <div>
                     <h4 className="font-medium">البريد الإلكتروني</h4>
                     <p className="text-muted-foreground">info@sahara-crm.com</p>
@@ -114,7 +110,7 @@ const ContactForm = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <Phone className="h-5 w-5 text-primary ml-4 mt-1" />
+                  <Phone className="h-5 w-5 text-primary ml-3 mt-1" />
                   <div>
                     <h4 className="font-medium">الهاتف</h4>
                     <p className="text-muted-foreground">+966 12 345 6789</p>
@@ -122,7 +118,7 @@ const ContactForm = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-primary ml-4 mt-1" />
+                  <MapPin className="h-5 w-5 text-primary ml-3 mt-1" />
                   <div>
                     <h4 className="font-medium">العنوان</h4>
                     <p className="text-muted-foreground">

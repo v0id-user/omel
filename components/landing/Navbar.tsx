@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Menu } from 'lucide-react';
+import { OButton } from '@/components/omel/Button';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,16 +69,22 @@ const Navbar = () => {
           >
             تواصل معنا
           </a>
+          <a
+            href="#contact"
+            className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+          >
+            {' ' /*Empty */}
+          </a>
         </div>
 
         <div className="hidden md:block">
-          <Button className="rounded-full">تسجيل الدخول</Button>
+          <OButton>تسجيل الدخول</OButton>
         </div>
       </div>
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-16 right-0 left-0 bg-background border-b border-border animate-fade-in">
+        <div className="md:hidden absolute top-16 right-0 left-0 bg-background border-b border-border rounded-xl shadow-sm animate-fade-in">
           <div className="container-custom py-4 flex flex-col space-y-4">
             <a
               href="#features"
@@ -107,7 +114,7 @@ const Navbar = () => {
             >
               تواصل معنا
             </a>
-            <Button className="rounded-full">تسجيل الدخول</Button>
+            <OButton>تسجيل الدخول</OButton>
           </div>
         </div>
       )}

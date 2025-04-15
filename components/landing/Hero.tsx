@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
+import { OButton } from '@/components/omel/Button';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,12 +25,8 @@ const Hero = () => {
           <div
             className={`flex flex-col sm:flex-row justify-center gap-4 pt-4 transition-all duration-700 delay-200 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
           >
-            <Button size="lg" className="rounded-full">
-              ابدأ الآن مجاناً
-            </Button>
-            <Button variant="outline" size="lg" className="rounded-full">
-              طلب عرض توضيحي
-            </Button>
+            <OButton>ابدأ الآن مجاناً</OButton>
+            <OButton variant="secondary">طلب عرض توضيحي</OButton>
           </div>
         </div>
 
