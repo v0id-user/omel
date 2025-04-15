@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { DashboardSidebar, DashboardBreadcrumb } from '@/components/dashboard';
+import { DashboardSidebar, DashboardBreadcrumb } from '@/components';
 export const metadata: Metadata = {
   title: 'أوميل - لوحة التحكم',
   description: 'لوحة التحكم الرئيسية الخاصة بتطبيق أوميل  --  لإدارة علاقات الزبائن',
