@@ -10,7 +10,7 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: 'Omel CRM',
+  title: 'أوميل - أداة إدارة العلاقات العملاء',
   description: 'خذ تجربة خدمة العملاء المثالية مع أوميل.',
 };
 
