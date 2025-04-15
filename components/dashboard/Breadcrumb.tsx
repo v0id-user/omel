@@ -10,7 +10,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { ChevronLeft } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { ChevronLeft, Slash } from 'lucide-react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export function DashboardBreadcrumb() {
   const pathname = usePathname();
@@ -20,10 +22,17 @@ export function DashboardBreadcrumb() {
   if (paths.length === 1 && paths[0] === 'dashboard') {
     return (
       <Breadcrumb>
+        {/* TODO: Make this correct | Sidebar + Breadcrumb */}
+
         <BreadcrumbList>
+          <BreadcrumbItem>
+            <SidebarTrigger variant="ghost" className="text-black" />
+          </BreadcrumbItem>
+          <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
           <BreadcrumbItem>
             <BreadcrumbPage>لوحة التحكم</BreadcrumbPage>
           </BreadcrumbItem>
+          <Slash className="mx-1 h-3 w-3" />
         </BreadcrumbList>
       </Breadcrumb>
     );

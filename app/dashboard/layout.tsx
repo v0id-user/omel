@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardSidebar, DashboardBreadcrumb } from '@/components/dashboard';
 
 export const metadata: Metadata = {
@@ -11,14 +11,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <DashboardSidebar variant="inset" />
-      <SidebarTrigger />
       <SidebarInset>
-        <div className="flex h-screen">
-          <main className="flex-1 overflow-y-auto p-4">
-            <DashboardBreadcrumb />
-            {children}
-          </main>
-        </div>
+        <main className="flex-1 overflow-y-auto p-4">
+          <DashboardBreadcrumb />
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );
