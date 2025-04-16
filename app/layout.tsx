@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar">
-      <body className={`antialiased ${ibmPlexSansArabic.className}`} dir="rtl">
+      <body className={`antialiased ${ibmPlexSansArabic.className} bg-white`} dir="rtl">
         <TRPCProvider>
           <PostHogProvider>
             <Toaster />

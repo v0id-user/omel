@@ -42,15 +42,15 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen min-w-screen bg-white bg-[radial-gradient(100%_50%_at_50%_0%,rgba(0,163,255,0.13)_0,rgba(0,163,255,0)_50%,rgba(0,163,255,0)_100%)] dark:bg-black">
+    <div className="relative min-h-screen bg-[radial-gradient(100%_50%_at_50%_0%,rgba(0,163,255,0.13)_0,rgba(0,163,255,0)_50%,rgba(0,163,255,0)_100%)]">
       <div
         className={cn(
           'absolute inset-0',
           '[background-size:50px_50px]',
-          '[background-image:linear-gradient(to_right,#ececec_1px,transparent_1px),linear-gradient(to_bottom,#ececec_1px,transparent_1px)]'
+          '[background-image:linear-gradient(to_right,#E6E4E4_1px,transparent_1px),linear-gradient(to_bottom,#E6E4E4_1px,transparent_1px)]'
         )}
       />
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_5%,black)] dark:bg-black"></div>
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_5%,black)]"></div>
       <div className="relative inset-0">
         <Navbar />
         <Hero />
