@@ -10,22 +10,25 @@ export const TableOfContents = ({ items }: { items: TocItem[] | undefined }) => 
   return (
     <div
       id="toc"
-      className="right-8 flex w-full flex-shrink-0 flex-col md:sticky md:top-16 md:w-64"
+      className="text-right w-full flex flex-shrink-0 flex-col md:sticky md:top-16 md:w-64 lg:left-8"
+      dir="rtl"
     >
-      <nav className="hidden w-full flex-col gap-y-4 md:flex">
-        <h3 className="text-black dark:text-white">On this page</h3>
-        <ul className="dark:border-polar-700 flex flex-col gap-y-2.5 border-l border-gray-200 pl-4 text-sm">
+      <nav className="w-full flex-col gap-y-4 md:flex">
+        <h3 className="text-black dark:text-white text-right text-lg font-medium">
+          محتويات الصفحة
+        </h3>
+        <ul className="flex flex-col gap-y-2.5 border-l border-gray-200 pl-4 text-sm">
           {items.map(item => (
-            <li key={item.href}>
+            <li key={item.href} className="text-right">
               <Link
                 id={`toc-entry-${item.href}`}
                 href={item.href}
                 className={twMerge(
-                  'dark:text-polar-500 flex flex-row gap-x-2 leading-normal text-gray-500 transition-colors duration-200 ease-in-out hover:text-blue-500 dark:hover:text-white',
-                  'aria-selected:text-blue-500 aria-selected:dark:text-white'
+                  'flex flex-row-reverse gap-x-2 leading-normal text-gray-500 transition-colors duration-200 ease-in-out hover:text-gray-700',
+                  'aria-selected:text-gray-700 aria-selected:dark:text-white'
                 )}
               >
-                {item.depth > 2 && <ArrowRight className="mt-[4px]" />}
+                {item.depth > 2 && <ArrowRight className="mt-[4px] rotate-180" />}
                 {item.value}
               </Link>
             </li>

@@ -3,6 +3,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkFlexibleToc from 'remark-flexible-toc';
 import remarkGfm from 'remark-gfm';
 import rehypeMdxImportMedia from 'rehype-mdx-import-media';
+import rehypeSlug from 'rehype-slug';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -29,7 +30,13 @@ const withMDX = createMDX({
           {
             type: 'mdxJsxFlowElement',
             name: 'BodyWrapper',
-            attributes: [],
+            attributes: [
+              {
+                type: 'mdxJsxAttribute',
+                name: 'toc',
+                value: JSON.stringify(file.data.toc),
+              },
+            ],
             children: tree.children,
           },
           // Automatically add a TOCGenerator component to the end of the MDX file
@@ -49,7 +56,7 @@ const withMDX = createMDX({
         ],
       }),
     ],
-    rehypePlugins: [rehypeMdxImportMedia],
+    rehypePlugins: [rehypeMdxImportMedia, rehypeSlug],
   },
 });
 

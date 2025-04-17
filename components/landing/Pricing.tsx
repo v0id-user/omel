@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react';
 import { OButton } from '@/components/omel/Button';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 
-// Saudi Riyal Symbol Component
 const SaudiRiyal = ({ className = '', size = 0.8 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +23,15 @@ const SaudiRiyal = ({ className = '', size = 0.8 }) => (
   </svg>
 );
 
-const pricingPlans = [
+interface PricingPlan {
+  name: string;
+  price: string;
+  features: string[];
+  cta: string;
+  highlighted: boolean;
+}
+
+const pricingPlans: PricingPlan[] = [
   {
     name: 'أساسي',
     price: '99',
@@ -71,6 +78,57 @@ const pricingPlans = [
   },
 ];
 
+export const PricingCard = ({
+  plan,
+  visibleItems,
+  index,
+}: {
+  plan: PricingPlan;
+  visibleItems: number[];
+  index: number;
+}) => {
+  return (
+    <div
+      className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-500 ease-out ${
+        visibleItems.includes(index) ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+      }`}
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      <GlowingEffect spread={70} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
+      {plan.highlighted && (
+        <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 -translate-y-1/2 translate-x-1/4 rounded-full">
+          الأكثر شعبية
+        </div>
+      )}
+      <div className="relative flex flex-col justify-between h-full">
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold">{plan.name}</h3>
+        </div>
+        <div className="mb-6">
+          <span className="text-4xl font-bold">{plan.price}</span>
+          <span className="text-muted-foreground text-sm">
+            {' '}
+            <SaudiRiyal size={1} /> / شهرياً
+          </span>
+        </div>
+        <ul className="space-y-3 mb-8">
+          {plan.features.map((feature, featureIndex) => (
+            <li key={featureIndex} className="flex items-start">
+              <Check className="h-5 w-5 text-primary shrink-0 ml-2 mt-0.5" />
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <OButton
+          className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
+        >
+          {plan.cta}
+        </OButton>
+      </div>
+    </div>
+  );
+};
+
 const Pricing = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const pricingRef = useRef<HTMLDivElement>(null);
@@ -105,6 +163,7 @@ const Pricing = () => {
   return (
     <section id="pricing" className="py-20 bg-white">
       <div className="container-custom" ref={pricingRef}>
+        {/** Pricing Header */}
         <div className="text-center mb-14">
           <h2 className="text-3xl font-bold mb-4">خطط الأسعار</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -112,55 +171,45 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {pricingPlans.map((plan, index) => (
-            <div
-              key={index}
-              className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-500 ease-out ${
-                visibleItems.includes(index)
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-8 opacity-0'
-              }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <GlowingEffect
-                spread={70}
-                glow={true}
-                disabled={false}
-                proximity={64}
-                inactiveZone={0.01}
-              />
-              {plan.highlighted && (
-                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 -translate-y-1/2 translate-x-1/4 rounded-full">
-                  الأكثر شعبية
-                </div>
-              )}
-              <div className="relative flex flex-col h-full">
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold">{plan.name}</h3>
-                </div>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground text-sm">
-                    {' '}
-                    <SaudiRiyal size={1} /> / شهرياً
-                  </span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <Check className="h-5 w-5 text-primary shrink-0 ml-2 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <OButton
-                  className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
-                >
-                  {plan.cta}
-                </OButton>
-              </div>
+        {/** Pricing Cards */}
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 ring-1 ring-gray-300/40 px-14 py-10">
+          {/* Top left corner cross */}
+          <div className="absolute -top-3 -left-3 flex items-center justify-center">
+            {/* <div className="absolute w-8 h-[1px] bg-gradient-to-r from-gray-300/40 to-transparent"></div>
+            <div className="absolute w-[1px] h-8 bg-gradient-to-b from-gray-300/40 to-transparent"></div>
+             */}
+            {/* <div className="text-gray-500/40 text-xs bg-white w-6 h-6 flex items-center justify-center">
+              *
+            </div> */}
+          </div>
+          {/* Top right corner cross */}
+          <div className="absolute -top-3 -right-3 flex items-center justify-center">
+            <div className="absolute w-8 h-[1px] bg-gradient-to-l from-gray-300/40 to-transparent"></div>
+            <div className="absolute w-[1px] h-8 bg-gradient-to-b from-gray-300/40 to-transparent"></div>
+            <div className="text-gray-500/40 text-xs bg-white w-6 h-6 flex items-center justify-center">
+              +
             </div>
+          </div>
+          {/* Bottom left corner cross */}
+          <div className="absolute -bottom-3 -left-3 flex items-center justify-center">
+            <div className="absolute w-8 h-[1px] bg-gradient-to-r from-gray-300/40 to-transparent"></div>
+            <div className="absolute w-[1px] h-8 bg-gradient-to-t from-gray-300/40 to-transparent"></div>
+            <div className="text-gray-500/40 text-xs bg-white w-6 h-6 flex items-center justify-center">
+              +
+            </div>
+          </div>
+          {/* Bottom right corner cross */}
+          <div className="absolute -bottom-3 -right-3 flex items-center justify-center">
+            {/* <div className="absolute w-8 h-[1px] bg-gradient-to-l from-gray-300/40 to-transparent"></div>
+            <div className="absolute w-[1px] h-8 bg-gradient-to-t from-gray-300/40 to-transparent"></div>
+             */}
+            {/* <div className="text-gray-500/40 text-xs bg-white w-6 h-6 flex items-center justify-center">
+              *
+            </div> */}
+          </div>
+
+          {pricingPlans.map((plan, index) => (
+            <PricingCard key={index} plan={plan} visibleItems={visibleItems} index={index} />
           ))}
         </div>
       </div>
