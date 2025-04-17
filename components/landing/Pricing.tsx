@@ -33,8 +33,8 @@ interface PricingPlan {
 
 const pricingPlans: PricingPlan[] = [
   {
-    name: 'أساسي',
-    price: '99',
+    name: 'مجاني',
+    price: '0',
     features: [
       'حتى 1,000 جهة اتصال',
       'إدارة فريق من 5 مستخدمين',
@@ -47,7 +47,7 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'احترافي',
-    price: '249',
+    price: '29.96',
     features: [
       'حتى 10,000 جهة اتصال',
       'إدارة فريق من 15 مستخدمين',
@@ -62,7 +62,7 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'المؤسسات',
-    price: '499',
+    price: '1,499',
     features: [
       'جهات اتصال غير محدودة',
       'مستخدمين غير محدودين',
@@ -105,11 +105,29 @@ export const PricingCard = ({
           <h3 className="text-xl font-semibold">{plan.name}</h3>
         </div>
         <div className="mb-6">
-          <span className="text-4xl font-bold">{plan.price}</span>
-          <span className="text-muted-foreground text-sm">
-            {' '}
-            <SaudiRiyal size={1} /> / شهرياً
-          </span>
+          {!plan.highlighted ? (
+            <>
+              <span className="text-4xl font-bold">{plan.price}</span>
+
+              <span className="text-muted-foreground text-sm">
+                {' '}
+                <SaudiRiyal size={1} /> / شهرياً
+              </span>
+            </>
+          ) : (
+            <div className="flex flex-col items-start gap-2">
+              <div className="flex items-end gap-2">
+                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-muted-foreground text-sm mb-1">
+                  {' '}
+                  <SaudiRiyal size={1} /> / شهرياً
+                </span>
+              </div>
+              <span className="text-emerald-600 bg-emerald-50 ring-1 ring-emerald-500/20 rounded-full px-3 py-1 text-[11px] font-medium opacity-65">
+                ⚡️ سعر حصري لفترة محدودة
+              </span>
+            </div>
+          )}
         </div>
         <ul className="space-y-3 mb-8">
           {plan.features.map((feature, featureIndex) => (

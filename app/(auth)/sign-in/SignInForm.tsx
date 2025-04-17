@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import { AuthFooter, EmailField, PasswordField } from '@/components/auth';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
@@ -8,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth/userInfo';
 import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
+
 export default function SignInClientPage() {
   const { userInfo, formState, formStep, setFormState, setFormStep } = useAuthStore();
   const { validator, isLoading, setIsLoading } = useClientValidations();
