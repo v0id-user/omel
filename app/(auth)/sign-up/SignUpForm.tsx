@@ -3,13 +3,13 @@
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { RenderFormStep, useProcessForm } from './steps';
-import { useSignUpStore } from './store';
-import { FormStep } from './enums';
+import { useAuthStore } from '@/store/auth/userInfo';
+import { FormStep } from '@/enums/auth';
 import { ArrowRight } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
 
 export default function SignUpForm() {
-  const { setFormStep, formStep, formState } = useSignUpStore();
+  const { setFormStep, formStep, formState } = useAuthStore();
   const { processStep, isLoading } = useProcessForm();
   return (
     <div className="w-full md:w-[450px]">

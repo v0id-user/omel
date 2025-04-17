@@ -1,3 +1,5 @@
+'use client';
+
 import { useForm } from '@tanstack/react-form';
 import { Mail, Lock, Phone } from 'lucide-react';
 import {
@@ -6,7 +8,7 @@ import {
   clientValidatePhoneInput,
 } from '@/utils/client/validators';
 import { AuthFormInput } from '@/components/auth';
-import { useSignUpStore } from './store';
+import { useAuthStore } from '@/store/auth/userInfo';
 import { useState, useCallback, useRef } from 'react';
 import {
   Select,
@@ -15,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { allowedRegions } from './countryCodes';
+import { allowedRegions } from '@/lib/countryCodes';
 
 // Custom FormInput for phone field to match Select height
 const PhoneFormInput = (props: React.ComponentProps<typeof AuthFormInput>) => {
@@ -43,7 +45,7 @@ const PhoneFormInput = (props: React.ComponentProps<typeof AuthFormInput>) => {
 };
 
 export const EmailField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -79,7 +81,7 @@ export const EmailField = () => {
 };
 
 export const PasswordField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -115,7 +117,7 @@ export const PasswordField = () => {
 };
 
 export const NameFields = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -243,7 +245,7 @@ const PhoneSelect = ({
 };
 
 export const PhoneField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const [selectedDialCode, setSelectedDialCode] = useState<string>('+966'); // Default to Saudi Arabia
   const [rawNumber, setRawNumber] = useState<string>('');
   const form = useForm({
@@ -332,7 +334,7 @@ export const PhoneField = () => {
 };
 
 export const CompanyNameField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -375,7 +377,7 @@ export const CompanyNameField = () => {
 };
 
 export const CompanyAddressField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -418,7 +420,7 @@ export const CompanyAddressField = () => {
 };
 
 export const CompanyWebsiteField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });
@@ -461,7 +463,7 @@ export const CompanyWebsiteField = () => {
 };
 
 export const CompanySizeField = () => {
-  const { userInfo, setUserInfo } = useSignUpStore();
+  const { userInfo, setUserInfo } = useAuthStore();
   const form = useForm({
     defaultValues: userInfo,
   });

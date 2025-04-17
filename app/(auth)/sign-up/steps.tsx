@@ -1,8 +1,14 @@
 'use client';
 
-import { useSignUpStore } from './store';
-import { FormStep } from './enums';
-import { EmailField, PasswordField, NameFields, PhoneField, CompanyFields } from './form-inputs';
+import { useAuthStore } from '@/store/auth/userInfo';
+import { FormStep } from '@/enums/auth/enums';
+import {
+  EmailField,
+  PasswordField,
+  NameFields,
+  PhoneField,
+  CompanyFields,
+} from '../../../components/auth/form-inputs';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
@@ -10,15 +16,15 @@ import { trpc } from '@/trpc/client';
 import { TRPCClientError } from '@trpc/client';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/betterauth/auth-client';
+
 function useProcessForm() {
   const router = useRouter();
-  const { setFormStep, setFormState, userInfo, formStep } = useSignUpStore();
+  const { setFormStep, setFormState, userInfo, formStep } = useAuthStore();
   const createCRMRpc = trpc.crm.new.create.useMutation();
-  //TODO: Complete this, validate the eamil first then the rest of the steps.
   const { validator, isLoading, setIsLoading } = useClientValidations();
 
   const processStep = async () => {
-    const processes = {
+    const processes: Record<FormStep, () => Promise<boolean>> = {
       [FormStep.AskForEmail]: async () => {
         setFormState({
           buttonText: 'التحقق من البريد الإلكتروني...',
@@ -41,6 +47,7 @@ function useProcessForm() {
         });
         return true;
       },
+
       [FormStep.AskForPassword]: async () => {
         const isValidPassword = clientValidatePasswordInput(userInfo.password);
         if (isValidPassword !== undefined) {
@@ -49,6 +56,7 @@ function useProcessForm() {
         }
         return true;
       },
+
       [FormStep.AskForPersonalInfo]: async () => {
         console.log(userInfo.personalInfo);
         setFormState({
@@ -86,6 +94,7 @@ function useProcessForm() {
         });
         return true;
       },
+
       [FormStep.AskForCompanyInfo]: async () => {
         console.log(userInfo);
         // Validate company info
@@ -117,6 +126,7 @@ function useProcessForm() {
 
         return true;
       },
+
       [FormStep.FinalStep]: async () => {
         try {
           setIsLoading(true);
@@ -184,7 +194,6 @@ function useProcessForm() {
     //   setFormStep(formStep + 1);
     //   return true;
     // }
-
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
     if (!canProcess) return;
@@ -198,7 +207,7 @@ function useProcessForm() {
 }
 
 function RenderFormStep() {
-  const { formStep } = useSignUpStore();
+  const { formStep } = useAuthStore();
   switch (formStep) {
     case FormStep.AskForEmail:
       return <EmailField />;

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import SignInClientPage from './ClientPage';
+import SignInClientPage from './SignInForm';
 
 export const metadata: Metadata = {
   title: 'أوميل - تسجيل الدخول',

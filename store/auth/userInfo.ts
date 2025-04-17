@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import { FormStep } from './enums';
-import { FormState } from './interfaces';
+import { FormStep } from '@/enums/auth';
+import { FormState } from '@/interfaces/auth';
 import { NewCRMUserInfo as UserInfo } from '@/interfaces/crm';
-interface SignUpStore {
+
+interface AuthStore {
   formStep: FormStep;
   setFormStep: (formStep: FormStep) => void;
   formState: FormState;
@@ -11,7 +12,7 @@ interface SignUpStore {
   setUserInfo: (userInfo: UserInfo) => void;
 }
 
-export const useSignUpStore = create<SignUpStore>(set => ({
+export const useAuthStore = create<AuthStore>(set => ({
   formStep: FormStep.AskForEmail,
   setFormStep: (formStep: FormStep) => set({ formStep }),
   formState: {
