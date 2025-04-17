@@ -1,8 +1,7 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { Metadata } from 'next';
 import SignUpForm from './SignUpForm';
-
+import { AuthFooter } from '@/components/auth';
 export const metadata: Metadata = {
   title: 'أوميل - تسجيل الدخول',
   description: 'تسجيل الدخول إلى أوميل للبدء في إدارة علاقات العملاء الخاصة بك.',
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
 const SignUpContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
-      className="border border-solid border-gray-700 rounded-xl py-20
+      className="ring-1 ring-black/60 rounded-xl py-20
                     px-6 md:px-8 lg:px-12 w-full max-w-[95vw] md:max-w-[90vw] lg:max-w-[1200px]"
     >
       {children}
@@ -35,24 +34,6 @@ const SignUpDisplayText = () => {
   );
 };
 
-const SignUpFooter = () => {
-  return (
-    <footer className="p-4">
-      <div className="container flex flex-col sm:flex-row mx-auto gap-2 justify-center items-center text-sm text-gray-400">
-        <div>© 2025 أوميل</div>
-        <div className="flex gap-4">
-          <Link href="/privacy-policy" className="hover:text-gray-300 underline">
-            سياسة الخصوصية
-          </Link>
-          <Link href="/support" className="hover:text-gray-300 underline">
-            الدعم
-          </Link>
-        </div>
-      </div>
-    </footer>
-  );
-};
-
 export default function SignUp() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -66,7 +47,7 @@ export default function SignUp() {
         </SignUpContainer>
       </div>
 
-      <SignUpFooter />
+      <AuthFooter />
     </div>
   );
 }

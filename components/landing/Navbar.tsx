@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Menu } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -79,7 +80,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:block">
-          <OButton>تسجيل الدخول</OButton>
+          <OButton onClick={() => router.push('/sign-in')}>تسجيل الدخول</OButton>
         </div>
       </div>
 
@@ -115,7 +116,7 @@ const Navbar = () => {
             >
               تواصل معنا
             </a>
-            <OButton>تسجيل الدخول</OButton>
+            <OButton onClick={() => router.push('/sign-in')}>تسجيل الدخول</OButton>
           </div>
         </div>
       )}

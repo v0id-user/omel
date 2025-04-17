@@ -11,7 +11,7 @@ interface FormInputProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   inputRef?: Ref<HTMLInputElement>;
 }
-function FormInput({
+function AuthFormInput({
   type,
   value,
   onBlur,
@@ -43,4 +43,4 @@ function FormInput({
   );
 }
 
-export default FormInput;
+export default AuthFormInput;

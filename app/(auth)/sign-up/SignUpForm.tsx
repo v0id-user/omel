@@ -61,7 +61,7 @@ export default function SignUpForm() {
       </div>
 
       {/* Process Form Button                                            */}
-      <OButton isLoading={isLoading} processStep={processStep} variant="primary" className="w-full">
+      <OButton isLoading={isLoading} onClick={processStep} variant="primary" className="w-full">
         {formState.buttonText}
       </OButton>
 

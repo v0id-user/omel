@@ -5,7 +5,7 @@ import {
   clientValidatePasswordInput,
   clientValidatePhoneInput,
 } from '@/utils/client/validators';
-import FormInput from '@/components/auth/FormInput';
+import { AuthFormInput } from '@/components/auth';
 import { useSignUpStore } from './store';
 import { useState, useCallback, useRef } from 'react';
 import {
@@ -18,7 +18,7 @@ import {
 import { allowedRegions } from './countryCodes';
 
 // Custom FormInput for phone field to match Select height
-const PhoneFormInput = (props: React.ComponentProps<typeof FormInput>) => {
+const PhoneFormInput = (props: React.ComponentProps<typeof AuthFormInput>) => {
   return (
     <div className="relative h-[42px]">
       <input
@@ -56,7 +56,7 @@ export const EmailField = () => {
     >
       {field => (
         <>
-          <FormInput
+          <AuthFormInput
             type="email"
             value={field.state.value}
             onBlur={field.handleBlur}
@@ -92,7 +92,7 @@ export const PasswordField = () => {
     >
       {field => (
         <>
-          <FormInput
+          <AuthFormInput
             type="password"
             value={field.state.value}
             onBlur={field.handleBlur}
@@ -138,7 +138,7 @@ export const NameFields = () => {
       >
         {field => (
           <>
-            <FormInput
+            <AuthFormInput
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -182,7 +182,7 @@ export const NameFields = () => {
       >
         {field => (
           <>
-            <FormInput
+            <AuthFormInput
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -349,7 +349,7 @@ export const CompanyNameField = () => {
     >
       {field => (
         <>
-          <FormInput
+          <AuthFormInput
             type="text"
             value={field.state.value || ''}
             onBlur={field.handleBlur}
@@ -392,7 +392,7 @@ export const CompanyAddressField = () => {
     >
       {field => (
         <>
-          <FormInput
+          <AuthFormInput
             type="text"
             value={field.state.value || ''}
             onBlur={field.handleBlur}
@@ -435,7 +435,7 @@ export const CompanyWebsiteField = () => {
     >
       {field => (
         <>
-          <FormInput
+          <AuthFormInput
             type="text"
             value={field.state.value || ''}
             onBlur={field.handleBlur}
