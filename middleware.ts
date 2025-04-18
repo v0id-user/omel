@@ -7,6 +7,7 @@ export async function middleware(request: NextRequest) {
     headers: await headers(),
   });
 
+  // TODO: Add validation for team and org
   if (!session) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
@@ -16,5 +17,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: 'nodejs',
-  matcher: ['/dashboard'], // Apply middleware to specific routes
+  matcher: ['/dashboard', '/dashboard/:path*'], // Apply middleware to specific routes
 };
