@@ -82,7 +82,7 @@ export default function SignInClientPage() {
         className="mb-16 mt-10"
         priority
       />
-      <div className="flex-grow flex flex-col justify-center items-center p-4 md:p-6 lg:p-8">
+      <div className="flex-grow flex flex-col justify-center items-center pb-4 md:pb-6 lg:pb-8">
         <div className="w-full md:w-[450px] max-w-[95vw] md:max-w-[90vw]">
           <h1 className="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
           {/* Google Login Button */}

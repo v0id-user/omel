@@ -19,17 +19,17 @@ import Link from 'next/link';
 const menuItems = {
   'نظام إدارة العملاء': [
     { href: '/dashboard', icon: LayoutDashboardIcon, label: 'لوحة التحكم' },
-    { href: '/clients', icon: UsersIcon, label: 'العملاء' },
-    { href: '/tasks', icon: CheckSquareIcon, label: 'المهام' },
+    { href: '/dashboard/clients', icon: UsersIcon, label: 'العملاء' },
+    { href: '/dashboard/tasks', icon: CheckSquareIcon, label: 'المهام' },
   ],
   التواصل: [
-    { href: '/notes', icon: StickyNoteIcon, label: 'الملاحظات' },
-    { href: '/messages', icon: MessageSquareIcon, label: 'الرسائل' },
-    { href: '/calendar', icon: CalendarIcon, label: 'التقويم' },
+    { href: '/dashboard/notes', icon: StickyNoteIcon, label: 'الملاحظات' },
+    { href: '/dashboard/messages', icon: MessageSquareIcon, label: 'الرسائل' },
+    { href: '/dashboard/calendar', icon: CalendarIcon, label: 'التقويم' },
   ],
   'مساحة العمل': [
-    { href: '/team', icon: UsersIcon, label: 'الفريق' },
-    { href: '/settings', icon: SettingsIcon, label: 'الإعدادات' },
+    { href: '/dashboard/team', icon: UsersIcon, label: 'الفريق' },
+    { href: '/dashboard/settings', icon: SettingsIcon, label: 'الإعدادات' },
   ],
 };
 
