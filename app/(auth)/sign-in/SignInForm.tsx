@@ -77,17 +77,17 @@ export default function SignInClientPage() {
       <Image
         src="/logo_small.png"
         alt="logo"
-        width={75}
-        height={75}
+        width={65}
+        height={65}
         className="mb-16 mt-10"
         priority
       />
-      <div className="flex-grow flex flex-col justify-center items-center pb-4 md:pb-6 lg:pb-8">
-        <div className="w-full md:w-[450px] max-w-[95vw] md:max-w-[90vw]">
+      <div className="flex-grow flex flex-col justify-center items-center pb-24">
+        <div className="w-full md:w-[400px] max-w-[95vw] md:max-w-[90vw]">
           <h1 className="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
           {/* Google Login Button */}
           <div className="mb-8">
-            <button className="w-full flex items-center justify-center gap-2 p-3 border cursor-pointer border-gray-700 rounded-md hover:bg-gray-200/50 transition-colors">
+            <button className="w-full flex items-center justify-center gap-2 p-2 border cursor-pointer border-gray-700 rounded-md hover:bg-gray-200/50 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
