@@ -1,12 +1,24 @@
+// import {
+//   CalendarIcon,
+//   CheckSquare2,
+//   MessageSquareIcon,
+//   SettingsIcon,
+//   StickyNoteIcon,
+//   UsersIcon,
+//   LayoutDashboardIcon
+// } from 'lucide-react';
+
 import {
-  CalendarIcon,
-  CheckSquareIcon,
-  MessageSquareIcon,
-  SettingsIcon,
-  StickyNoteIcon,
-  UsersIcon,
-} from 'lucide-react';
-import { LayoutDashboardIcon } from 'lucide-react';
+  ViewStructureUp,
+  Community,
+  CheckSquare,
+  Notes,
+  Message,
+  Calendar,
+  Group,
+  Settings,
+} from 'iconoir-react';
+
 import {
   SidebarMenuButton,
   SidebarMenuItem,
@@ -18,18 +30,18 @@ import Link from 'next/link';
 
 const menuItems = {
   'نظام إدارة العملاء': [
-    { href: '/dashboard', icon: LayoutDashboardIcon, label: 'لوحة التحكم' },
-    { href: '/dashboard/clients', icon: UsersIcon, label: 'العملاء' },
-    { href: '/dashboard/tasks', icon: CheckSquareIcon, label: 'المهام' },
+    { href: '/dashboard', icon: ViewStructureUp, label: 'لوحة التحكم' },
+    { href: '/dashboard/clients', icon: Community, label: 'العملاء' },
+    { href: '/dashboard/tasks', icon: CheckSquare, label: 'المهام' },
   ],
   التواصل: [
-    { href: '/dashboard/notes', icon: StickyNoteIcon, label: 'الملاحظات' },
-    { href: '/dashboard/messages', icon: MessageSquareIcon, label: 'الرسائل' },
-    { href: '/dashboard/calendar', icon: CalendarIcon, label: 'التقويم' },
+    { href: '/dashboard/notes', icon: Notes, label: 'الملاحظات' },
+    { href: '/dashboard/messages', icon: Message, label: 'الرسائل' },
+    { href: '/dashboard/calendar', icon: Calendar, label: 'التقويم' },
   ],
   'مساحة العمل': [
-    { href: '/dashboard/team', icon: UsersIcon, label: 'الفريق' },
-    { href: '/dashboard/settings', icon: SettingsIcon, label: 'الإعدادات' },
+    { href: '/dashboard/team', icon: Group, label: 'الفريق' },
+    { href: '/dashboard/settings', icon: Settings, label: 'الإعدادات' },
   ],
 };
 

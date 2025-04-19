@@ -1,10 +1,10 @@
 import { createTRPCRouter, baseProcedure } from '@/trpc/init';
 import { z } from 'zod';
-import { createNewCRM } from '../../../../services/crm/createNewCRM';
+import { createNewCRM } from '@/services/crm/new';
 import { NewCRMUserInfo } from '@/interfaces/crm';
 import { TRPCError } from '@trpc/server';
 
-export const CRMRouter = createTRPCRouter({
+export const newCRMRouter = createTRPCRouter({
   create: baseProcedure
     .input(z.custom<NewCRMUserInfo>())
     .mutation(async ({ input: newUserInfo, ctx }) => {

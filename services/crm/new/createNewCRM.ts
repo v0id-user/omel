@@ -1,9 +1,5 @@
 import { NewCRMUserInfo } from '@/interfaces/crm';
 import { TRPCError } from '@trpc/server';
-import { auth } from '@/lib/betterauth/auth';
-import { OrganizationMetadata } from '@/interfaces/organization';
-import { validateEmail } from '@/utils/emails';
-import { validatePhone } from '@/utils/phone';
 import {
   validateUserInput,
   determineOrganizationName,
@@ -15,16 +11,6 @@ import {
   createOrganization,
   formatResult,
 } from './steps';
-
-const isValidCompanyName = (name: string) => {
-  const regex = /^[A-Za-z0-9&.,'’\-\s]{2,100}$/;
-  return regex.test(name.trim());
-};
-
-const isValidName = (name: string) => {
-  const regex = /^[\p{Script=Arabic}\p{Script=Latin}0-9\s'’.-]{2,100}$/u;
-  return regex.test(name.trim());
-};
 
 async function createNewCRM(input: NewCRMUserInfo) {
   console.log('Starting createNewCRM with input:', JSON.stringify(input, null, 2));

@@ -11,8 +11,9 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
-import { ChevronLeft, Slash } from 'lucide-react';
+import { Slash } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import React from 'react';
 
 export function DashboardBreadcrumb() {
   const pathname = usePathname();
@@ -23,7 +24,6 @@ export function DashboardBreadcrumb() {
     return (
       <Breadcrumb>
         {/* TODO: Make this correct | Sidebar + Breadcrumb */}
-
         <BreadcrumbList>
           <BreadcrumbItem>
             <SidebarTrigger variant="ghost" className="text-black" />
@@ -32,7 +32,9 @@ export function DashboardBreadcrumb() {
           <BreadcrumbItem>
             <BreadcrumbPage>لوحة التحكم</BreadcrumbPage>
           </BreadcrumbItem>
-          <Slash className="mx-1 h-3 w-3" />
+          <BreadcrumbSeparator>
+            <Slash className="mx-1 h-3 w-3" />
+          </BreadcrumbSeparator>
         </BreadcrumbList>
       </Breadcrumb>
     );
@@ -41,6 +43,10 @@ export function DashboardBreadcrumb() {
   return (
     <Breadcrumb>
       <BreadcrumbList>
+        <BreadcrumbItem>
+          <SidebarTrigger variant="ghost" className="text-black" />
+        </BreadcrumbItem>
+        <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link href="/dashboard">لوحة التحكم</Link>
@@ -51,26 +57,23 @@ export function DashboardBreadcrumb() {
           paths.slice(1).map((path, index) => {
             const href = `/${paths.slice(0, index + 2).join('/')}`;
             const isLast = index === paths.length - 2;
+            const key = `${path}-${index}`;
 
             return (
-              <>
+              <React.Fragment key={key}>
                 <BreadcrumbSeparator>
-                  <ChevronLeft className="h-4 w-4" />
+                  <Slash className="mx-1 h-3 w-3" />
                 </BreadcrumbSeparator>
-                <BreadcrumbItem key={path}>
+                <BreadcrumbItem>
                   {isLast ? (
-                    <BreadcrumbPage>
-                      {path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')}
-                    </BreadcrumbPage>
+                    <BreadcrumbPage>{path === 'tasks' ? 'المهام' : path}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={href}>
-                        {path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')}
-                      </Link>
+                      <Link href={href}>{path === 'tasks' ? 'المهام' : path}</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-              </>
+              </React.Fragment>
             );
           })}
       </BreadcrumbList>

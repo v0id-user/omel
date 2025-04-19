@@ -1,6 +1,8 @@
 import { createTRPCRouter } from '@/trpc/init';
-import { CRMRouter } from './new/proc';
+import { newCRMRouter } from './new/proc';
+import { CRMRouter } from './dashboard/proc';
 
 export const crmRouter = createTRPCRouter({
-  new: CRMRouter,
+  new: newCRMRouter,
+  dashboard: CRMRouter,
 });
