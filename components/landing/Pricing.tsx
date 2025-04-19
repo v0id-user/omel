@@ -4,6 +4,7 @@ import { Check } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { OButton } from '@/components/omel/Button';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { motion } from 'motion/react';
 
 const SaudiRiyal = ({ className = '', size = 0.8 }) => (
   <svg
@@ -25,16 +26,38 @@ const SaudiRiyal = ({ className = '', size = 0.8 }) => (
 
 interface PricingPlan {
   name: string;
-  price: string;
+  price: {
+    monthly: string;
+    yearly: string;
+  };
   features: string[];
   cta: string;
   highlighted: boolean;
 }
 
-const pricingPlans: PricingPlan[] = [
+const formatPrice = (price: number): string => {
+  if (price === 0) return '0';
+
+  // For prices >= 1000, format with commas and no decimals
+  if (price >= 1000) {
+    return Math.ceil(price).toLocaleString('en-US');
+  }
+
+  // For smaller prices, round up to .99
+  return (Math.ceil(price) - 0.01).toFixed(2);
+};
+
+const calculateYearlyPrice = (monthlyPrice: number): string => {
+  if (monthlyPrice === 0) return '0';
+  const yearlyTotal = monthlyPrice * 12;
+  const discountedPrice = yearlyTotal * 0.8; // 20% off
+  return formatPrice(discountedPrice);
+};
+
+const basePricingPlans = [
   {
     name: 'مجاني',
-    price: '0',
+    monthlyPrice: 0,
     features: [
       'حتى 1,000 جهة اتصال',
       'إدارة فريق من 5 مستخدمين',
@@ -47,7 +70,7 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'احترافي',
-    price: '29.96',
+    monthlyPrice: 29.96,
     features: [
       'حتى 10,000 جهة اتصال',
       'إدارة فريق من 15 مستخدمين',
@@ -62,7 +85,7 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'المؤسسات',
-    price: '1,499',
+    monthlyPrice: 1499,
     features: [
       'جهات اتصال غير محدودة',
       'مستخدمين غير محدودين',
@@ -78,14 +101,26 @@ const pricingPlans: PricingPlan[] = [
   },
 ];
 
+const pricingPlans: PricingPlan[] = basePricingPlans.map(plan => ({
+  ...plan,
+  price: {
+    monthly: plan.monthlyPrice === 0 ? '0' : formatPrice(plan.monthlyPrice),
+    yearly: calculateYearlyPrice(plan.monthlyPrice),
+  },
+}));
+
+type BillingPeriod = 'monthly' | 'yearly';
+
 export const PricingCard = ({
   plan,
   visibleItems,
   index,
+  billingPeriod,
 }: {
   plan: PricingPlan;
   visibleItems: number[];
   index: number;
+  billingPeriod: BillingPeriod;
 }) => {
   return (
     <div
@@ -107,20 +142,34 @@ export const PricingCard = ({
         <div className="mb-6">
           {!plan.highlighted ? (
             <>
-              <span className="text-4xl font-bold">{plan.price}</span>
+              <motion.span
+                key={`${plan.name}-${billingPeriod}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl font-bold"
+              >
+                {plan.price[billingPeriod]}
+              </motion.span>
 
               <span className="text-muted-foreground text-sm">
                 {' '}
-                <SaudiRiyal size={1} /> / شهرياً
+                <SaudiRiyal size={1} /> / {billingPeriod === 'monthly' ? 'شهرياً' : 'سنوياً'}
               </span>
             </>
           ) : (
             <div className="flex flex-col items-start gap-2">
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold">{plan.price}</span>
+                <motion.span
+                  key={`${plan.name}-${billingPeriod}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-4xl font-bold"
+                >
+                  {plan.price[billingPeriod]}
+                </motion.span>
                 <span className="text-muted-foreground text-sm mb-1">
                   {' '}
-                  <SaudiRiyal size={1} /> / شهرياً
+                  <SaudiRiyal size={1} /> / {billingPeriod === 'monthly' ? 'شهرياً' : 'سنوياً'}
                 </span>
               </div>
               <span className="text-emerald-600 bg-emerald-50 ring-1 ring-emerald-500/20 rounded-full px-3 py-1 text-[11px] font-medium opacity-65">
@@ -149,6 +198,7 @@ export const PricingCard = ({
 
 const Pricing = () => {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
   const pricingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -184,9 +234,52 @@ const Pricing = () => {
         {/** Pricing Header */}
         <div className="text-center mb-14">
           <h2 className="text-3xl font-bold mb-4">خطط الأسعار</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             اختر الخطة المناسبة لاحتياجات عملك. جميع الخطط تشمل تحديثات مجانية
           </p>
+
+          {/* Billing Period Toggle */}
+          <div className="flex justify-center mb-8">
+            <div className="relative bg-gray-100 rounded-xl p-1.5 inline-flex min-w-[240px]">
+              <button
+                onClick={() => setBillingPeriod('yearly')}
+                className={`relative z-10 px-4 py-2 text-sm rounded-xl transition-colors duration-200 flex-1 text-center ${
+                  billingPeriod === 'yearly' ? 'text-primary-foreground' : 'text-muted-foreground'
+                }`}
+              >
+                سنوي
+                {billingPeriod === 'yearly' && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute -top-3 right-0 translate-x-1/2 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full whitespace-nowrap"
+                  >
+                    خصم 20%
+                  </motion.span>
+                )}
+              </button>
+              <button
+                onClick={() => setBillingPeriod('monthly')}
+                className={`relative z-10 px-4 py-2 text-sm rounded-xl transition-colors duration-200 flex-1 text-center ${
+                  billingPeriod === 'monthly' ? 'text-primary-foreground' : 'text-muted-foreground'
+                }`}
+              >
+                شهري
+              </button>
+              <motion.div
+                className="absolute inset-1.5 isolate inline-flex items-center justify-center overflow-hidden text-left font-medium rounded-lg shadow-[0_1px_rgba(255,255,255,0.07)_inset,0_1px_3px_rgba(0,0,0,0.2)] ring-1 bg-[#010103] text-[#f3f4f6] ring-[#6c7688] text-sm py-2 px-4 before:duration-300 before:ease-[cubic-bezier(0.4,0.36,0,1)] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-b before:from-white/20 before:opacity-50 hover:before:opacity-100 after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:rounded-lg after:bg-gradient-to-b after:from-white/10 after:from-[46%] after:to-[54%] after:mix-blend-overlay hover:drop-shadow-2xs"
+                initial={false}
+                animate={{
+                  x: billingPeriod === 'yearly' ? 0 : '-100%',
+                }}
+                transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                style={{
+                  width: 'calc(50% - 6px)',
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/** Pricing Cards */}
@@ -227,7 +320,13 @@ const Pricing = () => {
           </div>
 
           {pricingPlans.map((plan, index) => (
-            <PricingCard key={index} plan={plan} visibleItems={visibleItems} index={index} />
+            <PricingCard
+              key={index}
+              plan={plan}
+              visibleItems={visibleItems}
+              index={index}
+              billingPeriod={billingPeriod}
+            />
           ))}
         </div>
       </div>
