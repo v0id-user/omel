@@ -4,6 +4,7 @@ import { Sorter } from '@/components/ui/sorter';
 
 interface DashboardContentProps {
   children: React.ReactNode;
+  title: string;
   ctaLabel: string;
   ctaIcon?: React.ReactNode;
   onCtaClick: () => void;
@@ -21,6 +22,7 @@ interface DashboardContentProps {
 
 export function DashboardContent({
   children,
+  title,
   ctaLabel,
   ctaIcon,
   onCtaClick,
@@ -44,7 +46,7 @@ export function DashboardContent({
             />
           </div>
         )}
-        <OButton onClick={onCtaClick} className="mr-auto text-xs">
+        <OButton onClick={onCtaClick} className="mr-auto text-xs py-1.5 px-2" variant="secondary">
           {ctaIcon}
           {ctaLabel}
         </OButton>
@@ -59,8 +61,9 @@ export function DashboardContent({
             width={100}
             height={100}
           />
+          <h1 className="text-xl font-bold font-gray-500 mb-2">{title}</h1>
           <p className="text-gray-500 mb-4">{emptyState.text}</p>
-          <OButton onClick={onCtaClick} className="text-xs">
+          <OButton onClick={onCtaClick} className="text-xs py-1.5 px-2" variant="secondary">
             {ctaIcon}
             {ctaLabel}
           </OButton>

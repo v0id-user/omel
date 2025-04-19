@@ -13,7 +13,7 @@ export function DashboardSidebar({ isAdmin, ...props }: DashboardSidebarProps) {
     <Sidebar collapsible="offcanvas" className="text-muted-foreground" {...props}>
       {/* Sidebar Header */}
       <SideNavHeader />
-      {isAdmin ?? 'Yes'}
+      {isAdmin ?? ' '}
 
       {/* Main Menu */}
       <SidebarContent>

@@ -1,7 +1,7 @@
 'use client';
 
 import { DashboardContent } from '@/components/dashboard';
-import { PlusIcon } from 'lucide-react';
+import { MultiplePagesPlus } from 'iconoir-react';
 
 interface Task {
   id: string;
@@ -16,8 +16,9 @@ export default function TasksPage() {
 
   return (
     <DashboardContent
+      title="المهام"
       ctaLabel="مهمة جديدة"
-      ctaIcon={<PlusIcon className="w-5 h-5 ml-2" />}
+      ctaIcon={<MultiplePagesPlus className="w-4 h-4 ml-2" />}
       onCtaClick={() => {
         // Placeholder for task creation logic
         console.log('Create new task');

@@ -11,7 +11,7 @@
 import {
   ViewStructureUp,
   Community,
-  CheckSquare,
+  MultiplePagesEmpty,
   Notes,
   Message,
   Calendar,
@@ -32,7 +32,7 @@ const menuItems = {
   'نظام إدارة العملاء': [
     { href: '/dashboard', icon: ViewStructureUp, label: 'لوحة التحكم' },
     { href: '/dashboard/clients', icon: Community, label: 'العملاء' },
-    { href: '/dashboard/tasks', icon: CheckSquare, label: 'المهام' },
+    { href: '/dashboard/tasks', icon: MultiplePagesEmpty, label: 'المهام' },
   ],
   التواصل: [
     { href: '/dashboard/notes', icon: Notes, label: 'الملاحظات' },
