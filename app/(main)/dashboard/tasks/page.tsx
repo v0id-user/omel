@@ -17,6 +17,7 @@ export default function TasksPage() {
   return (
     <DashboardContent
       title="المهام"
+      emptyStateIcon="/icons/iso/add-circle.svg"
       ctaLabel="مهمة جديدة"
       ctaIcon={<MultiplePagesPlus className="w-4 h-4 ml-2" />}
       onCtaClick={() => {

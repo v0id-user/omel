@@ -5,6 +5,7 @@ import { Sorter } from '@/components/ui/sorter';
 interface DashboardContentProps {
   children: React.ReactNode;
   title: string;
+  emptyStateIcon: string;
   ctaLabel: string;
   ctaIcon?: React.ReactNode;
   onCtaClick: () => void;
@@ -23,6 +24,7 @@ interface DashboardContentProps {
 export function DashboardContent({
   children,
   title,
+  emptyStateIcon,
   ctaLabel,
   ctaIcon,
   onCtaClick,
@@ -55,7 +57,7 @@ export function DashboardContent({
       {isEmpty && emptyState ? (
         <div className="flex flex-col items-center justify-center h-[60vh] text-center">
           <Image
-            src="/icons/iso/add-circle.svg"
+            src={emptyStateIcon}
             alt="Empty state"
             className="mb-4 opacity-50"
             width={100}
