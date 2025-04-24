@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Xmark, Minus, Pin } from 'iconoir-react';
+import { Xmark, Minus, MultiWindow, WebWindow } from 'iconoir-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface DashboardDialogProps {
@@ -25,7 +25,7 @@ export function DashboardDialog({
   const [isExpanded, setIsExpanded] = useState(false);
   const [position, setPosition] = useState({
     x: 20,
-    y: window?.innerHeight ? window.innerHeight - 100 : 500,
+    y: window?.innerHeight ? window.innerHeight - 200 : 400,
   });
 
   // Close handler with confirmation prompt fallback
@@ -81,6 +81,7 @@ export function DashboardDialog({
       if (position.x < 300) {
         positionClasses = 'left-full bottom-0 mb-0 ml-2';
       }
+
       // If near top of screen
       if (position.y < 200) {
         positionClasses =
@@ -124,7 +125,7 @@ export function DashboardDialog({
               className="bg-white text-gray-600 w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100"
               title="إلغاء التثبيت"
             >
-              <Pin className="w-3 h-3" />
+              <WebWindow className="w-3 h-3" />
             </button>
             <button
               onClick={handleClose}
@@ -146,7 +147,7 @@ export function DashboardDialog({
               });
             }}
             whileTap={{ scale: 1.1 }}
-            className="flex justify-center items-center w-12 h-12 rounded-full bg-primary text-white cursor-pointer shadow-lg"
+            className="flex justify-center items-center w-12 h-12 rounded-full bg-primary text-white cursor-pointer shadow-lg mt-16"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <div className="text-center font-semibold">{getInitialOrIcon()}</div>
@@ -214,7 +215,7 @@ export function DashboardDialog({
                   className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-sm p-0.5 animate-all duration-300 cursor-pointer"
                   title="تثبيت"
                 >
-                  <Pin className="w-3 h-3" />
+                  <MultiWindow className="w-3 h-3" />
                 </button>
                 <button
                   onClick={handleClose}
