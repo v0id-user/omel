@@ -1,7 +1,6 @@
-import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
+import { createTRPCRouter } from '@/trpc/init';
+import { taskRouter } from './tasks';
 
 export const CRMRouter = createTRPCRouter({
-  getTasks: protectedProcedure.query(async ({ ctx }) => {
-    return `Hello ${ctx.session.user.email}`;
-  }),
+  task: taskRouter,
 });

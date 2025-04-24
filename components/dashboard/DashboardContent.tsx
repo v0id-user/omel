@@ -19,6 +19,7 @@ interface DashboardContentProps {
     text: string;
     icon?: React.ReactNode;
   };
+  dialogs?: React.ReactNode;
 }
 
 export function DashboardContent({
@@ -32,8 +33,10 @@ export function DashboardContent({
   onSortChange,
   currentSort,
   emptyState,
+  dialogs,
 }: DashboardContentProps) {
-  const isEmpty = !children || (Array.isArray(children) && children.length === 0);
+  const isEmpty =
+    !children || (Array.isArray(children) && children.length === 0) || children === null;
 
   return (
     <div className="w-full min-h-[80vh] relative" dir="rtl">
@@ -73,6 +76,8 @@ export function DashboardContent({
       ) : (
         children
       )}
+
+      {dialogs}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { DashboardSidebar } from './SideBar';
 import { DashboardBreadcrumb } from './Breadcrumb';
 import { DashboardContent } from './DashboardContent';
-export { DashboardSidebar, DashboardBreadcrumb, DashboardContent };
+import { DashboardDialog } from './Dialog';
+export { DashboardSidebar, DashboardBreadcrumb, DashboardContent, DashboardDialog };
