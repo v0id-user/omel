@@ -2,201 +2,97 @@
 
 import * as React from 'react';
 import { ChevronRight, ChevronLeft, Calendar as CalendarIcon } from 'lucide-react';
-// Custom implementation for Hijri date conversions since we're building from scratch
+import dayjs from 'dayjs';
+import localeData from 'dayjs/plugin/localeData';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import 'dayjs/locale/ar';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-// Hijri month names in Arabic
-const HIJRI_MONTHS = [
-  'محرم',
-  'صفر',
-  'ربيع الأول',
-  'ربيع الثاني',
-  'جمادى الأولى',
-  'جمادى الآخرة',
-  'رجب',
-  'شعبان',
-  'رمضان',
-  'شوال',
-  'ذو القعدة',
-  'ذو الحجة',
-];
+// Initialize dayjs plugins
+dayjs.extend(localeData);
+dayjs.extend(updateLocale);
 
-// Month indices for special date checking
-const SHABAN_INDEX = 7;
-const RAMADAN_INDEX = 8;
-const SHAWWAL_INDEX = 9;
-const DHU_AL_QADAH_INDEX = 10;
-const DHU_AL_HIJJAH_INDEX = 11;
+// Set Arabic as the only locale
+dayjs.locale('ar');
 
-// Weekday names in Arabic, starting with Sunday
-const WEEKDAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+// Configure Arabic locale
+dayjs.updateLocale('ar', {
+  months: [
+    'يناير',
+    'فبراير',
+    'مارس',
+    'أبريل',
+    'مايو',
+    'يونيو',
+    'يوليو',
+    'أغسطس',
+    'سبتمبر',
+    'أكتوبر',
+    'نوفمبر',
+    'ديسمبر',
+  ],
+  weekdays: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+  weekdaysShort: ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
+  weekdaysMin: ['س', 'ح', 'ن', 'ث', 'ر', 'خ', 'ج'],
+});
 
-// Implementation of Hijri calendar conversion algorithms (Tabular Islamic calendar)
-// Reference: "Calendrical Calculations" by Nachum Dershowitz and Edward M. Reingold
-
-// Constants for Islamic calendar calculations
-const ISLAMIC_EPOCH = 1948439.5; // Julian day number for 1 Muharram 1 A.H.
-
-// Convert Gregorian date to Julian day number
-function gregorianToJulianDay(year: number, month: number, day: number): number {
-  // Adjust month and year for January and February
-  if (month < 3) {
-    month += 12;
-    year -= 1;
-  }
-
-  const a = Math.floor(year / 100);
-  const b = 2 - a + Math.floor(a / 4);
-
-  return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524.5;
+// Format a date in Arabic
+export function formatGregorianDateArabic(date: Date): string {
+  return dayjs(date).format('D MMMM YYYY');
 }
 
-// Convert Julian day to Hijri date
-function julianDayToIslamic(jd: number): { year: number; month: number; day: number } {
-  const jd1 = Math.floor(jd) + 0.5;
-  const year = Math.floor((30 * (jd1 - ISLAMIC_EPOCH) + 10646) / 10631);
-  const month = Math.min(12, Math.ceil((jd1 - (29 + islamicToJulianDay(year, 1, 1))) / 29.5) + 1);
-  const day = Math.floor(jd1 - islamicToJulianDay(year, month, 1) + 1);
-
-  // Adjust month to be 0-indexed for our internal calculations
-  return { year, month: month - 1, day };
-}
-
-// Convert Hijri date to Julian day number
-function islamicToJulianDay(year: number, month: number, day: number): number {
-  return (
-    day +
-    Math.ceil(29.5 * (month - 1)) +
-    (year - 1) * 354 +
-    Math.floor((3 + 11 * year) / 30) +
-    ISLAMIC_EPOCH -
-    1
-  );
-}
-
-// Convert Julian day to Gregorian date
-function julianDayToGregorian(jd: number): { year: number; month: number; day: number } {
-  const z = Math.floor(jd + 0.5);
-  const a = Math.floor((z - 1867216.25) / 36524.25);
-  const b = z + 1 + a - Math.floor(a / 4);
-  const c = b + 1524;
-  const d = Math.floor((c - 122.1) / 365.25);
-  const e = Math.floor(365.25 * d);
-  const f = Math.floor((c - e) / 30.6001);
-
-  const day = Math.floor(c - e - Math.floor(30.6001 * f));
-  const month = f - 1 - 12 * Math.floor(f / 14);
-  const year = d - 4715 - Math.floor((7 + month) / 10);
-
-  return { year, month, day };
-}
-
-// Get Hijri date from Gregorian date
-function getHijriDate(date: Date): { year: number; month: number; day: number } {
-  const jd = gregorianToJulianDay(date.getFullYear(), date.getMonth() + 1, date.getDate());
-  return julianDayToIslamic(jd);
-}
-
-// Get Gregorian date from Hijri date parts
-function getGregorianFromHijri(year: number, month: number, day: number): Date {
-  // Adjust month to be 1-indexed for the conversion
-  const jd = islamicToJulianDay(year, month + 1, day);
-  const { year: gYear, month: gMonth, day: gDay } = julianDayToGregorian(jd);
-  return new Date(gYear, gMonth - 1, gDay);
-}
-
-// Format a Hijri date
+// Keep for backward compatibility
 export function formatHijriDate(date: Date): string {
-  const hijri = getHijriDate(date);
-  return `${hijri.day} ${HIJRI_MONTHS[hijri.month]} ${hijri.year}`;
+  return formatGregorianDateArabic(date);
 }
 
-// Calculate days in Hijri month
-function getDaysInHijriMonth(year: number, month: number): number {
-  // In the Islamic calendar, odd months have 30 days and even months have 29 days
-  // with adjustments for leap years
-  if ((month + 1) % 2 === 1) {
-    return 30;
-  } else if (month + 1 === 12) {
-    // For Dhu al-Hijjah, check if it's a leap year (11 leap years in a 30-year cycle)
-    const leapYears = [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29];
-    const cycleYear = year % 30;
-    return leapYears.includes(cycleYear) ? 30 : 29;
-  } else {
-    return 29;
-  }
-}
-
-// Check if a Hijri date is a potentially uncertain date (requires moon sighting)
-function isUncertainDate(day: number, month: number): boolean {
-  // 29th of specified months
-  if (
-    day === 29 &&
-    [SHABAN_INDEX, RAMADAN_INDEX, SHAWWAL_INDEX, DHU_AL_QADAH_INDEX, DHU_AL_HIJJAH_INDEX].includes(
-      month
-    )
-  ) {
-    return true;
-  }
-
-  // 1st of specified months
-  if (day === 1 && [RAMADAN_INDEX, SHAWWAL_INDEX, DHU_AL_HIJJAH_INDEX].includes(month)) {
-    return true;
-  }
-
-  return false;
-}
-
-// Create a HijriDate type that stores both the Gregorian Date (for selection) and the Hijri values
-export interface HijriDate {
-  date: Date; // Gregorian date for internal use
-  hijri: {
-    year: number;
-    month: number;
-    day: number;
-  };
-}
-
-// Generate calendar days
+// Generate calendar days using dayjs
 function getCalendarDays(year: number, month: number) {
-  const daysInMonth = getDaysInHijriMonth(year, month);
-  const firstDayDate = getGregorianFromHijri(year, month, 1);
-  const firstDayOfWeek = firstDayDate.getDay(); // 0 = Sunday, 6 = Saturday
+  const firstDayOfMonth = dayjs(new Date(year, month, 1));
+  const daysInMonth = firstDayOfMonth.daysInMonth();
+  const dayOfWeek = firstDayOfMonth.day(); // 0 = Sunday, 6 = Saturday
 
   const days: {
     date: Date;
     day: number;
     isCurrentMonth: boolean;
-    hijriDay: number;
-    hijriMonth: number;
   }[] = [];
 
   // Add previous month's days
-  const previousMonth = month === 0 ? 11 : month - 1;
-  const previousYear = month === 0 ? year - 1 : year;
-  const daysInPreviousMonth = getDaysInHijriMonth(previousYear, previousMonth);
+  const previousMonth = dayjs(firstDayOfMonth).subtract(1, 'month');
+  const daysInPreviousMonth = previousMonth.daysInMonth();
 
-  for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-    const hijriDay = daysInPreviousMonth - i;
-    const date = getGregorianFromHijri(previousYear, previousMonth, hijriDay);
-    days.push({ date, day: hijriDay, isCurrentMonth: false, hijriDay, hijriMonth: previousMonth });
+  for (let i = dayOfWeek - 1; i >= 0; i--) {
+    const day = daysInPreviousMonth - i;
+    const date = dayjs(previousMonth).date(day).toDate();
+    days.push({
+      date,
+      day,
+      isCurrentMonth: false,
+    });
   }
 
   // Add current month's days
-  for (let hijriDay = 1; hijriDay <= daysInMonth; hijriDay++) {
-    const date = getGregorianFromHijri(year, month, hijriDay);
-    days.push({ date, day: hijriDay, isCurrentMonth: true, hijriDay, hijriMonth: month });
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = dayjs(firstDayOfMonth).date(day).toDate();
+    days.push({
+      date,
+      day,
+      isCurrentMonth: true,
+    });
   }
 
   // Add next month's days to complete the grid (6 rows x 7 days = 42 cells)
-  const nextMonth = month === 11 ? 0 : month + 1;
-  const nextYear = month === 11 ? year + 1 : year;
+  const nextMonth = dayjs(firstDayOfMonth).add(1, 'month');
   const remainingDays = 42 - days.length;
 
-  for (let hijriDay = 1; hijriDay <= remainingDays; hijriDay++) {
-    const date = getGregorianFromHijri(nextYear, nextMonth, hijriDay);
-    days.push({ date, day: hijriDay, isCurrentMonth: false, hijriDay, hijriMonth: nextMonth });
+  for (let day = 1; day <= remainingDays; day++) {
+    const date = dayjs(nextMonth).date(day).toDate();
+    days.push({
+      date,
+      day,
+      isCurrentMonth: false,
+    });
   }
 
   return days;
@@ -204,16 +100,16 @@ function getCalendarDays(year: number, month: number) {
 
 // Check if two dates are the same day
 function isSameDay(date1: Date, date2: Date) {
-  return (
-    date1.getDate() === date2.getDate() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getFullYear() === date2.getFullYear()
-  );
+  return dayjs(date1).isSame(dayjs(date2), 'day');
 }
 
 // Check if a date is between two dates
 function isDateInRange(date: Date, startDate: Date, endDate: Date) {
-  return date >= startDate && date <= endDate;
+  return (
+    (dayjs(date).isAfter(dayjs(startDate), 'day') && dayjs(date).isBefore(dayjs(endDate), 'day')) ||
+    isSameDay(date, startDate) ||
+    isSameDay(date, endDate)
+  );
 }
 
 // Types
@@ -233,10 +129,13 @@ export function Calendar({
   ...props
 }: CalendarProps) {
   const today = new Date();
-  const { year: currentHijriYear, month: currentHijriMonth } = getHijriDate(today);
 
-  const [hijriMonth, setHijriMonth] = React.useState(currentHijriMonth);
-  const [hijriYear, setHijriYear] = React.useState(currentHijriYear);
+  // Calendar state
+  const [calendarDate, setCalendarDate] = React.useState(dayjs(today));
+  const currentMonth = calendarDate.month();
+  const currentYear = calendarDate.year();
+
+  // Shared state
   const [hoveredDate, setHoveredDate] = React.useState<Date | null>(null);
 
   // Initialize selection
@@ -267,7 +166,7 @@ export function Calendar({
       onSelect?.([date, null] as Date[]);
     } else {
       // Complete selection
-      const isBeforeStart = date < selectedDates.start;
+      const isBeforeStart = dayjs(date).isBefore(dayjs(selectedDates.start), 'day');
       const start = isBeforeStart ? date : selectedDates.start;
       const end = isBeforeStart ? selectedDates.start : date;
       onSelect?.([start, end] as Date[]);
@@ -276,39 +175,32 @@ export function Calendar({
 
   // Handle month navigation
   const handlePreviousMonth = () => {
-    if (hijriMonth === 0) {
-      setHijriMonth(11);
-      setHijriYear(hijriYear - 1);
-    } else {
-      setHijriMonth(hijriMonth - 1);
-    }
+    setCalendarDate(calendarDate.subtract(1, 'month'));
   };
 
   const handleNextMonth = () => {
-    if (hijriMonth === 11) {
-      setHijriMonth(0);
-      setHijriYear(hijriYear + 1);
-    } else {
-      setHijriMonth(hijriMonth + 1);
-    }
+    setCalendarDate(calendarDate.add(1, 'month'));
   };
 
   // Navigate to today
   const handleGoToToday = () => {
-    setHijriMonth(currentHijriMonth);
-    setHijriYear(currentHijriYear);
+    setCalendarDate(dayjs(today));
   };
 
   // Get calendar grid
-  const days = getCalendarDays(hijriYear, hijriMonth);
+  const days = getCalendarDays(currentYear, currentMonth);
+
+  // Get localized weekdays
+  const weekdaysMin = dayjs.weekdaysMin();
+
+  // Get month name
+  const monthName = calendarDate.format('MMMM');
 
   return (
     <div className={cn('p-3 select-none', className)} dir="rtl" {...props}>
       {/* Calendar header */}
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-medium text-right">
-          {HIJRI_MONTHS[hijriMonth]} {hijriYear}
-        </div>
+        <div className="text-base font-medium">{`${monthName} ${currentYear}`}</div>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -339,9 +231,9 @@ export function Calendar({
 
       {/* Weekday headers */}
       <div className="grid grid-cols-7 mb-1">
-        {WEEKDAYS.map(day => (
+        {weekdaysMin.map(day => (
           <div key={day} className="text-xs text-muted-foreground text-center py-1.5">
-            {day.substring(0, 1)}
+            {day}
           </div>
         ))}
       </div>
@@ -360,14 +252,11 @@ export function Calendar({
             hoveredDate &&
             selectedDates.start &&
             !selectedDates.end &&
-            (hoveredDate > selectedDates.start
+            (dayjs(hoveredDate).isAfter(dayjs(selectedDates.start), 'day')
               ? isDateInRange(day.date, selectedDates.start, hoveredDate)
               : isDateInRange(day.date, hoveredDate, selectedDates.start));
           const isToday = isSameDay(day.date, today);
           const isDisabled = disabled && disabled(day.date);
-
-          // Check if this is a date that requires moon sighting verification
-          const isUncertain = isUncertainDate(day.hijriDay, day.hijriMonth);
 
           // The content of the cell
           const cellContent = (
@@ -388,37 +277,25 @@ export function Calendar({
                   isHovered && 'bg-accent text-accent-foreground'
                 )}
               >
-                {day.hijriDay}
+                <div className="flex flex-col items-center">
+                  <span className="text-sm">{day.day}</span>
+                </div>
               </button>
 
               {/* Today indicator dot */}
               {isToday && (
                 <div className="absolute bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full -translate-x-1/2"></div>
               )}
-
-              {/* Moon sighting uncertainty indicator */}
-              {isUncertain && (
-                <div className="absolute bottom-1 left-1/2 w-1 h-1 bg-yellow-400 rounded-full -translate-x-1/2"></div>
-              )}
             </div>
           );
-
-          // Wrap in tooltip if it's an uncertain date
-          if (isUncertain) {
-            return (
-              <Tooltip key={index}>
-                <TooltipTrigger asChild>{cellContent}</TooltipTrigger>
-                <TooltipContent>
-                  <p dir="rtl">⚠️ قد لا يكون هذا التاريخ دقيقًا. يرجى التحقق من رؤية الهلال.</p>
-                </TooltipContent>
-              </Tooltip>
-            );
-          }
 
           // Return normal date cell
           return <div key={index}>{cellContent}</div>;
         })}
       </div>
+
+      {/* Calendar type indicator */}
+      <div className="mt-2 text-xs text-center text-muted-foreground">التقويم الميلادي</div>
     </div>
   );
 }

@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@calidy/dayjs-calendarsystems": "^1.11.3",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@internationalized/date": "^3.8.0",
