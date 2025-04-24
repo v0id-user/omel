@@ -43,6 +43,13 @@
       "when": 1745456015933,
       "tag": "0005_brave_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1745456236235,
+      "tag": "0006_high_hardball",
+      "breakpoints": true
     }
   ]
 }
