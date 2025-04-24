@@ -31,7 +31,7 @@ export const OButton = ({
     default: '',
     sm: 'text-xs py-1 px-2',
     xs: 'text-xs py-0.5 px-1.5',
-    icon: 'p-1 w-8 h-8 flex items-center justify-center',
+    icon: 'p-1 flex items-center justify-center',
   };
 
   const defaultPadding =
