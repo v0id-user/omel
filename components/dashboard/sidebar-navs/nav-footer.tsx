@@ -74,7 +74,7 @@ export function SideNavFooter() {
               <DropdownMenuSeparator />
               {Object.entries(menuItems).map(([groupLabel, items]) => (
                 <div key={groupLabel}>
-                  <DropdownMenuGroup>
+                  <DropdownMenuGroup dir="rtl">
                     {items.map(({ icon: Icon, label }) => (
                       <DropdownMenuItem key={label} className="cursor-pointer">
                         <Icon />

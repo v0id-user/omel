@@ -233,7 +233,7 @@ export function DashboardDialog({
   const [isExpanded, setIsExpanded] = useState(false);
   const [position, setPosition] = useState({
     x: 20,
-    y: window?.innerHeight ? window.innerHeight - 200 : 400,
+    y: typeof window !== 'undefined' && window?.innerHeight ? window.innerHeight - 200 : 400,
   });
 
   const handleClose = () => {

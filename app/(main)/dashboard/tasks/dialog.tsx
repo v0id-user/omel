@@ -7,7 +7,7 @@ import { trpc } from '@/trpc/client';
 import toast from 'react-hot-toast';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarIcon, User, CheckCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, User, CheckCircle, Save } from 'lucide-react';
 import { formatGregorianDateArabic } from '@/components/ui/calendar';
 
 interface TaskDialogProps {
@@ -155,7 +155,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               isLoading={createTask.isPending}
               className="flex items-center gap-1 px-4"
             >
-              حفظ
+              حفظ <Save className="w-4 h-4" />
             </OButton>
           </div>
         </div>
