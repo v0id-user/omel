@@ -230,9 +230,9 @@ function FullDialog({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.98, opacity: 0 }}
             transition={{ duration: 0.08 }}
-            className="bg-white rounded-lg shadow-xl border border-gray-100 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
+            className="bg-white rounded-xl shadow-xl border border-gray-100 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden p-0.5"
           >
-            <div className="flex items-center justify-between border-b border-gray-200 p-4">
+            <div className="bg-[F0F1F1] flex items-center justify-between rounded-t-xl border border-gray-200 py-1.5 px-2.5">
               <h2 className="font-semibold text-lg">{title}</h2>
               <DialogHeaderButtons
                 minimizable={minimizable}
@@ -241,7 +241,9 @@ function FullDialog({
                 onClose={handleClose}
               />
             </div>
-            <div className="overflow-y-auto p-4 flex-1">{children}</div>
+            <div className="overflow-y-auto p-4 flex-1 border-x border-b border-gray-200 rounded-b-xl">
+              {children}
+            </div>
           </motion.div>
         </motion.div>
       )}
