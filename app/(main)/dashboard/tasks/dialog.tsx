@@ -74,8 +74,10 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
           {/* Date Picker */}
           <Popover>
             <PopoverTrigger className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md hover:bg-gray-100">
-              <CalendarIcon className="h-4 w-4" />
-              <span>{dueDate ? formatGregorianDateArabic(dueDate) : 'تاريخ الاستحقاق'}</span>
+              <CalendarIcon className={`h-4 w-4 ${!dueDate ? 'text-gray-500' : ''}`} />
+              <span className={!dueDate ? 'text-gray-500' : ''}>
+                {dueDate ? formatGregorianDateArabic(dueDate) : 'تاريخ الاستحقاق'}
+              </span>
             </PopoverTrigger>
             <PopoverContent className="p-0 z-[70]" align="start">
               <Calendar
@@ -90,14 +92,14 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
           {/* Assigned To */}
           <Popover>
             <PopoverTrigger className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-md hover:bg-gray-100">
-              <User className="h-4 w-4" />
+              <User className={`h-4 w-4 ${!assignedUser ? 'text-gray-500' : ''}`} />
               {assignedUser ? (
                 <span>
                   <span className="text-gray-500">تعيين إلى:</span>{' '}
                   <span className="text-primary font-medium">{assignedUser.name}</span>
                 </span>
               ) : (
-                <span>تعيين إلى</span>
+                <span className="text-gray-500">تعيين إلى</span>
               )}
             </PopoverTrigger>
             <PopoverContent className="p-2 z-[70]" align="start">
