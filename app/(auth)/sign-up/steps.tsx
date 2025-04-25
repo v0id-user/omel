@@ -16,6 +16,7 @@ import { trpc } from '@/trpc/client';
 import { TRPCClientError } from '@trpc/client';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/betterauth/auth-client';
+import { z } from 'zod';
 
 function useProcessForm() {
   const router = useRouter();
@@ -114,14 +115,13 @@ function useProcessForm() {
         }
 
         // Website is optional, but if provided, validate it
-        if (
-          userInfo.companyInfo.website &&
-          !userInfo.companyInfo.website.match(
-            /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
-          )
-        ) {
-          toast.error('الموقع الإلكتروني غير صالح');
-          return false;
+        if (userInfo.companyInfo.website) {
+          const websiteSchema = z.string().url().optional();
+          const result = websiteSchema.safeParse(userInfo.companyInfo.website);
+          if (!result.success) {
+            toast.error('الموقع الإلكتروني غير صالح');
+            return false;
+          }
         }
 
         return true;
