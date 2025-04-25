@@ -51,9 +51,13 @@ export function DashboardContent({
             />
           </div>
         )}
-        <OButton onClick={onCtaClick} className="mr-auto text-xs py-1.5 px-2" variant="secondary">
-          {ctaIcon}
+        <OButton
+          onClick={onCtaClick}
+          className="flex items-center gap-1 mr-auto text-xs py-1.5 px-2"
+          variant="secondary"
+        >
           {ctaLabel}
+          {ctaIcon}
         </OButton>
       </div>
 
@@ -68,9 +72,13 @@ export function DashboardContent({
           />
           <h1 className="text-xl font-bold font-gray-500 mb-2">{title}</h1>
           <p className="text-gray-500 mb-4">{emptyState.text}</p>
-          <OButton onClick={onCtaClick} className="text-xs py-1.5 px-2" variant="secondary">
-            {ctaIcon}
+          <OButton
+            onClick={onCtaClick}
+            className="flex items-center gap-1 text-xs py-1.5 px-2"
+            variant="secondary"
+          >
             {ctaLabel}
+            {ctaIcon}
           </OButton>
         </div>
       ) : (

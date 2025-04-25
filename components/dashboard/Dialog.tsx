@@ -3,13 +3,77 @@ import { useEffect, useState } from 'react';
 import { Xmark, Minus, MultiWindow, WebWindow } from 'iconoir-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-interface DashboardDialogProps {
-  isOpen: boolean;
+// Shared Button Components
+interface DialogButtonProps {
+  onClick: () => void;
   title: string;
-  onClose?: () => void;
-  children?: React.ReactNode;
+  icon: React.ReactNode;
+}
+
+function DialogButton({ onClick, title, icon }: DialogButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-sm p-1 animate-all duration-300 cursor-pointer"
+      title={title}
+    >
+      {icon}
+    </button>
+  );
+}
+
+function CircularButton({ onClick, title, icon }: DialogButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-white text-gray-600 w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100"
+      title={title}
+    >
+      {icon}
+    </button>
+  );
+}
+
+// Shared Button Groups
+interface DialogHeaderButtonsProps {
   minimizable?: boolean;
-  icon?: React.ReactNode;
+  onMinimize: () => void;
+  onPin: () => void;
+  onClose: () => void;
+}
+
+function DialogHeaderButtons({
+  minimizable,
+  onMinimize,
+  onPin,
+  onClose,
+}: DialogHeaderButtonsProps) {
+  return (
+    <div className="flex items-center gap-2">
+      {minimizable && (
+        <DialogButton onClick={onMinimize} title="تصغير" icon={<Minus className="w-3 h-3" />} />
+      )}
+      <DialogButton onClick={onPin} title="تثبيت" icon={<MultiWindow className="w-3 h-3" />} />
+      <DialogButton onClick={onClose} title="إغلاق" icon={<Xmark className="w-3 h-3" />} />
+    </div>
+  );
+}
+
+function CircularActionButtons({ onPin, onClose }: { onPin: () => void; onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col gap-1 mb-1"
+    >
+      <CircularButton
+        onClick={onPin}
+        title="إلغاء التثبيت"
+        icon={<WebWindow className="w-3 h-3" />}
+      />
+      <CircularButton onClick={onClose} title="إغلاق" icon={<Xmark className="w-3 h-3" />} />
+    </motion.div>
+  );
 }
 
 // Helper function to get initials or icon
@@ -28,10 +92,10 @@ interface PinnedCircularViewProps {
   isExpanded: boolean;
   setIsExpanded: (expanded: boolean) => void;
   title: string;
-  children: React.ReactNode;
   togglePin: () => void;
   handleClose: () => void;
   icon?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 function PinnedCircularView({
@@ -40,10 +104,10 @@ function PinnedCircularView({
   isExpanded,
   setIsExpanded,
   title,
-  children,
   togglePin,
   handleClose,
   icon,
+  children,
 }: PinnedCircularViewProps) {
   const getExpandedPosition = () => {
     let positionClasses = 'right-full bottom-0 mb-0 mr-2';
@@ -70,7 +134,11 @@ function PinnedCircularView({
           >
             <div className="flex justify-between items-center mb-2 border-b pb-2">
               <h3 className="font-medium text-sm">{title}</h3>
-              <Xmark className="w-3 h-3 cursor-pointer" onClick={() => setIsExpanded(false)} />
+              <DialogButton
+                onClick={() => setIsExpanded(false)}
+                title="إغلاق"
+                icon={<Minus className="w-3 h-3" />}
+              />
             </div>
             <div className="text-sm">{children}</div>
           </motion.div>
@@ -78,26 +146,7 @@ function PinnedCircularView({
       </AnimatePresence>
 
       <div className="relative flex flex-col gap-1 items-end">
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col gap-1 mb-1"
-        >
-          <button
-            onClick={togglePin}
-            className="bg-white text-gray-600 w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100"
-            title="إلغاء التثبيت"
-          >
-            <WebWindow className="w-3 h-3" />
-          </button>
-          <button
-            onClick={handleClose}
-            className="bg-white text-gray-600 w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100"
-            title="إغلاق"
-          >
-            <Xmark className="w-3 h-3" />
-          </button>
-        </motion.div>
+        <CircularActionButtons onPin={togglePin} onClose={handleClose} />
 
         <motion.div
           drag
@@ -144,21 +193,21 @@ function MinimizedBar({ title, setIsMinimized }: MinimizedBarProps) {
 interface FullDialogProps {
   isOpen: boolean;
   title: string;
-  children: React.ReactNode;
   handleClose: () => void;
   minimizable: boolean;
   setIsMinimized: (minimized: boolean) => void;
   togglePin: () => void;
+  children: React.ReactNode;
 }
 
 function FullDialog({
   isOpen,
   title,
-  children,
   handleClose,
   minimizable,
   setIsMinimized,
   togglePin,
+  children,
 }: FullDialogProps) {
   return (
     <AnimatePresence>
@@ -167,7 +216,7 @@ function FullDialog({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.1 }}
           className="fixed inset-0 flex items-center justify-center z-[60] p-4"
           dir="rtl"
           onClick={e => {
@@ -177,39 +226,20 @@ function FullDialog({
           }}
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
+            initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            exit={{ scale: 0.98, opacity: 0 }}
+            transition={{ duration: 0.08 }}
             className="bg-white rounded-lg shadow-xl border border-gray-100 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
           >
             <div className="flex items-center justify-between border-b border-gray-200 p-4">
               <h2 className="font-semibold text-lg">{title}</h2>
-              <div className="flex items-center gap-2">
-                {minimizable && (
-                  <button
-                    onClick={() => setIsMinimized(true)}
-                    className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-sm p-0.5 animate-all duration-300 cursor-pointer"
-                    title="تصغير"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                )}
-                <button
-                  onClick={togglePin}
-                  className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-sm p-0.5 animate-all duration-300 cursor-pointer"
-                  title="تثبيت"
-                >
-                  <MultiWindow className="w-3 h-3" />
-                </button>
-                <button
-                  onClick={handleClose}
-                  className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-sm p-0.5 animate-all duration-300 cursor-pointer"
-                  title="إغلاق"
-                >
-                  <Xmark className="w-3 h-3" />
-                </button>
-              </div>
+              <DialogHeaderButtons
+                minimizable={minimizable}
+                onMinimize={() => setIsMinimized(true)}
+                onPin={togglePin}
+                onClose={handleClose}
+              />
             </div>
             <div className="overflow-y-auto p-4 flex-1">{children}</div>
           </motion.div>
@@ -220,6 +250,15 @@ function FullDialog({
 }
 
 // Main DashboardDialog Component
+interface DashboardDialogProps {
+  isOpen: boolean;
+  title: string;
+  onClose?: () => void;
+  children?: React.ReactNode;
+  minimizable?: boolean;
+  icon?: React.ReactNode;
+}
+
 export function DashboardDialog({
   isOpen,
   title,

@@ -151,11 +151,13 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
 
           <div className="flex items-center">
             <OButton
+              variant="secondary"
               type="submit"
               isLoading={createTask.isPending}
               className="flex items-center gap-1 px-4"
             >
-              حفظ <Save className="w-4 h-4" />
+              حفظ
+              <Save className="w-4 h-4" />
             </OButton>
           </div>
         </div>
