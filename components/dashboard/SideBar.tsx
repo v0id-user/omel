@@ -5,15 +5,20 @@ import { SideNavFooter } from './sidebar-navs/nav-footer';
 import { SideNavHeader } from './sidebar-navs/nav-header';
 
 interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  isAdmin?: boolean;
+  organizationName: string;
+  user: {
+    name: string;
+    email: string;
+    avatar: string;
+    userId: string;
+  };
 }
 
-export function DashboardSidebar({ isAdmin, ...props }: DashboardSidebarProps) {
+export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" className="text-muted-foreground" {...props}>
       {/* Sidebar Header */}
-      <SideNavHeader />
-      {isAdmin ?? ' '}
+      <SideNavHeader organizationName={props.organizationName} />
 
       {/* Main Menu */}
       <SidebarContent>
@@ -21,7 +26,7 @@ export function DashboardSidebar({ isAdmin, ...props }: DashboardSidebarProps) {
       </SidebarContent>
 
       {/* User Dropdown Menu */}
-      <SideNavFooter />
+      <SideNavFooter user={props.user} />
     </Sidebar>
   );
 }

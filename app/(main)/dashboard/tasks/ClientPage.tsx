@@ -4,14 +4,7 @@ import { DashboardContent } from '@/components/dashboard';
 import { MultiplePagesPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { TaskDialog } from './dialog';
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  priority: string;
-}
+import { Task } from '@/database/types/task';
 
 export default function TasksPage() {
   // Placeholder for future task management logic

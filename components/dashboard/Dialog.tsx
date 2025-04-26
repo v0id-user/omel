@@ -197,6 +197,7 @@ function MinimizedBar({ title, setIsMinimized }: MinimizedBarProps) {
 interface FullDialogProps {
   isOpen: boolean;
   title: string;
+  icon?: React.ReactNode;
   handleClose: () => void;
   minimizable: boolean;
   pinnable: boolean;
@@ -207,6 +208,7 @@ interface FullDialogProps {
 function FullDialog({
   isOpen,
   title,
+  icon,
   pinnable,
   handleClose,
   minimizable,
@@ -238,7 +240,10 @@ function FullDialog({
             className="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden p-1"
           >
             <div className="bg-[F0F1F1] flex items-center justify-between rounded-t-xl border border-gray-200 pt-3 pb-2 px-4">
-              <h2 className="font-medium text-sm">{title}</h2>
+              <div className="flex items-center justify-center gap-2">
+                {icon}
+                <h2 className="font-medium text-sm">{title}</h2>
+              </div>
               <DialogHeaderButtons
                 minimizable={minimizable}
                 pinnable={pinnable}
@@ -337,6 +342,7 @@ export function DashboardDialog({
   return (
     <FullDialog
       isOpen={isOpen}
+      icon={icon}
       title={title}
       handleClose={handleClose}
       minimizable={minimizable}

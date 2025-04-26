@@ -1,11 +1,10 @@
 import { tasks } from '@/database/schemas/app-schema';
 
+// Base task type from database schema
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
 
-// For creating a new task, we can omit auto-generated fields
-export type CreateTask = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
-
+// Task status options
 export const TASK_STATUSES = [
   'pending', // created, not started
   'in_progress', // actively being worked on
@@ -14,4 +13,32 @@ export const TASK_STATUSES = [
   'cancelled', // no longer going to be done
 ] as const;
 
+const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+
 export type TaskStatus = (typeof TASK_STATUSES)[number];
+export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+
+// Form schemas for task operations
+export type TaskFormData = {
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate?: Date;
+  assigneeId?: string;
+};
+
+export type TaskUpdateFormData = Partial<TaskFormData>;
+
+// Database operation types
+export type CreateTaskInput = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateTaskInput = Partial<CreateTaskInput>;
+
+// Query filters
+export type TaskFilters = {
+  status?: TaskStatus;
+  assigneeId?: string;
+  priority?: TaskPriority;
+  dueBefore?: Date;
+  dueAfter?: Date;
+};

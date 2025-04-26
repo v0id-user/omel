@@ -2,7 +2,7 @@ import { db } from '@/database/db';
 import { members, organizations } from '@/database/schema';
 import { eq } from 'drizzle-orm';
 
-export async function getOrganization(userID: string) {
+export async function getFirstOrganizationByUserId(userID: string) {
   const orgs = await db
     .select()
     .from(members)
@@ -18,4 +18,14 @@ export async function getOrganization(userID: string) {
   }
 
   return orgs[0].organizations;
+}
+
+export async function getOrganizationById(organizationId: string) {
+  const org = (
+    await db.select().from(organizations).where(eq(organizations.id, organizationId))
+  )[0];
+  if (!org) {
+    throw new Error('Organization not found');
+  }
+  return org;
 }

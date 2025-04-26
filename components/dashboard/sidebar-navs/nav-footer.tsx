@@ -31,7 +31,15 @@ const menuItems = {
   الخروج: [{ icon: LogOutIcon, label: 'تسجيل الخروج' }],
 };
 
-export function SideNavFooter() {
+interface SideNavFooterProps {
+  user: {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}
+
+export function SideNavFooter({ user }: SideNavFooterProps) {
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -43,12 +51,12 @@ export function SideNavFooter() {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
               >
                 <Avatar className="h-8 w-8 rounded-lg grayscale">
-                  <AvatarImage src="/placeholder-avatar.jpg" alt="المستخدم" />
-                  <AvatarFallback className="rounded-lg">م</AvatarFallback>
+                  <AvatarImage src={user.avatar} alt="المستخدم" />
+                  <AvatarFallback className="rounded-lg">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-right text-sm leading-tight">
-                  <span className="truncate font-medium">مستخدم تجريبي</span>
-                  <span className="truncate text-xs text-muted-foreground">user@example.com</span>
+                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                 </div>
                 <MoreVerticalIcon className="mr-auto size-4" />
               </SidebarMenuButton>
@@ -62,12 +70,12 @@ export function SideNavFooter() {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="/placeholder-avatar.jpg" alt="المستخدم" />
-                    <AvatarFallback className="rounded-lg">م</AvatarFallback>
+                    <AvatarImage src={user.avatar} alt="المستخدم" />
+                    <AvatarFallback className="rounded-lg">{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-right text-sm leading-tight">
-                    <span className="truncate font-medium">مستخدم تجريبي</span>
-                    <span className="truncate text-xs text-muted-foreground">user@example.com</span>
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>

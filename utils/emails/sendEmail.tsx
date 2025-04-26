@@ -10,7 +10,7 @@ async function sendWelcomeEmail(to: string) {
     logger.info('Sending welcome email', { to });
 
     // Render the React component to HTML string
-    const htmlContent = renderReactEmail(<WelcomeEmail recipientEmail={to} />);
+    const htmlContent = await renderReactEmail(<WelcomeEmail recipientEmail={to} />);
 
     const { data, error } = await resend.emails.send({
       from: 'Omel <hello@omel.im>',

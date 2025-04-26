@@ -2,7 +2,7 @@ import { text, timestamp } from 'drizzle-orm/pg-core';
 import { pgTable } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { users, organizations } from '@/database/schemas/auth-schema';
-import { TaskStatus } from '@/database/types/task';
+import { TaskPriority, TaskStatus } from '@/database/types/task';
 export const contacts = pgTable('contacts', {
   id: text('id').primaryKey().default(createId()),
   name: text('name').notNull(),
@@ -46,6 +46,7 @@ export const tasks = pgTable('tasks', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   dueDate: timestamp('due_date'),
   status: text('status').$type<TaskStatus>().notNull().default('pending'),
+  priority: text('priority').$type<TaskPriority>().notNull().default('low'),
   assignedTo: text('assigned_to')
     .notNull()
     .references(() => users.id),

@@ -50,6 +50,13 @@
       "when": 1745456236235,
       "tag": "0006_high_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745707294911,
+      "tag": "0007_chemical_blade",
+      "breakpoints": true
     }
   ]
 }

@@ -10,14 +10,18 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
-export function CompanyName() {
+interface CompanyNameProps {
+  organizationName: string;
+}
+
+export function CompanyName({ organizationName }: CompanyNameProps) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5 text-gray-600">
           <Link href="/dashboard" prefetch={true}>
             <ArrowUpCircleIcon className="h-5 w-5" />
-            <span className="text-base font-semibold">شركة أكمي</span>
+            <span className="text-base font-semibold">{organizationName}</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -48,11 +52,14 @@ export function QuickAction() {
     </SidebarMenu>
   );
 }
+interface SideNavHeaderProps {
+  organizationName: string;
+}
 
-export function SideNavHeader() {
+export function SideNavHeader({ organizationName }: SideNavHeaderProps) {
   return (
     <SidebarHeader>
-      <CompanyName />
+      <CompanyName organizationName={organizationName} />
       <QuickAction />
     </SidebarHeader>
   );
