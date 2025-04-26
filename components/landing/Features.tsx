@@ -6,31 +6,37 @@ const featuresList = [
     icon: <Users className="h-6 w-6" />,
     title: 'إدارة العملاء',
     description: 'تتبع معلومات وتفاعلات العملاء في مكان واحد مع تصنيف ذكي وتقارير مفصلة',
+    className: 'md:col-span-2 lg:col-span-2',
   },
   {
     icon: <BarChart className="h-6 w-6" />,
     title: 'تحليل المبيعات',
     description: 'رؤية شاملة لأداء المبيعات مع تقارير تفاعلية وإحصائيات دقيقة',
+    className: 'md:col-span-1 lg:col-span-1',
   },
   {
     icon: <MessageSquare className="h-6 w-6" />,
     title: 'تواصل متكامل',
     description: 'التواصل مع العملاء عبر قنوات متعددة من منصة واحدة',
+    className: 'md:col-span-1 lg:col-span-1',
   },
   {
     icon: <Calendar className="h-6 w-6" />,
     title: 'جدولة المهام',
     description: 'تنظيم المواعيد والمهام بكفاءة مع تذكيرات آلية',
+    className: 'md:col-span-1 lg:col-span-1',
   },
   {
     icon: <Mail className="h-6 w-6" />,
     title: 'حملات تسويقية',
     description: 'إنشاء وإدارة حملات البريد الإلكتروني مع تتبع النتائج',
+    className: 'md:col-span-1 lg:col-span-2',
   },
   {
     icon: <PieChart className="h-6 w-6" />,
     title: 'لوحة تحكم ذكية',
     description: 'رؤية شاملة لجميع أنشطة الأعمال مع تقارير قابلة للتخصيص',
+    className: 'md:col-span-2 lg:col-span-1',
   },
 ];
 
@@ -74,16 +80,19 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {featuresList.map((feature, index) => (
             <div
               key={index}
-              className={`p-6 rounded-xl border border-border bg-white transition-all duration-500 ease-out ${
+              className={`p-6 rounded-xl border border-border bg-white transition-all duration-500 ease-out ${feature.className} ${
                 visibleItems.includes(index)
                   ? 'translate-y-0 opacity-100'
                   : 'translate-y-8 opacity-0'
               }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+              style={{
+                transitionDelay: `${index * 100}ms`,
+                minHeight: index === 0 ? '220px' : '180px',
+              }}
             >
               <div className="bg-primary/5 text-primary p-3 inline-block rounded-lg mb-4">
                 {feature.icon}

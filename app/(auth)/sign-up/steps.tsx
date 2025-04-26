@@ -8,7 +8,7 @@ import {
   NameFields,
   PhoneField,
   CompanyFields,
-} from '../../../components/auth/form-inputs';
+} from '@/components/auth/form-inputs';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { toast } from 'react-hot-toast';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
