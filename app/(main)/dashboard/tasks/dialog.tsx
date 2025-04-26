@@ -9,6 +9,9 @@ import { Calendar as CalendarIcon, AtSignCircle, MultiplePagesPlus } from 'icono
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
 import { Switch } from '@/components/omel/Switch';
+import { CreateTaskInput } from '@/database/types/task';
+import { useUserInfoStore } from '@/store/persist/userInfo';
+
 interface TaskDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,6 +22,9 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
   const [assignedUser, setAssignedUser] = useState<{ id: string; name: string } | null>(null);
   const [moreTasks, setMoreTasks] = useState<boolean>(false);
+  const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
+  const userInfo = useUserInfoStore();
+
   const createTask = trpc.crm.dashboard.task.new.useMutation({
     onSuccess: () => {
       toast.success('تم إنشاء المهمة بنجاح');
@@ -31,6 +37,10 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     onError: err => toast.error(err.message || 'حدث خطأ'),
   });
 
+  const appendTask = (task: CreateTaskInput) => {
+    setTasks(prev => [...prev, task]);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
@@ -38,20 +48,30 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
 
     const description = (data.get('description') as string) ?? '';
 
-    createTask.mutate([
-      {
-        name: description.slice(0, 100) || 'مهمة جديدة',
-        description,
-        organizationId: 'org1',
-        dueDate: dueDate || null,
-        assignedTo: assignedUser?.id || '',
-        status: 'pending',
-        category: null,
-        priority: 'low',
-        createdBy: '',
-        updatedBy: '',
-      },
-    ]);
+    const user = userInfo.getUserInfo();
+
+    if (!user) {
+      toast.error('حدث خطأ');
+      return;
+    }
+
+    const task: CreateTaskInput = {
+      name: description.slice(0, 100) || 'مهمة جديدة',
+      description,
+      organizationId: 'org1',
+      dueDate: dueDate || null,
+      assignedTo: assignedUser?.id || '',
+      status: 'pending',
+      category: null,
+      priority: 'low',
+      createdBy: user.userId,
+      updatedBy: '', // It's not updated yet
+    };
+
+    appendTask(task);
+    if (!moreTasks) {
+      createTask.mutate(tasks);
+    }
   };
 
   return (
