@@ -18,7 +18,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const utils = trpc.useUtils();
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
   const [assignedUser, setAssignedUser] = useState<{ id: string; name: string } | null>(null);
-
+  const [moreTasks, setMoreTasks] = useState<boolean>(false);
   const createTask = trpc.crm.dashboard.task.new.useMutation({
     onSuccess: () => {
       toast.success('تم إنشاء المهمة بنجاح');
@@ -38,13 +38,20 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
 
     const description = (data.get('description') as string) ?? '';
 
-    createTask.mutate({
-      name: description.slice(0, 100) || 'مهمة جديدة',
-      description,
-      organizationId: 'org1',
-      ...(dueDate && { dueDate }),
-      ...(assignedUser?.id && { assignedTo: assignedUser.id }),
-    });
+    createTask.mutate([
+      {
+        name: description.slice(0, 100) || 'مهمة جديدة',
+        description,
+        organizationId: 'org1',
+        dueDate: dueDate || null,
+        assignedTo: assignedUser?.id || '',
+        status: 'pending',
+        category: null,
+        priority: 'low',
+        createdBy: '',
+        updatedBy: '',
+      },
+    ]);
   };
 
   return (
@@ -149,9 +156,10 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
             </Popover>
           </div>
           <div className="flex items-center gap-4">
-            {/* Add mroe */}
+            {/* Add more */}
             <Switch
-              checked
+              checked={moreTasks}
+              onChange={() => setMoreTasks(!moreTasks)}
               label="اصنع المزيد"
               labelClassName="text-sm text-gray-500 font-medium"
             />
