@@ -11,7 +11,7 @@ import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
 import { Switch } from '@/components/omel/Switch';
 import { CreateTaskInput } from '@/database/types/task';
 import { useUserInfoStore } from '@/store/persist/userInfo';
-
+import { useRouter } from 'next/navigation';
 interface TaskDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,6 +24,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const [moreTasks, setMoreTasks] = useState<boolean>(false);
   const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
   const userInfo = useUserInfoStore();
+  const router = useRouter();
 
   const createTask = trpc.crm.dashboard.task.new.useMutation({
     onSuccess: () => {
@@ -52,6 +53,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
 
     if (!user) {
       toast.error('حدث خطأ');
+      router.push('/clock-in');
       return;
     }
 
