@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth/userInfo';
 import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
-
+import { authClient } from '@/lib/betterauth/auth-client';
 export default function SignInClientPage() {
   const { userInfo, formState, formStep, setFormState, setFormStep } = useAuthStore();
   const { validator, isLoading, setIsLoading } = useClientValidations();
@@ -46,6 +46,7 @@ export default function SignInClientPage() {
       });
       setIsLoading(false);
     } else {
+      setIsLoading(true);
       setFormState({
         buttonText: 'جاري تسجيل الدخول...',
       });
@@ -60,14 +61,16 @@ export default function SignInClientPage() {
         return;
       }
 
-      // TODO:
-      // Perform login logic with TRPC plz...?
+      const signInResponse = await authClient.signIn.email({
+        email: userInfo.email,
+        password: userInfo.password,
+      });
 
-      // TODO: Remove
-      return;
+      console.log('signInResponse', signInResponse);
+
       setTimeout(() => {
         toast.success('تم تسجيل الدخول بنجاح');
-        router.push('/dashboard');
+        router.push('/clock-in');
       }, 1000);
     }
   };

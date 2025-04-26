@@ -190,10 +190,10 @@ function useProcessForm() {
     };
 
     // Skip when needed just uncomment this, bad? yeah it need a UI debug, but working for now
-    // if (process.env.NEXT_PUBLIC_ENV === 'dev') {
-    //   setFormStep(formStep + 1);
-    //   return true;
-    // }
+    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+      setFormStep(formStep + 1);
+      return true;
+    }
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
     if (!canProcess) return;

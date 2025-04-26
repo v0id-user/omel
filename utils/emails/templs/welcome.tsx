@@ -12,7 +12,7 @@ import {
   Tailwind,
 } from '@react-email/components';
 
-const WelcomeEmail = (recipientEmail: string) => {
+const WelcomeEmail = ({ recipientEmail }: { recipientEmail: string }) => {
   const currentDate = new Date().toLocaleDateString('ar-SA', {
     year: 'numeric',
     month: 'long',
