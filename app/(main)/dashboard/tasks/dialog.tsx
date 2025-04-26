@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { CheckCircle, Save } from 'lucide-react';
 import { Calendar as CalendarIcon, AtSignCircle } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
 interface TaskDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -75,14 +75,14 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               >
                 <label className="flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4" />
-                  اليوم
+                  {dueDate ? formatGregorianDateArabic(dueDate) : 'اليوم'}
                 </label>
               </PopoverTrigger>
               <PopoverContent
                 className="bg-transparent border-0 p-0 w-fit z-[999]"
                 align="end"
                 side="bottom"
-                sideOffset={10}
+                sideOffset={7}
                 sticky="always"
               >
                 <Calendar

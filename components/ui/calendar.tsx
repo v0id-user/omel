@@ -45,6 +45,18 @@ dayjs.updateLocale('ar', {
 
 // Format a date in Arabic
 export function formatGregorianDateArabic(date: Date): string {
+  const today = dayjs().startOf('day');
+  const tomorrow = dayjs().add(1, 'day').startOf('day');
+  const inputDate = dayjs(date).startOf('day');
+
+  if (inputDate.isSame(today)) {
+    return 'اليوم';
+  }
+
+  if (inputDate.isSame(tomorrow)) {
+    return 'غداً';
+  }
+
   return dayjs(date).format('D MMMM YYYY');
 }
 
