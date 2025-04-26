@@ -1,0 +1,53 @@
+'use client';
+
+import { DashboardContent } from '@/components/dashboard';
+import { MultiplePagesPlus } from 'iconoir-react';
+import { useState } from 'react';
+import { TaskDialog } from './dialog';
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  priority: string;
+}
+
+export default function TasksPage() {
+  // Placeholder for future task management logic
+  const tasks: Task[] = [];
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  return (
+    <DashboardContent
+      title="المهام"
+      emptyStateIcon="/icons/iso/add-circle.svg"
+      ctaLabel="مهمة جديدة"
+      ctaIcon={<MultiplePagesPlus className="w-4 h-4 ml-2" />}
+      onCtaClick={() => setDialogOpen(true)}
+      sortOptions={[
+        { value: 'dueDate', label: 'تاريخ الانتهاء' },
+        { value: 'priority', label: 'الأولوية' },
+        { value: 'status', label: 'الحالة' },
+      ]}
+      currentSort="dueDate"
+      onSortChange={value => {
+        // Placeholder for sort logic
+        console.log('Sort by:', value);
+      }}
+      emptyState={{
+        text: 'لا توجد مهام بعد! أنشئ مهمتك الأولى للبدء.',
+      }}
+      dialogs={<TaskDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
+    >
+      {tasks.length > 0 ? (
+        <div className="space-y-4">
+          {/* Placeholder for task list */}
+          {tasks.map(task => (
+            <div key={task.id}>Task item placeholder</div>
+          ))}
+        </div>
+      ) : null}
+    </DashboardContent>
+  );
+}
