@@ -12,6 +12,8 @@ import {
   formatResult,
 } from './steps';
 
+import { EmailTemplate, emailSend } from '@/trigger/emailSend';
+
 async function createNewCRM(input: NewCRMUserInfo) {
   console.log('Starting createNewCRM with input:', JSON.stringify(input, null, 2));
 
@@ -55,7 +57,21 @@ async function createNewCRM(input: NewCRMUserInfo) {
       );
 
       // Step 8: Format and return result
-      return formatResult(organization, proposedSlug, user.id, orgHeaders, signUpHeaders);
+      const formattedResult = formatResult(
+        organization,
+        proposedSlug,
+        user.id,
+        orgHeaders,
+        signUpHeaders
+      );
+
+      // Step 9: Send welcome email with trigger.dev
+      await emailSend.trigger({
+        email: user.email,
+        template: EmailTemplate.WELCOME,
+      });
+
+      return formattedResult;
     } catch (error) {
       console.error('Error after user creation, cleaning up:', error);
       try {
