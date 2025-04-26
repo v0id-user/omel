@@ -60,13 +60,13 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
           required
           name="description"
           placeholder="اكتب تفاصيل المهمة هنا..."
-          className="w-full pt-4 px-4 text-sm font-medium focus:outline-none focus:ring-0 focus:border-primary resize-none min-h-[32px]"
+          className="w-full pt-4 px-4 text-sm focus:outline-none focus:ring-0 focus:border-primary resize-none min-h-[32px]"
         />
 
         {/* Bottom Controls & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-2 border-t border-gray-200 bg-gray-300/20">
           {/* Inline Due Date & Assignee */}
-          <div className="flex items-center gap-6 text-sm text-gray-500 font-medium">
+          <div className="flex items-center gap-6 text-sm text-gray-500">
             {/* Due Date */}
             <Popover>
               <PopoverTrigger

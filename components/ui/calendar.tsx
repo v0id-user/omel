@@ -1,7 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronRight, ChevronLeft, Calendar as CalendarIcon } from 'lucide-react';
+import {
+  ChevronRight,
+  ChevronLeft,
+  Calendar as CalendarIcon,
+  Calendar1,
+  CalendarDays,
+  CalendarArrowUp,
+} from 'lucide-react';
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -187,6 +194,22 @@ export function Calendar({
     setCalendarDate(dayjs(today));
   };
 
+  // Quick navigation handlers
+  const handleGoToTomorrow = () => {
+    const tomorrow = dayjs(today).add(1, 'day').toDate();
+    onSelect?.(tomorrow);
+  };
+
+  const handleGoToNextWeek = () => {
+    const nextWeek = dayjs(today).add(1, 'week').toDate();
+    onSelect?.(nextWeek);
+  };
+
+  const handleGoToNextMonth = () => {
+    const nextMonth = dayjs(today).add(1, 'month').toDate();
+    onSelect?.(nextMonth);
+  };
+
   // Get calendar grid
   const days = getCalendarDays(currentYear, currentMonth);
 
@@ -197,49 +220,49 @@ export function Calendar({
   const monthName = calendarDate.format('MMMM');
 
   return (
-    <div className={cn('bg-white p-3 select-none', className)} dir="rtl" {...props}>
+    <div className={cn('bg-white p-2 select-none max-w-64', className)} dir="rtl" {...props}>
       {/* Calendar header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-medium">{`${monthName} ${currentYear}`}</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm font-medium">{`${monthName} ${currentYear}`}</div>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={handlePreviousMonth}
-            className="p-1.5 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="p-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             title="الشهر السابق"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             onClick={handleGoToToday}
-            className="p-1.5 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="p-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             title="اليوم"
           >
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             onClick={handleNextMonth}
-            className="p-1.5 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="p-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             title="الشهر التالي"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7 mb-0.5">
         {weekdaysMin.map(day => (
-          <div key={day} className="text-xs text-muted-foreground text-center py-1.5">
+          <div key={day} className="text-xs text-muted-foreground text-center py-1">
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar days */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0.5">
         {days.map((day, index) => {
           const isSelected = selectedDates.start && isSameDay(day.date, selectedDates.start);
           const isRangeEnd = selectedDates.end && isSameDay(day.date, selectedDates.end);
@@ -258,9 +281,14 @@ export function Calendar({
           const isToday = isSameDay(day.date, today);
           const isDisabled = disabled && disabled(day.date);
 
-          // The content of the cell
+          // For days not in current month, render empty cell
+          if (!day.isCurrentMonth) {
+            return <div key={index} className="h-7 w-7"></div>;
+          }
+
+          // The content of the cell for current month days
           const cellContent = (
-            <div className="h-9 w-9 flex items-center justify-center relative">
+            <div className="h-7 w-7 flex items-center justify-center relative">
               <button
                 type="button"
                 onClick={() => !isDisabled && handleSelectDate(day.date)}
@@ -268,8 +296,7 @@ export function Calendar({
                 onMouseLeave={() => mode === 'range' && setHoveredDate(null)}
                 disabled={isDisabled}
                 className={cn(
-                  'h-full w-full flex items-center justify-center rounded-md',
-                  !day.isCurrentMonth && 'text-muted-foreground opacity-50',
+                  'h-full w-full flex items-center justify-center rounded-md hover:bg-accent cursor-pointer',
                   isDisabled && 'text-muted-foreground opacity-50 cursor-not-allowed',
                   (isSelected || isRangeEnd) &&
                     'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
@@ -278,13 +305,18 @@ export function Calendar({
                 )}
               >
                 <div className="flex flex-col items-center">
-                  <span className="text-sm">{day.day}</span>
+                  <span className="text-xs">{day.day}</span>
                 </div>
               </button>
 
               {/* Today indicator dot */}
               {isToday && (
-                <div className="absolute bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full -translate-x-1/2"></div>
+                <div
+                  className={cn(
+                    'absolute bottom-0.5 left-1/2 w-1 h-1 rounded-full -translate-x-1/2',
+                    isSelected || isRangeEnd ? 'bg-primary-foreground' : 'bg-primary'
+                  )}
+                ></div>
               )}
             </div>
           );
@@ -294,8 +326,36 @@ export function Calendar({
         })}
       </div>
 
+      {/* Quick navigation buttons */}
+      <div className="mt-2 mb-4 flex justify-end gap-1.5 text-[0.6rem] font-medium cursor-pointer">
+        <button
+          type="button"
+          onClick={handleGoToTomorrow}
+          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+        >
+          <Calendar1 className="h-3 w-3" />
+          <span>غداً</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleGoToNextWeek}
+          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+        >
+          <CalendarDays className="h-3 w-3" />
+          <span>الأسبوع القادم</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleGoToNextMonth}
+          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+        >
+          <CalendarArrowUp className="h-3 w-3" />
+          <span>الشهر القادم</span>
+        </button>
+      </div>
+
       {/* Calendar type indicator */}
-      <div className="mt-2 text-xs text-center text-muted-foreground">التقويم الميلادي</div>
+      <div className="mt-1 text-xs text-center text-muted-foreground">التقويم الميلادي</div>
     </div>
   );
 }
