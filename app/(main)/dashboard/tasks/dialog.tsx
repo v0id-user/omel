@@ -9,6 +9,7 @@ import { CheckCircle, Save } from 'lucide-react';
 import { Calendar as CalendarIcon, AtSignCircle } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
+import { Switch } from '@/components/omel/Switch';
 interface TaskDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -60,20 +61,20 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
           required
           name="description"
           placeholder="اكتب تفاصيل المهمة هنا..."
-          className="w-full pt-4 px-4 text-sm focus:outline-none focus:ring-0 focus:border-primary resize-none min-h-[32px]"
+          className="w-full pt-4 px-4 text-sm font-medium focus:outline-none focus:ring-0 focus:border-primary resize-none min-h-[32px]"
         />
 
         {/* Bottom Controls & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-2 border-t border-gray-200 bg-gray-300/20">
           {/* Inline Due Date & Assignee */}
-          <div className="flex items-center gap-6 text-sm text-gray-500">
+          <div className="flex items-center gap-6 text-sm text-gray-500 font-medium">
             {/* Due Date */}
             <Popover>
               <PopoverTrigger
                 asChild
                 className="cursor-pointer py-1.5 px-2.5 rounded-md hover:bg-gray-200 transition-colors"
               >
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 font-medium">
                   <CalendarIcon className="h-4 w-4" />
                   {dueDate ? formatGregorianDateArabic(dueDate) : 'اليوم'}
                 </label>
@@ -102,7 +103,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                 asChild
                 className="cursor-pointer py-1.5 px-2.5 rounded-md hover:bg-gray-200 transition-colors"
               >
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 font-medium">
                   <AtSignCircle className="h-4 w-4" />
                   تعيين إلى
                 </label>
@@ -118,7 +119,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                 <div className="w-48">
                   <select
                     name="assignedTo"
-                    className="w-full border p-2 rounded text-sm focus:outline-none"
+                    className="w-full border p-2 rounded text-sm focus:outline-none font-medium"
                     value={assignedUser?.id || ''}
                     onChange={e => {
                       const selectedId = e.target.value;
@@ -148,17 +149,25 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               </PopoverContent>
             </Popover>
           </div>
+          <div className="flex items-center gap-4">
+            {/* Add mroe */}
+            <Switch
+              checked
+              label="اصنع المزيد"
+              labelClassName="text-sm text-gray-500 font-medium"
+            />
 
-          {/* Save Button */}
-          <OButton
-            variant="secondary"
-            type="submit"
-            isLoading={createTask.isPending}
-            className="flex items-center gap-1 px-4 text-sm"
-          >
-            حفظ
-            <Save className="w-4 h-4" />
-          </OButton>
+            {/* Save Button */}
+            <OButton
+              variant="secondary"
+              type="submit"
+              isLoading={createTask.isPending}
+              className="flex items-center gap-1 px-4 font-medium text-sm"
+            >
+              حفظ
+              <Save className="w-4 h-4" />
+            </OButton>
+          </div>
         </div>
       </form>
     </DashboardDialog>

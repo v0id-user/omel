@@ -222,7 +222,7 @@ function FullDialog({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
-          className="fixed inset-0 flex items-start justify-center z-[60] p-4 mt-24"
+          className="fixed inset-0 flex items-start justify-center z-[60] p-4 mt-36"
           dir="rtl"
           onClick={e => {
             if (e.target === e.currentTarget) {
@@ -235,7 +235,7 @@ function FullDialog({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.98, opacity: 0 }}
             transition={{ duration: 0.08 }}
-            className="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden p-1"
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden p-1"
           >
             <div className="bg-[F0F1F1] flex items-center justify-between rounded-t-xl border border-gray-200 pt-3 pb-2 px-4">
               <h2 className="font-medium text-sm">{title}</h2>
