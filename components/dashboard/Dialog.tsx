@@ -37,6 +37,7 @@ function CircularButton({ onClick, title, icon }: DialogButtonProps) {
 // Shared Button Groups
 interface DialogHeaderButtonsProps {
   minimizable?: boolean;
+  pinnable?: boolean;
   onMinimize: () => void;
   onPin: () => void;
   onClose: () => void;
@@ -44,6 +45,7 @@ interface DialogHeaderButtonsProps {
 
 function DialogHeaderButtons({
   minimizable,
+  pinnable,
   onMinimize,
   onPin,
   onClose,
@@ -53,7 +55,9 @@ function DialogHeaderButtons({
       {minimizable && (
         <DialogButton onClick={onMinimize} title="تصغير" icon={<Minus className="w-3 h-3" />} />
       )}
-      <DialogButton onClick={onPin} title="تثبيت" icon={<MultiWindow className="w-3 h-3" />} />
+      {pinnable && (
+        <DialogButton onClick={onPin} title="تثبيت" icon={<MultiWindow className="w-3 h-3" />} />
+      )}
       <DialogButton onClick={onClose} title="إغلاق" icon={<Xmark className="w-3 h-3" />} />
     </div>
   );
@@ -195,6 +199,7 @@ interface FullDialogProps {
   title: string;
   handleClose: () => void;
   minimizable: boolean;
+  pinnable: boolean;
   setIsMinimized: (minimized: boolean) => void;
   togglePin: () => void;
   children: React.ReactNode;
@@ -202,6 +207,7 @@ interface FullDialogProps {
 function FullDialog({
   isOpen,
   title,
+  pinnable,
   handleClose,
   minimizable,
   setIsMinimized,
@@ -216,7 +222,7 @@ function FullDialog({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
-          className="fixed inset-0 flex items-center justify-center z-[60] p-4"
+          className="fixed inset-0 flex items-start justify-center z-[60] p-4 mt-24"
           dir="rtl"
           onClick={e => {
             if (e.target === e.currentTarget) {
@@ -235,6 +241,7 @@ function FullDialog({
               <h2 className="font-medium text-sm">{title}</h2>
               <DialogHeaderButtons
                 minimizable={minimizable}
+                pinnable={pinnable}
                 onMinimize={() => setIsMinimized(true)}
                 onPin={togglePin}
                 onClose={handleClose}
@@ -257,6 +264,7 @@ interface DashboardDialogProps {
   onClose?: () => void;
   children?: React.ReactNode;
   minimizable?: boolean;
+  pinnable?: boolean;
   icon?: React.ReactNode;
 }
 
@@ -266,6 +274,7 @@ export function DashboardDialog({
   onClose,
   children,
   minimizable = false,
+  pinnable = false,
   icon,
 }: DashboardDialogProps) {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -331,6 +340,7 @@ export function DashboardDialog({
       title={title}
       handleClose={handleClose}
       minimizable={minimizable}
+      pinnable={pinnable}
       setIsMinimized={setIsMinimized}
       togglePin={togglePin}
     >

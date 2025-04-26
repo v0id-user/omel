@@ -197,7 +197,7 @@ export function Calendar({
   const monthName = calendarDate.format('MMMM');
 
   return (
-    <div className={cn('p-3 select-none', className)} dir="rtl" {...props}>
+    <div className={cn('bg-white p-3 select-none', className)} dir="rtl" {...props}>
       {/* Calendar header */}
       <div className="flex items-center justify-between mb-4">
         <div className="text-base font-medium">{`${monthName} ${currentYear}`}</div>
