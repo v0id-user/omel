@@ -191,7 +191,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               variant="ghost"
               type="submit"
               isLoading={createTask.isPending}
-              className="flex items-center gap-2 px-4 font-medium text-sm"
+              className="flex items-center gap-2 px-2 font-medium text-sm"
             >
               الغاء
               <kbd className="px-2 py-1 text-[11px] font-light text-gray-800 bg-transparent border border-gray-200 rounded-lg min-w-[24px] h-6 flex items-center justify-center">

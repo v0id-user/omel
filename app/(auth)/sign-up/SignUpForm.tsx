@@ -70,7 +70,7 @@ export default function SignUpForm() {
           بإدخال بريدك الإلكتروني، فإنك توافق على تواصل أوميل معك بخصوص منتجاتنا وخدماتنا. يمكنك
           إلغاء الاشتراك في أي وقت بالنقر على إلغاء الاشتراك في رسائلنا الإلكترونية. اعرف المزيد حول
           كيفية استخدامنا للبيانات في{' '}
-          <Link href="/privacy-policy" className="underline">
+          <Link href="/legal/privacy" className="underline">
             سياسة الخصوصية
           </Link>
           .
