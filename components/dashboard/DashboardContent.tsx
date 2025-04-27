@@ -69,6 +69,7 @@ export function DashboardContent({
             className="mb-4 opacity-50"
             width={100}
             height={100}
+            priority
           />
           <h1 className="text-xl font-bold font-gray-500 mb-2">{title}</h1>
           <p className="text-gray-500 mb-4">{emptyState.text}</p>

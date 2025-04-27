@@ -3,6 +3,7 @@ import { pgTable } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { users, organizations } from '@/database/schemas/auth-schema';
 import { TaskPriority, TaskStatus } from '@/database/types/task';
+
 export const contacts = pgTable('contacts', {
   id: text('id').primaryKey().default(createId()),
   name: text('name').notNull(),

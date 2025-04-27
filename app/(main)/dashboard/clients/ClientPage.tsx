@@ -1,43 +1,43 @@
 'use client';
 
 import { DashboardContent } from '@/components/dashboard';
-import { MultiplePagesPlus } from 'iconoir-react';
+import { UserPlus } from 'iconoir-react';
 import { useState } from 'react';
-import { TaskDialog } from './dialog';
+import { AddClientsDialog } from './dialog';
 import { Task } from '@/database/types/task';
 
-export default function TasksPage() {
+export default function ClientsPage() {
   // Placeholder for future task management logic
   const tasks: Task[] = [];
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   return (
     <DashboardContent
-      title="المهام"
-      emptyStateIcon="/icons/iso/add-circle.svg"
-      ctaLabel="مهمة جديدة"
-      ctaIcon={<MultiplePagesPlus className="w-4 h-4 ml-2" />}
+      title="العملاء"
+      emptyStateIcon="/icons/iso/add-group.svg"
+      ctaLabel="عميل جديد"
+      ctaIcon={<UserPlus className="w-4 h-4 ml-2" />}
       onCtaClick={() => setDialogOpen(true)}
       sortOptions={[
-        { value: 'dueDate', label: 'تاريخ الانتهاء' },
-        { value: 'priority', label: 'الأولوية' },
-        { value: 'status', label: 'الحالة' },
+        { value: 'name', label: 'الاسم' },
+        { value: 'email', label: 'البريد الإلكتروني' },
+        { value: 'phone', label: 'الهاتف' },
       ]}
-      currentSort="dueDate"
+      currentSort="name"
       onSortChange={value => {
         // Placeholder for sort logic
         console.log('Sort by:', value);
       }}
       emptyState={{
-        text: 'لا توجد مهام بعد! أنشئ مهمتك الأولى للبدء.',
+        text: 'لايوجد عملاء بعد! أنشئ عميلك الأول للبدء.',
       }}
-      dialogs={<TaskDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
+      dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
       {tasks.length > 0 ? (
         <div className="space-y-4">
-          {/* Placeholder for task list */}
+          {/* Placeholder for contact list */}
           {tasks.map(task => (
-            // TODO: Make cards
+            // Make cards
             <div key={task.id}>Task item placeholder</div>
           ))}
         </div>

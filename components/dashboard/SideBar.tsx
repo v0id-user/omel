@@ -14,11 +14,11 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
   };
 }
 
-export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
+export function DashboardSidebar({ organizationName, user, ...props }: DashboardSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" className="text-muted-foreground" {...props}>
       {/* Sidebar Header */}
-      <SideNavHeader organizationName={props.organizationName} />
+      <SideNavHeader organizationName={organizationName} />
 
       {/* Main Menu */}
       <SidebarContent>
@@ -26,7 +26,7 @@ export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
       </SidebarContent>
 
       {/* User Dropdown Menu */}
-      <SideNavFooter user={props.user} />
+      <SideNavFooter user={user} />
     </Sidebar>
   );
 }
