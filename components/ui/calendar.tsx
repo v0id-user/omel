@@ -47,6 +47,8 @@ dayjs.updateLocale('ar', {
 export function formatGregorianDateArabic(date: Date): string {
   const today = dayjs().startOf('day');
   const tomorrow = dayjs().add(1, 'day').startOf('day');
+  const nextWeek = dayjs().add(1, 'week').startOf('day');
+  const nextMonth = dayjs().add(1, 'month').startOf('day');
   const inputDate = dayjs(date).startOf('day');
 
   if (inputDate.isSame(today)) {
@@ -55,6 +57,14 @@ export function formatGregorianDateArabic(date: Date): string {
 
   if (inputDate.isSame(tomorrow)) {
     return 'غداً';
+  }
+
+  if (inputDate.isSame(nextWeek)) {
+    return 'الأسبوع القادم';
+  }
+
+  if (inputDate.isSame(nextMonth)) {
+    return 'الشهر القادم';
   }
 
   return dayjs(date).format('D MMMM YYYY');
@@ -210,16 +220,26 @@ export function Calendar({
   const handleGoToTomorrow = () => {
     const tomorrow = dayjs(today).add(1, 'day').toDate();
     onSelect?.(tomorrow);
+    // If tomorrow is in a different month, update the calendar view
+    if (dayjs(tomorrow).month() !== calendarDate.month()) {
+      setCalendarDate(dayjs(tomorrow));
+    }
   };
 
   const handleGoToNextWeek = () => {
     const nextWeek = dayjs(today).add(1, 'week').toDate();
     onSelect?.(nextWeek);
+    // If next week is in a different month, update the calendar view
+    if (dayjs(nextWeek).month() !== calendarDate.month()) {
+      setCalendarDate(dayjs(nextWeek));
+    }
   };
 
   const handleGoToNextMonth = () => {
     const nextMonth = dayjs(today).add(1, 'month').toDate();
     onSelect?.(nextMonth);
+    // Always update the calendar view for next month
+    setCalendarDate(dayjs(nextMonth));
   };
 
   // Get calendar grid
@@ -343,7 +363,7 @@ export function Calendar({
         <button
           type="button"
           onClick={handleGoToTomorrow}
-          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+          className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent transition-colors duration-300"
         >
           <Calendar1 className="h-3 w-3" />
           <span>غداً</span>
@@ -351,7 +371,7 @@ export function Calendar({
         <button
           type="button"
           onClick={handleGoToNextWeek}
-          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+          className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent transition-colors duration-300"
         >
           <CalendarDays className="h-3 w-3" />
           <span>الأسبوع القادم</span>
@@ -359,7 +379,7 @@ export function Calendar({
         <button
           type="button"
           onClick={handleGoToNextMonth}
-          className="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/30 hover:bg-accent"
+          className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent transition-colors duration-300"
         >
           <CalendarArrowUp className="h-3 w-3" />
           <span>الشهر القادم</span>
