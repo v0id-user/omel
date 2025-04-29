@@ -57,6 +57,13 @@
       "when": 1745707294911,
       "tag": "0007_chemical_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1745901563228,
+      "tag": "0008_outstanding_inertia",
+      "breakpoints": true
     }
   ]
 }

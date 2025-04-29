@@ -13,7 +13,7 @@ export const TASK_STATUSES = [
   'cancelled', // no longer going to be done
 ] as const;
 
-const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+export const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
 
 export type TaskStatus = (typeof TASK_STATUSES)[number];
 export type TaskPriority = (typeof TASK_PRIORITIES)[number];
