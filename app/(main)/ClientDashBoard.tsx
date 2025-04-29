@@ -20,11 +20,10 @@ export default function ClientDashBoard() {
       router.push('/clock-in');
     }
   }, [mounted, info, router]);
-
   if (!mounted || !info || !info.organizationInfo?.companyInfo?.name) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="fixed inset-0 bg-white z-9999 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }

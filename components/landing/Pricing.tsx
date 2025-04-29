@@ -5,6 +5,8 @@ import { useEffect, useState, useRef } from 'react';
 import { OButton } from '@/components/omel/Button';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { motion } from 'motion/react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const SaudiRiyal = ({ className = '', size = 0.8 }) => (
   <svg
@@ -30,10 +32,46 @@ interface PricingPlan {
     monthly: string;
     yearly: string;
   };
-  features: string[];
+  features: (string | React.ReactNode)[];
   cta: string;
   highlighted: boolean;
 }
+
+type StorageEstimate = {
+  count: number | string;
+  fileType: string;
+  sizeEachMB: number;
+};
+
+const storageEstimates5GB: StorageEstimate[] = [
+  { count: '١٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '١٬٦٦٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '٢٬٥٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '٥٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '٢٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '١٠٠–١٦٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '٥٠٠–١٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+];
+
+const storageEstimates25GB: StorageEstimate[] = [
+  { count: '٥٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '٨٬٣٠٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '١٢٬٥٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '٢٥٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '١٠٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '٥٠٠–٨٠٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '٢٬٥٠٠–٥٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+];
+
+const storageEstimates100GB: StorageEstimate[] = [
+  { count: '٢٠٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '٣٣٬٢٠٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '٥٠٬٠٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '١٠٠٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '٤٠٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '٢٬٠٠٠–٣٬٢٠٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '١٠٬٠٠٠–٢٠٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+];
 
 const formatPrice = (price: number): string => {
   if (price === 0) return '0';
@@ -43,8 +81,8 @@ const formatPrice = (price: number): string => {
     return Math.ceil(price).toLocaleString('en-US');
   }
 
-  // For smaller prices, round up to .99
-  return (Math.ceil(price) - 0.01).toFixed(2);
+  // For smaller prices, return as is
+  return price.toString();
 };
 
 const calculateYearlyPrice = (monthlyPrice: number): string => {
@@ -52,6 +90,90 @@ const calculateYearlyPrice = (monthlyPrice: number): string => {
   const yearlyTotal = monthlyPrice * 12;
   const discountedPrice = yearlyTotal * 0.8; // 20% off
   return formatPrice(discountedPrice);
+};
+
+const StorageTooltip = ({ gb }: { gb: number }) => {
+  // State to track if we're on a mobile device
+  const [isMobile, setIsMobile] = useState(false);
+
+  // This effect runs once on component mount to detect if we're on mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  let estimates: StorageEstimate[] = [];
+
+  if (gb === 5) {
+    estimates = storageEstimates5GB;
+  } else if (gb === 25) {
+    estimates = storageEstimates25GB;
+  } else if (gb === 100) {
+    estimates = storageEstimates100GB;
+  }
+
+  // Content to show in either tooltip or popover
+  const storageContent = (
+    <div className="space-y-2 text-sm text-right">
+      <div className="font-bold mb-2">
+        {gb === 5 ? '٥' : gb === 25 ? '٢٥' : '١٠٠'} جيجابايت يعادل:
+      </div>
+      <ul className="space-y-1.5">
+        {estimates.map((item, index) => (
+          <li key={index} className="flex flex-col">
+            <div className="flex justify-between gap-2">
+              <span className="text-gray-600">{item.fileType}</span>
+              <span className="font-semibold whitespace-nowrap">{item.count}</span>
+            </div>
+            <div className="text-xs text-gray-500 text-left mt-0.5 pr-1">
+              {item.sizeEachMB === 1
+                ? 'كل ملف ١ ميجابايت'
+                : `كل ملف ${item.sizeEachMB.toString().replace('.', '٫')} ميجابايت`}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  // Trigger element with dotted underline
+  const triggerElement = (
+    <span className="border-b border-dotted border-gray-500 cursor-pointer">
+      <span className="font-semibold">{gb === 5 ? '٥' : gb === 25 ? '٢٥' : '١٠٠'}</span> جيجابايت
+    </span>
+  );
+
+  // Use Popover for mobile (click/tap to show)
+  if (isMobile) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
+        <PopoverContent className="bg-white text-black shadow-lg rounded-lg border border-gray-200 p-3 max-w-[280px] z-50">
+          {storageContent}
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  // Use Tooltip for desktop (hover to show)
+  return (
+    <Tooltip>
+      <TooltipTrigger>{triggerElement}</TooltipTrigger>
+      <TooltipContent className="bg-white text-black shadow-lg rounded-lg border border-gray-200 p-3 max-w-[280px]">
+        {storageContent}
+      </TooltipContent>
+    </Tooltip>
+  );
 };
 
 const basePricingPlans = [
@@ -63,20 +185,30 @@ const basePricingPlans = [
       'إدارة فريق من 5 مستخدمين',
       'وصول للتقارير الأساسية',
       'دعم عبر البريد الإلكتروني',
-      'تخزين سحابي 5GB',
+      <>
+        تخزين سحابي{' '}
+        <TooltipProvider>
+          <StorageTooltip gb={5} />
+        </TooltipProvider>
+      </>,
     ],
     cta: 'ابدأ الآن',
     highlighted: false,
   },
   {
     name: 'احترافي',
-    monthlyPrice: 29.96,
+    monthlyPrice: 30.0,
     features: [
       'حتى 10,000 جهة اتصال',
       'إدارة فريق من 15 مستخدمين',
       'تقارير متقدمة وتحليلات',
       'دعم على مدار الساعة',
-      'تخزين سحابي 25GB',
+      <>
+        تخزين سحابي{' '}
+        <TooltipProvider>
+          <StorageTooltip gb={25} />
+        </TooltipProvider>
+      </>,
       'حملات تسويقية متقدمة',
       'تكامل مع تطبيقات خارجية',
     ],
@@ -85,13 +217,18 @@ const basePricingPlans = [
   },
   {
     name: 'المؤسسات',
-    monthlyPrice: 1499,
+    monthlyPrice: 1500.0,
     features: [
       'جهات اتصال غير محدودة',
       'مستخدمين غير محدودين',
       'تقارير مخصصة وتحليلات متقدمة',
       'مدير حساب مخصص',
-      'تخزين سحابي 100GB',
+      <>
+        تخزين سحابي{' '}
+        <TooltipProvider>
+          <StorageTooltip gb={100} />
+        </TooltipProvider>
+      </>,
       'أتمتة العمليات التسويقية',
       'تكامل مع جميع الأنظمة',
       'تدريب وإعداد مخصص',
