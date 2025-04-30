@@ -248,7 +248,7 @@ const pricingPlans: PricingPlan[] = basePricingPlans.map(plan => ({
 
 type BillingPeriod = 'monthly' | 'yearly';
 
-export const PricingCard = ({
+const PricingCard = ({
   plan,
   visibleItems,
   index,
@@ -261,10 +261,15 @@ export const PricingCard = ({
 }) => {
   return (
     <div
-      className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-500 ease-out ${
-        visibleItems.includes(index) ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+      className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-800 ease-out ${
+        visibleItems.includes(index)
+          ? 'translate-y-0 opacity-100 scale-100'
+          : 'translate-y-12 opacity-0 scale-95'
       }`}
-      style={{ transitionDelay: `${index * 100}ms` }}
+      style={{
+        transitionDelay: `${index * 150}ms`,
+        willChange: 'transform, opacity, scale',
+      }}
     >
       <GlowingEffect spread={70} glow={true} disabled={false} proximity={64} inactiveZone={0.01} />
       {plan.highlighted && (
@@ -283,6 +288,7 @@ export const PricingCard = ({
                 key={`${plan.name}-${billingPeriod}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="text-4xl font-bold"
               >
                 {plan.price[billingPeriod]}
@@ -300,6 +306,7 @@ export const PricingCard = ({
                   key={`${plan.name}-${billingPeriod}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
                   className="text-4xl font-bold"
                 >
                   {plan.price[billingPeriod]}
@@ -317,7 +324,11 @@ export const PricingCard = ({
         </div>
         <ul className="space-y-3 mb-8">
           {plan.features.map((feature, featureIndex) => (
-            <li key={featureIndex} className="flex items-start">
+            <li
+              key={featureIndex}
+              className="flex items-start transition-all duration-500"
+              style={{ transitionDelay: `${index * 100 + featureIndex * 50}ms` }}
+            >
               <Check className="h-5 w-5 text-primary shrink-0 ml-2 mt-0.5" />
               <span className="text-sm">{feature}</span>
             </li>
@@ -342,14 +353,15 @@ const Pricing = () => {
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
-          const timer = setTimeout(() => {
-            const visibleIndices = Array.from({ length: pricingPlans.length }, (_, i) => i);
-            setVisibleItems(visibleIndices);
-          }, 100);
-          return () => clearTimeout(timer);
+          // Stagger the animations
+          pricingPlans.forEach((_, index) => {
+            setTimeout(() => {
+              setVisibleItems(prev => [...prev, index]);
+            }, index * 150); // Staggered delay for smoother appearance
+          });
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
     );
 
     const currentRef = pricingRef.current;
@@ -369,7 +381,14 @@ const Pricing = () => {
     <section id="pricing" className="py-20 bg-white">
       <div className="container-custom" ref={pricingRef}>
         {/** Pricing Header */}
-        <div className="text-center mb-14">
+        <div
+          className="text-center mb-14 transition-all duration-800 ease-out"
+          style={{
+            opacity: visibleItems.length > 0 ? 1 : 0,
+            transform: visibleItems.length > 0 ? 'translateY(0)' : 'translateY(20px)',
+            willChange: 'transform, opacity',
+          }}
+        >
           <h2 className="text-3xl font-bold mb-4">خطط الأسعار</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             اختر الخطة المناسبة لاحتياجات عملك. جميع الخطط تشمل تحديثات مجانية
@@ -389,7 +408,7 @@ const Pricing = () => {
                   <motion.span
                     initial={{ opacity: 0, y: 3 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
                     className="absolute -top-3 right-0 translate-x-1/2 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full whitespace-nowrap"
                   >
                     خصم 20%
@@ -413,6 +432,7 @@ const Pricing = () => {
                 transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 style={{
                   width: 'calc(50% - 6px)',
+                  willChange: 'transform',
                 }}
               />
             </div>

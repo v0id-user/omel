@@ -48,14 +48,15 @@ const Features = () => {
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
-          const timer = setTimeout(() => {
-            const visibleIndices = Array.from({ length: featuresList.length }, (_, i) => i);
-            setVisibleItems(visibleIndices);
-          }, 100);
-          return () => clearTimeout(timer);
+          // Stagger the animations
+          featuresList.forEach((_, index) => {
+            setTimeout(() => {
+              setVisibleItems(prev => [...prev, index]);
+            }, index * 120); // Staggered delay for butter-smooth appearance
+          });
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
     );
 
     const currentRef = featuresRef.current;
@@ -73,7 +74,10 @@ const Features = () => {
   return (
     <section id="features" className="py-20 bg-white">
       <div className="container-custom" ref={featuresRef}>
-        <div className="text-center mb-14">
+        <div
+          className="text-center mb-14 transition-opacity duration-700 ease-out"
+          style={{ opacity: visibleItems.length > 0 ? 1 : 0 }}
+        >
           <h2 className="text-3xl font-bold mb-4">المميزات الرئيسية</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             تقدم منصة أوميل CRM مجموعة متكاملة من الأدوات المصممة خصيصاً للشركات العربية
@@ -84,14 +88,15 @@ const Features = () => {
           {featuresList.map((feature, index) => (
             <div
               key={index}
-              className={`p-6 rounded-xl border border-border bg-white transition-all duration-500 ease-out ${feature.className} ${
+              className={`p-6 rounded-xl border border-border bg-white transition-all duration-800 ease-out ${feature.className} ${
                 visibleItems.includes(index)
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-8 opacity-0'
+                  ? 'translate-y-0 opacity-100 scale-100'
+                  : 'translate-y-12 opacity-0 scale-95'
               }`}
               style={{
-                transitionDelay: `${index * 100}ms`,
+                transitionDelay: `${index * 120}ms`,
                 minHeight: index === 0 ? '220px' : '180px',
+                willChange: 'transform, opacity, scale',
               }}
             >
               <div className="bg-primary/5 text-primary p-3 inline-block rounded-lg mb-4">

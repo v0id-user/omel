@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -24,6 +25,27 @@ const Navbar = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Handle smooth scrolling for anchor links
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+
+    // If it's an anchor link
+    if (href.startsWith('#')) {
+      const targetElement = document.querySelector(href);
+      if (targetElement) {
+        // Smooth scroll to the element
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    } else {
+      // For non-anchor links
+      router.push(href);
+    }
+  };
 
   return (
     <nav
@@ -62,30 +84,35 @@ const Navbar = () => {
           <a
             href="#features"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+            onClick={e => handleAnchorClick(e, '#features')}
           >
             المميزات
           </a>
           <a
             href="#testimonials"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+            onClick={e => handleAnchorClick(e, '#testimonials')}
           >
             آراء العملاء
           </a>
           <a
             href="#pricing"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+            onClick={e => handleAnchorClick(e, '#pricing')}
           >
             الأسعار
           </a>
           <a
             href="#contact"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+            onClick={e => handleAnchorClick(e, '#contact')}
           >
             تواصل معنا
           </a>
           <a
             href="#contact"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
+            onClick={e => handleAnchorClick(e, '#contact')}
           >
             {' ' /*Empty */}
           </a>
@@ -103,28 +130,28 @@ const Navbar = () => {
             <a
               href="#features"
               className="text-foreground/70 hover:text-foreground py-2"
-              onClick={() => setIsOpen(false)}
+              onClick={e => handleAnchorClick(e, '#features')}
             >
               المميزات
             </a>
             <a
               href="#testimonials"
               className="text-foreground/70 hover:text-foreground py-2"
-              onClick={() => setIsOpen(false)}
+              onClick={e => handleAnchorClick(e, '#testimonials')}
             >
               آراء العملاء
             </a>
             <a
               href="#pricing"
               className="text-foreground/70 hover:text-foreground py-2"
-              onClick={() => setIsOpen(false)}
+              onClick={e => handleAnchorClick(e, '#pricing')}
             >
               الأسعار
             </a>
             <a
               href="#contact"
               className="text-foreground/70 hover:text-foreground py-2"
-              onClick={() => setIsOpen(false)}
+              onClick={e => handleAnchorClick(e, '#contact')}
             >
               تواصل معنا
             </a>

@@ -2,13 +2,48 @@
 
 import { Input } from '@/components/ui/input';
 import { OButton } from '@/components/omel/Button';
+import { useEffect, useRef, useState } from 'react';
 
 const Footer = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = footerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
   return (
-    <footer className="bg-secondary px-5 rounded-t-4xl">
-      <div className="container-custom pt-12 pb-6">
+    <footer className="bg-secondary px-5 rounded-t-4xl" ref={footerRef}>
+      <div
+        className={`container-custom pt-12 pb-6 transition-all duration-1000 ease-out ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+        style={{ willChange: 'transform, opacity' }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div>
+          <div
+            className={`transition-all duration-700 delay-100 ease-out ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
             <div className="text-xl font-semibold mb-3">أوميل</div>
             <p className="text-muted-foreground text-sm mb-5">
               نظام إدارة علاقات العملاء الأمثل للشركات العربية. سهل الاستخدام. فعّال. موثوق.
@@ -51,7 +86,11 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          <div
+            className={`transition-all duration-700 delay-200 ease-out ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
             <h3 className="text-sm font-semibold mb-3">روابط سريعة</h3>
             <ul className="space-y-1.5 text-sm">
               <li>
@@ -97,7 +136,11 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          <div
+            className={`transition-all duration-700 delay-300 ease-out ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
             <h3 className="text-sm font-semibold mb-3">الدعم</h3>
             <ul className="space-y-1.5 text-sm">
               <li>
@@ -143,7 +186,11 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          <div
+            className={`transition-all duration-700 delay-400 ease-out ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
             <h3 className="text-sm font-semibold mb-3">النشرة البريدية</h3>
             <p className="text-muted-foreground text-sm mb-3">
               اشترك في نشرتنا البريدية للحصول على أحدث الأخبار والتحديثات
@@ -157,7 +204,11 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border pt-5 text-center text-muted-foreground text-xs">
+        <div
+          className={`border-t border-border pt-5 text-center text-muted-foreground text-xs transition-all duration-700 delay-500 ease-out ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           <p>© {new Date().getFullYear()} أوميل. جميع الحقوق محفوظة.</p>
         </div>
       </div>

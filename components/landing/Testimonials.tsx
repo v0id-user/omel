@@ -33,20 +33,15 @@ const Testimonials = () => {
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
-          const currentRef = testimonialsRef.current; // Store ref value
-          const timer = setTimeout(() => {
-            const visibleIndices = Array.from({ length: testimonials.length }, (_, i) => i);
-            setVisibleItems(visibleIndices);
-          }, 100);
-          return () => {
-            clearTimeout(timer);
-            if (currentRef) {
-              observer.unobserve(currentRef);
-            }
-          };
+          // Stagger the animations
+          testimonials.forEach((_, index) => {
+            setTimeout(() => {
+              setVisibleItems(prev => [...prev, index]);
+            }, index * 150); // Staggered delay for smoother appearance
+          });
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
     );
 
     const currentRef = testimonialsRef.current;
@@ -64,7 +59,14 @@ const Testimonials = () => {
   return (
     <section id="testimonials" className="py-20 bg-secondary/50">
       <div className="container-custom" ref={testimonialsRef}>
-        <div className="text-center mb-14">
+        <div
+          className="text-center mb-14 transition-all duration-700 ease-out"
+          style={{
+            opacity: visibleItems.length > 0 ? 1 : 0,
+            transform: visibleItems.length > 0 ? 'translateY(0)' : 'translateY(20px)',
+            willChange: 'transform, opacity',
+          }}
+        >
           <h2 className="text-3xl font-bold mb-4">ماذا يقول عملاؤنا</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             نفتخر بثقة المئات من الشركات العربية التي اختارت أوميل CRM
@@ -75,12 +77,15 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className={`bg-white rounded-xl p-6 border border-border shadow-sm transition-all duration-500 ease-out ${
+              className={`bg-white rounded-xl p-6 border border-border shadow-sm transition-all duration-900 ease-out ${
                 visibleItems.includes(index)
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-8 opacity-0'
+                  ? 'translate-y-0 opacity-100 scale-100'
+                  : 'translate-y-12 opacity-0 scale-95'
               }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+              style={{
+                transitionDelay: `${index * 150}ms`,
+                willChange: 'transform, opacity, scale',
+              }}
             >
               <blockquote className="text-lg font-light italic mb-6 text-foreground/90">
                 &ldquo;{testimonial.quote}&rdquo;

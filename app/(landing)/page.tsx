@@ -12,27 +12,15 @@ import React from 'react';
 
 const Index = () => {
   useEffect(() => {
+    // Add smooth scrolling to the document
+    document.documentElement.style.scrollBehavior = 'smooth';
+
     // Animate elements as they scroll into view
     const observerOptions = {
       root: null,
       rootMargin: '0px',
       threshold: 0.1,
     };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('appear');
-          observer.unobserve(entry.target);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    document.querySelectorAll('.fade-up').forEach(el => {
-      observer.observe(el);
-    });
 
     // Add custom scrollbar styles
     const styleElement = document.createElement('style');
@@ -62,8 +50,35 @@ const Index = () => {
         scrollbar-width: thin;
         scrollbar-color: #222 rgba(0, 0, 0, 0.05);
       }
+      
+      /* Enhanced smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* For Safari and other browsers that don't support scroll-behavior */
+      @supports not (scroll-behavior: smooth) {
+        html, body {
+          scroll-behavior: auto;
+        }
+      }
     `;
     document.head.appendChild(styleElement);
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('appear');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    document.querySelectorAll('.fade-up').forEach(el => {
+      observer.observe(el);
+    });
 
     return () => {
       document.querySelectorAll('.fade-up').forEach(el => {
@@ -74,6 +89,9 @@ const Index = () => {
       if (styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
       }
+
+      // Reset scroll behavior
+      document.documentElement.style.scrollBehavior = '';
     };
   }, []);
 
