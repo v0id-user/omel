@@ -197,7 +197,7 @@ const basePricingPlans = [
   },
   {
     name: 'احترافي',
-    monthlyPrice: 30.0,
+    monthlyPrice: 60.0,
     features: [
       'حتى 10,000 جهة اتصال',
       'إدارة فريق من 15 مستخدمين',
