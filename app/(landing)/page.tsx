@@ -34,10 +34,46 @@ const Index = () => {
       observer.observe(el);
     });
 
+    // Add custom scrollbar styles
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #222;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #000;
+      }
+      
+      /* Firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #222 rgba(0, 0, 0, 0.05);
+      }
+    `;
+    document.head.appendChild(styleElement);
+
     return () => {
       document.querySelectorAll('.fade-up').forEach(el => {
         observer.unobserve(el);
       });
+
+      // Clean up the custom scrollbar styles
+      if (styleElement.parentNode) {
+        styleElement.parentNode.removeChild(styleElement);
+      }
     };
   }, []);
 
