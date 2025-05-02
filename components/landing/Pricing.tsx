@@ -44,33 +44,33 @@ type StorageEstimate = {
 };
 
 const storageEstimates5GB: StorageEstimate[] = [
-  { count: '١٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
-  { count: '١٬٦٦٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
-  { count: '٢٬٥٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
-  { count: '٥٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
-  { count: '٢٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
-  { count: '١٠٠–١٦٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
-  { count: '٥٠٠–١٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+  { count: '1,000', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '1,660', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '2,500', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '5,000', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '20,000+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '100–160', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '500–1,000', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
 ];
 
 const storageEstimates25GB: StorageEstimate[] = [
-  { count: '٥٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
-  { count: '٨٬٣٠٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
-  { count: '١٢٬٥٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
-  { count: '٢٥٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
-  { count: '١٠٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
-  { count: '٥٠٠–٨٠٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
-  { count: '٢٬٥٠٠–٥٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+  { count: '5,000', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '8,300', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '12,500', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '25,000', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '100,000+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '500–800', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '2,500–5,000', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
 ];
 
 const storageEstimates100GB: StorageEstimate[] = [
-  { count: '٢٠٬٠٠٠', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
-  { count: '٣٣٬٢٠٠', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
-  { count: '٥٠٬٠٠٠', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
-  { count: '١٠٠٬٠٠٠', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
-  { count: '٤٠٠٬٠٠٠+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
-  { count: '٢٬٠٠٠–٣٬٢٠٠', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
-  { count: '١٠٬٠٠٠–٢٠٬٠٠٠', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
+  { count: '20,000', fileType: 'ملفات PDF (نص وصور)', sizeEachMB: 5 },
+  { count: '33,200', fileType: 'صور JPEG (جودة عالية)', sizeEachMB: 3 },
+  { count: '50,000', fileType: 'صور PNG (حجم الواجهة القياسية)', sizeEachMB: 2 },
+  { count: '100,000', fileType: 'ملفات PDF (نص فقط)', sizeEachMB: 1 },
+  { count: '400,000+', fileType: 'صور المصغرة / الأيقونات', sizeEachMB: 0.25 },
+  { count: '2,000–3,200', fileType: 'صور RAW (كاميرا DSLR / كاميرا)', sizeEachMB: 30 },
+  { count: '10,000–20,000', fileType: 'مستندات مسح (PDFs)', sizeEachMB: 5 },
 ];
 
 const formatPrice = (price: number): string => {
@@ -126,7 +126,7 @@ const StorageTooltip = ({ gb }: { gb: number }) => {
   const storageContent = (
     <div className="space-y-2 text-sm text-right">
       <div className="font-bold mb-2">
-        {gb === 5 ? '٥' : gb === 25 ? '٢٥' : '١٠٠'} جيجابايت يعادل:
+        {gb === 5 ? '5' : gb === 25 ? '25' : '100'} جيجابايت يعادل:
       </div>
       <ul className="space-y-1.5">
         {estimates.map((item, index) => (
@@ -137,7 +137,7 @@ const StorageTooltip = ({ gb }: { gb: number }) => {
             </div>
             <div className="text-xs text-gray-500 text-left mt-0.5 pr-1">
               {item.sizeEachMB === 1
-                ? 'كل ملف ١ ميجابايت'
+                ? 'كل ملف 1 ميجابايت'
                 : `كل ملف ${item.sizeEachMB.toString().replace('.', '٫')} ميجابايت`}
             </div>
           </li>
@@ -149,7 +149,7 @@ const StorageTooltip = ({ gb }: { gb: number }) => {
   // Trigger element with dotted underline
   const triggerElement = (
     <span className="border-b border-dotted border-gray-500 cursor-pointer">
-      <span className="font-semibold">{gb === 5 ? '٥' : gb === 25 ? '٢٥' : '١٠٠'}</span> جيجابايت
+      <span className="font-semibold">{gb === 5 ? '5' : gb === 25 ? '25' : '100'}</span> جيجابايت
     </span>
   );
 

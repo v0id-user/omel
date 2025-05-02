@@ -10,8 +10,24 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.omil.im'),
   title: 'أوميل - أداة إدارة علاقات العملاء',
   description: 'خذ تجربة خدمة العملاء المثالية مع أوميل.',
+  openGraph: {
+    title: 'أوميل - أداة إدارة علاقات العملاء',
+    description: 'خذ تجربة خدمة العملاء المثالية مع أوميل.',
+    images: '/images/open_graph.png',
+    siteName: 'أوميل',
+    locale: 'ar',
+    type: 'website',
+    url: 'https://www.omil.im',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'أوميل - أداة إدارة علاقات العملاء',
+    description: 'خذ تجربة خدمة العملاء المثالية مع أوميل.',
+    images: '/images/open_graph.png',
+  },
 };
 
 export default function RootLayout({

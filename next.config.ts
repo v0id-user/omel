@@ -13,9 +13,24 @@ const nextConfig: NextConfig = {
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   webpack: config => {
-    // TODO: just for testing, remove in production we need to cache the webpack
+    // TODO: Change on production
     config.cache = false;
     return config;
+  },
+
+  headers: async () => {
+    const cachingDays = 3;
+    return [
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: `public, max-age=${cachingDays * 24 * 60 * 60}, immutable`,
+          },
+        ],
+      },
+    ];
   },
 };
 

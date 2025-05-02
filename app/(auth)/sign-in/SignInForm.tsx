@@ -78,7 +78,7 @@ export default function SignInClientPage() {
   return (
     <div className="flex justify-center items-center flex-col min-h-screen">
       <Image
-        src="/logo_small.png"
+        src="/images/logo_small.png"
         alt="logo"
         width={65}
         height={65}

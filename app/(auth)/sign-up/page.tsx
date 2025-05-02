@@ -38,7 +38,14 @@ export default function SignUp() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow flex flex-col items-center justify-center p-2">
-        <Image src="/logo_small.png" alt="logo" width={75} height={75} className="mb-16" priority />
+        <Image
+          src="/images/logo_small.png"
+          alt="logo"
+          width={75}
+          height={75}
+          className="mb-16"
+          priority
+        />
         <SignUpContainer>
           <div className="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-28 justify-center items-center">
             <SignUpForm />
