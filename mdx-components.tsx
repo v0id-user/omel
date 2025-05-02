@@ -1,5 +1,5 @@
-import ProseWrapper from '@/components/MDX/ProseWrapper';
-import { TableOfContents } from '@/components/MDX/TableOfContents';
+import ProseWrapper from '@/components/mdx/ProseWrapper';
+import { TableOfContents } from '@/components/mdx/TableOfContents';
 import type { MDXComponents } from 'mdx/types';
 import Image from 'next/image';
 
