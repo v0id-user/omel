@@ -3,7 +3,7 @@
 // TODO: This is a foundation to later choose multiple organizations
 
 import { authClient } from '@/lib/betterauth/auth-client';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRouterEvents } from '@/lib/hooks/useRouterEvents';
 import { useUserInfoStore } from '@/store/persist/userInfo';
@@ -22,6 +22,12 @@ function clearErrorCount() {
   localStorage.removeItem(ERROR_COUNT_KEY);
 }
 
+// Component that uses useRouterEvents
+function RouterEventsHandler({ onRouteChange }: { onRouteChange: () => void }) {
+  useRouterEvents(onRouteChange);
+  return null;
+}
+
 export default function ClockInPage() {
   const router = useRouter();
   const myOrganization = authClient.useListOrganizations();
@@ -31,7 +37,12 @@ export default function ClockInPage() {
     clearErrorCount();
   }, []);
 
-  useRouterEvents(handleRouteChange);
+  // Wrap the component using useSearchParams in Suspense
+  const routerEventsHandler = (
+    <Suspense fallback={null}>
+      <RouterEventsHandler onRouteChange={handleRouteChange} />
+    </Suspense>
+  );
 
   useEffect(() => {
     if (myOrganization.error) {
@@ -121,5 +132,10 @@ export default function ClockInPage() {
     </div>
   );
 
-  return <Spinner />;
+  return (
+    <>
+      {routerEventsHandler}
+      <Spinner />
+    </>
+  );
 }
