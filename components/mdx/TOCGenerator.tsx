@@ -1,4 +1,4 @@
-import { TableOfContents } from '@/components/MDX/TableOfContents';
+import { TableOfContents } from '@/components/mdx/TableOfContents';
 import type { TocItem } from 'remark-flexible-toc';
 
 interface TOCGeneratorProps {
