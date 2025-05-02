@@ -209,9 +209,7 @@ const Footer = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Input placeholder="بريدك الإلكتروني" className="bg-white text-sm rounded-md" />
-              <OButton className="bg-primary text-primary-foreground whitespace-nowrap rounded-md">
-                اشتراك
-              </OButton>
+              <OButton className="whitespace-nowrap">اشتراك</OButton>
             </div>
           </div>
         </div>

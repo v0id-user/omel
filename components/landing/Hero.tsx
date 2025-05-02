@@ -21,7 +21,7 @@ const Hero = () => {
       <div className="container-custom">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <h1
-            className={`text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight transition-all duration-1000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
+            className={`text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight transition-all duration-1000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
             style={{ willChange: 'transform, opacity' }}
           >
             منصة إدارة علاقات العملاء المتطورة للشركات العربية

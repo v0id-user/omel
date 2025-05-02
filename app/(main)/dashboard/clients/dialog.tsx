@@ -1,8 +1,7 @@
 import { DashboardDialog } from '@/components/dashboard/Dialog';
 import { UserPlus } from 'iconoir-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-
+import { OButton } from '@/components/omel/Button';
 interface ClientsDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,7 +23,9 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
         <Input type="text" placeholder="المنطقة" />
         <Input type="text" placeholder="البلد" />
         <Input type="text" placeholder="الرمز البريدي" />
-        <Button type="submit">إضافة</Button>
+        <OButton type="submit" variant="primary">
+          إضافة
+        </OButton>
         <h1>TODO: Make the form to add new clients</h1>
       </div>
     </DashboardDialog>

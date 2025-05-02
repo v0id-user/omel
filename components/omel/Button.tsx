@@ -8,7 +8,7 @@ interface ButtonProps {
   size?: 'default' | 'sm' | 'xs' | 'icon';
 }
 const variantClasses = {
-  primary: 'bg-[#010103] text-[#f3f4f6] ring-[#6c7688]',
+  primary: 'bg-[#0a0a21] text-[#f3f4f6] ring-[#6c7688]',
   secondary: 'bg-[#1f2937] text-white ring-[#4b5563]',
   danger: 'bg-red-600 text-white ring-red-800',
   ghost: 'bg-transparent text-gray-700 ring-transparent hover:bg-gray-100',

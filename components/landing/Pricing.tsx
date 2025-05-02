@@ -357,7 +357,7 @@ const PricingCard = ({
           ))}
         </ul>
         <OButton
-          className={`w-full ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'} rounded-full`}
+          className={`w-full ${plan.highlighted ? '' : 'bg-secondary text-secondary-foreground'} rounded-full`}
         >
           {plan.cta}
         </OButton>
