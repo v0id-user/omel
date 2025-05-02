@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { OButton } from '@/components/omel/Button';
 import { useRouter } from 'next/navigation';
-
+import { ArrowRight } from 'lucide-react';
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
@@ -36,8 +36,16 @@ const Hero = () => {
             className={`flex flex-col sm:flex-row justify-center gap-4 pt-4 transition-all duration-1000 delay-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
             style={{ willChange: 'transform, opacity' }}
           >
-            <OButton onClick={() => router.push('/sign-up')}>ابدأ الآن مجاناً</OButton>
-            <OButton variant="secondary">طلب عرض توضيحي</OButton>
+            <OButton
+              onClick={() => router.push('/sign-up')}
+              className="flex items-center gap-2 px-4 group"
+            >
+              <ArrowRight className="w-4 h-4 text-white group-hover:text-white/80 group-hover:translate-x-1 transition-all duration-300 ease-out" />
+              ابدأ الآن مجاناً
+            </OButton>
+            <OButton variant="ghost" className="ring-1 ring-gray-300">
+              طلب عرض توضيحي
+            </OButton>
           </div>
         </div>
 

@@ -294,10 +294,16 @@ const PricingCard = ({
                 {plan.price[billingPeriod]}
               </motion.span>
 
-              <span className="text-muted-foreground text-sm">
+              <motion.span
+                key={`${plan.name}-${billingPeriod}-indicator`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="text-muted-foreground text-sm"
+              >
                 {' '}
                 <SaudiRiyal size={1} /> / {billingPeriod === 'monthly' ? 'شهرياً' : 'سنوياً'}
-              </span>
+              </motion.span>
             </>
           ) : (
             <div className="flex flex-col items-start gap-2">
@@ -316,10 +322,21 @@ const PricingCard = ({
                 >
                   {plan.price[billingPeriod]}
                 </motion.span>
-                <span className="text-muted-foreground text-sm mb-1">
+                <motion.span
+                  key={`${plan.name}-${billingPeriod}-indicator`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 200,
+                    damping: 20,
+                    mass: 0.5,
+                  }}
+                  className="text-muted-foreground text-sm mb-1"
+                >
                   {' '}
                   <SaudiRiyal size={1} /> / {billingPeriod === 'monthly' ? 'شهرياً' : 'سنوياً'}
-                </span>
+                </motion.span>
               </div>
               <span className="text-emerald-600 bg-emerald-50 ring-1 ring-emerald-500/20 rounded-full px-3 py-1 text-[11px] font-medium opacity-65">
                 ⚡️ سعر حصري لفترة محدودة
