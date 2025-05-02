@@ -3,7 +3,7 @@ import { createTRPCContext } from '@/trpc/init';
 import { appRouter } from '@/trpc/routers/_app';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function handler(req: NextRequest) {
+const handleRequest = async (req: NextRequest) => {
   // Create response headers that we'll pass to the context
   const resHeaders = new Headers();
 
@@ -35,6 +35,12 @@ export async function handler(req: NextRequest) {
   });
 
   return newResponse;
+};
+
+export async function GET(req: NextRequest) {
+  return handleRequest(req);
 }
 
-export { handler as GET, handler as POST };
+export async function POST(req: NextRequest) {
+  return handleRequest(req);
+}
