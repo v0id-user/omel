@@ -282,7 +282,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
         <div className="min-h-[300px]">{renderStepContent()}</div>
 
         {/* Buttons */}
-        <div className="flex gap-3 justify-between mt-4">
+        <div className="flex gap-3 justify-between mt-4 mb-2">
           {currentStep !== 'type' ? (
             <OButton variant="ghost" onClick={prevStep} className="flex items-center gap-1">
               <ArrowRight className="w-4 h-4" /> السابق
