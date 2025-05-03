@@ -12,7 +12,7 @@ import {
   formatResult,
 } from './steps';
 
-import { EmailTemplate, emailSend } from '@/trigger/emailSend';
+import { EmailTemplate, sendEmail } from '@/trigger/sendEmail';
 
 async function createNewCRM(input: NewCRMUserInfo) {
   console.log('Starting createNewCRM with input:', JSON.stringify(input, null, 2));
@@ -66,7 +66,7 @@ async function createNewCRM(input: NewCRMUserInfo) {
       );
 
       // Step 9: Send welcome email with trigger.dev
-      await emailSend.trigger({
+      await sendEmail.trigger({
         email: user.email,
         template: EmailTemplate.WELCOME,
       });

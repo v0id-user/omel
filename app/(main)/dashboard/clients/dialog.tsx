@@ -284,16 +284,16 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
         {/* Buttons */}
         <div className="flex gap-3 justify-between mt-4 mb-2">
           {currentStep !== 'type' ? (
-            <OButton variant="ghost" onClick={prevStep} className="flex items-center gap-1">
-              <ArrowRight className="w-4 h-4" /> السابق
+            <OButton variant="ghost" onClick={prevStep} className="flex items-center gap-1 px-2">
+              <ArrowRight className="w-3 h-3" /> السابق
             </OButton>
           ) : (
             <div></div> // Empty div to maintain flex spacing
           )}
 
           {currentStep !== 'complete' ? (
-            <OButton variant="primary" onClick={nextStep} className="flex items-center gap-1">
-              التالي <ArrowLeft className="w-4 h-4" />
+            <OButton variant="primary" onClick={nextStep} className="flex items-center gap-1 px-2">
+              التالي <ArrowLeft className="w-3 h-3" />
             </OButton>
           ) : (
             <OButton variant="primary" onClick={handleSubmit} isLoading={isSubmitting}>

@@ -5,8 +5,8 @@ export enum EmailTemplate {
   WELCOME = 'welcome',
 }
 
-export const emailSend = task({
-  id: 'email-send',
+export const sendEmail = task({
+  id: 'send-email',
   run: async (payload: { email: string; template: EmailTemplate }) => {
     try {
       logger.info('Processing email request', {
