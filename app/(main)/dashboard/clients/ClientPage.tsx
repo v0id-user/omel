@@ -5,6 +5,7 @@ import { UserPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { AddClientsDialog } from './dialog';
 import { Task } from '@/database/types/task';
+import AddGroup from '@/public/icons/iso/add-group.svg';
 
 export default function ClientsPage() {
   // Placeholder for future task management logic
@@ -14,7 +15,6 @@ export default function ClientsPage() {
   return (
     <DashboardContent
       title="العملاء"
-      emptyStateIcon="/icons/iso/add-group.svg"
       ctaLabel="عميل جديد"
       ctaIcon={<UserPlus className="w-4 h-4 ml-2" />}
       onCtaClick={() => setDialogOpen(true)}
@@ -30,6 +30,7 @@ export default function ClientsPage() {
       }}
       emptyState={{
         text: 'لايوجد عملاء بعد! أنشئ عميلك الأول للبدء.',
+        icon: <AddGroup className="w-[100px] h-[100px]" />,
       }}
       dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >

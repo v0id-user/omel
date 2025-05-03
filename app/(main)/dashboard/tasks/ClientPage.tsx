@@ -5,7 +5,7 @@ import { MultiplePagesPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { TaskDialog } from './dialog';
 import { Task } from '@/database/types/task';
-
+import AddCircle from '@/public/icons/iso/add-circle.svg';
 export default function TasksPage() {
   // Placeholder for future task management logic
   const tasks: Task[] = [];
@@ -14,7 +14,6 @@ export default function TasksPage() {
   return (
     <DashboardContent
       title="المهام"
-      emptyStateIcon="/icons/iso/add-circle.svg"
       ctaLabel="مهمة جديدة"
       ctaIcon={<MultiplePagesPlus className="w-4 h-4 ml-2" />}
       onCtaClick={() => setDialogOpen(true)}
@@ -30,6 +29,7 @@ export default function TasksPage() {
       }}
       emptyState={{
         text: 'لا توجد مهام بعد! أنشئ مهمتك الأولى للبدء.',
+        icon: <AddCircle className="w-[100px] h-[100px]" />,
       }}
       dialogs={<TaskDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
