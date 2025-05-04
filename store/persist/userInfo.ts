@@ -14,6 +14,7 @@ interface UserInfoStore {
 // Custom storage with compression and base64 encoding
 const compressedStorage = {
   getItem: (name: string) => {
+    if (typeof window === 'undefined') return null;
     try {
       const value = localStorage.getItem(name);
       if (!value) return null;
