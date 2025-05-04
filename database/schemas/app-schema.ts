@@ -4,6 +4,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { users, organizations } from '@/database/schemas/auth-schema';
 import { TaskPriority, TaskStatus } from '@/database/types/task';
 import { SubscriptionTier, SubscriptionStatus } from '@/database/types/subscriptions';
+import { ContactType } from '@/database/types/contacts';
 
 export const subscriptions = pgTable(
   'subscriptions',
@@ -36,6 +37,7 @@ export const contacts = pgTable(
     phone: text('phone'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    contactType: text('contact_type').$type<ContactType>().default('person'),
     createdBy: text('created_by')
       .notNull()
       .references(() => users.id),
