@@ -66,10 +66,14 @@ export function DashboardBreadcrumb() {
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
                   {isLast ? (
-                    <BreadcrumbPage>{path === 'tasks' ? 'المهام' : path}</BreadcrumbPage>
+                    <BreadcrumbPage>
+                      {path === 'tasks' ? 'المهام' : path === 'clients' ? 'العملاء' : path}
+                    </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={href}>{path === 'tasks' ? 'المهام' : path}</Link>
+                      <Link href={href}>
+                        {path === 'tasks' ? 'المهام' : path === 'clients' ? 'العملاء' : path}
+                      </Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
