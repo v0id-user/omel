@@ -61,7 +61,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     const task: CreateTaskInput = {
       name: description.slice(0, 100) || 'مهمة جديدة',
       description,
-      organizationId: 'org1',
+      organizationId: user.organizationInfo.id,
       dueDate: dueDate || null,
       assignedTo: assignedUser?.id || '',
       status: 'pending',
