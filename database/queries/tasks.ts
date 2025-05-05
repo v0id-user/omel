@@ -12,16 +12,14 @@ export async function createTasks(
   created_by: string,
   tasks_input: CreateTaskInput[]
 ) {
-  return db
-    .insert(tasks)
-    .values(
-      tasks_input.map(task => ({
-        ...task,
-        organizationId: organization_id,
-        createdBy: created_by,
-        updatedBy: created_by,
-      }))
-    );
+  return db.insert(tasks).values(
+    tasks_input.map(task => ({
+      ...task,
+      organizationId: organization_id,
+      createdBy: created_by,
+      updatedBy: created_by,
+    }))
+  );
 }
 
 export async function updateTask(task_id: string, updated_by: string, task_input: UpdateTaskInput) {

@@ -68,14 +68,14 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 
   if (!ctx.session.session.activeOrganizationId) {
     throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
+      code: 'UNAUTHORIZED',
       message: 'No active organization found',
     });
   }
 
   // Ratelimit the user
-  const { success } = await ratelimit.limit(ctx.session.user.id);
-  if (!success) {
+  const { success: PassedRatelimit } = await ratelimit.limit(ctx.session.user.id);
+  if (!PassedRatelimit) {
     throw new TRPCError({
       code: 'TOO_MANY_REQUESTS',
       message: 'You have made too many requests. Please try again later.',

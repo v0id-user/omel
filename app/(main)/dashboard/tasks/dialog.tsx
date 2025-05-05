@@ -24,6 +24,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const [assignedUser, setAssignedUser] = useState<{ id: string; name: string } | null>(null);
   const [moreTasks, setMoreTasks] = useState<boolean>(false);
   const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
+  const [description, setDescription] = useState<string>('');
   const userInfo = useUserInfoStore();
   const router = useRouter();
 
@@ -45,11 +46,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    const data = new FormData(form);
-
-    const description = (data.get('description') as string) ?? '';
-
     const user = userInfo.getUserInfo();
 
     if (!user) {
@@ -86,6 +82,8 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
         <textarea
           required
           name="description"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
           placeholder="اكتب تفاصيل المهمة هنا..."
           className="w-full pt-4 px-4 text-sm font-medium focus:outline-none focus:ring-0 focus:border-primary resize-none min-h-[32px]"
         />

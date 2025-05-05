@@ -8,14 +8,12 @@ export async function createContact(
   created_by: string,
   contact_input: CreateContactInput
 ) {
-  return db
-    .insert(contacts)
-    .values({
-      ...contact_input,
-      organizationId: organization_id,
-      createdBy: created_by,
-      updatedBy: created_by,
-    });
+  return db.insert(contacts).values({
+    ...contact_input,
+    organizationId: organization_id,
+    createdBy: created_by,
+    updatedBy: created_by,
+  });
 }
 
 export async function updateContact(
