@@ -11,6 +11,7 @@ export const subscriptions = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     email: text('email').notNull(),
+    deletedAt: timestamp('deleted_at'),
     userId: text('user_id')
       .notNull()
       .references(() => users.id),
@@ -35,6 +36,7 @@ export const contacts = pgTable(
     name: text('name').notNull(),
     email: text('email'),
     phone: text('phone'),
+    deletedAt: timestamp('deleted_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     contactType: text('contact_type').$type<ContactType>().default('person'),
@@ -60,6 +62,7 @@ export const categories = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
+    deletedAt: timestamp('deleted_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     createdBy: text('created_by')
@@ -83,6 +86,7 @@ export const tasks = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
+    deletedAt: timestamp('deleted_at'),
     description: text('description'),
     category: text('category'),
     createdAt: timestamp('created_at').notNull().defaultNow(),

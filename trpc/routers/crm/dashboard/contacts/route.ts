@@ -10,10 +10,10 @@ const contactUpdateInputSchema = z.object({
 });
 
 export const contactRouter = createTRPCRouter({
-  new: protectedProcedure.input(contactInputSchema).mutation(async ({ input }) => {
-    return createNewContact(input);
+  new: protectedProcedure.input(contactInputSchema).mutation(async ({ ctx, input }) => {
+    return createNewContact(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
   }),
-  update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ input }) => {
-    return updateContact(input.contact_id, input.contact_input);
+  update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ ctx, input }) => {
+    return updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
   }),
 });

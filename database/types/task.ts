@@ -31,7 +31,10 @@ export type TaskFormData = {
 export type TaskUpdateFormData = Partial<TaskFormData>;
 
 // Database operation types
-export type CreateTaskInput = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateTaskInput = Omit<
+  Task,
+  'id' | 'createdBy' | 'updatedBy' | 'organizationId' | 'deletedAt' | 'createdAt' | 'updatedAt'
+>;
 export type UpdateTaskInput = Partial<CreateTaskInput>;
 
 // Query filters

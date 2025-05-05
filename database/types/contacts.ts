@@ -35,7 +35,10 @@ export type ContactFormData = {
 export type ContactUpdateFormData = Partial<ContactFormData>;
 
 // Database operation types
-export type CreateContactInput = Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateContactInput = Omit<
+  Contact,
+  'id' | 'createdBy' | 'updatedBy' | 'organizationId' | 'deletedAt' | 'createdAt' | 'updatedAt'
+>;
 export type UpdateContactInput = Partial<CreateContactInput>;
 
 // Query filters

@@ -66,6 +66,13 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     });
   }
 
+  if (!ctx.session.session.activeOrganizationId) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'No active organization found',
+    });
+  }
+
   // Ratelimit the user
   const { success } = await ratelimit.limit(ctx.session.user.id);
   if (!success) {
