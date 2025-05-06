@@ -5,7 +5,7 @@ import { users, organizations } from '@/database/schemas/auth-schema';
 import { TaskPriority, TaskStatus } from '@/database/types/task';
 import { SubscriptionTier, SubscriptionStatus } from '@/database/types/subscriptions';
 import { ContactType } from '@/database/types/contacts';
-
+import { ResourceType } from '@/database/types/usage';
 export const subscriptions = pgTable(
   'subscriptions',
   {
@@ -113,5 +113,29 @@ export const tasks = pgTable(
     index('task_status_idx').on(table.status),
     index('task_due_date_idx').on(table.dueDate),
     index('task_created_by_idx').on(table.createdBy),
+  ]
+);
+
+export const usageCounters = pgTable(
+  'usage_counters',
+  {
+    id: text('id').primaryKey().default(createId()),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    resourceType: text('resource_type').notNull().$type<ResourceType>(),
+    count: text('count').notNull().default('0'),
+    limit: text('limit').notNull().default('0'),
+    periodStart: timestamp('period_start').notNull(),
+    periodEnd: timestamp('period_end').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    organizationId: text('organization_id')
+      .notNull()
+      .references(() => organizations.id),
+  },
+  table => [
+    index('usage_counter_org_id_idx').on(table.organizationId),
+    index('usage_counter_user_resource_idx').on(table.userId, table.resourceType),
   ]
 );
