@@ -2,6 +2,11 @@ import { CreateContactInput, UpdateContactInput } from '@/database/types/contact
 import { contacts } from '@/database/schemas/app-schema';
 import { db } from '@/database/db';
 import { eq } from 'drizzle-orm';
+import { Contact } from '@/database/types/contacts';
+
+export async function getContacts(organizationId: string): Promise<Contact[]> {
+  return db.$whereNotDeleted(contacts, eq(contacts.organizationId, organizationId));
+}
 
 export async function createContact(
   organization_id: string,
@@ -25,4 +30,8 @@ export async function updateContact(
     .update(contacts)
     .set({ ...contact_input, updatedBy: updated_by })
     .where(eq(contacts.id, contact_id));
+}
+
+export async function deleteContact(contact_id: string) {
+  return db.$softDelete(contacts, contact_id);
 }
