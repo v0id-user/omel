@@ -78,11 +78,11 @@ export default function SignInClientPage() {
   return (
     <div className="flex justify-center items-center flex-col min-h-screen">
       <Image
-        src="/images/logo_small.png"
+        src="/images/logo.png"
         alt="logo"
-        width={65}
-        height={65}
-        className="mb-16 mt-10"
+        width={85}
+        height={85}
+        className="mb-16 mt-14"
         priority
       />
       <div className="flex-grow flex flex-col justify-center items-center pb-24">

@@ -1,4 +1,4 @@
-export const SUBSCRIPTION_TIERS = ['free', 'pro', 'enterprise'] as const;
+export const SUBSCRIPTION_TIERS = ['free', '14dayfree', 'pro', 'enterprise'] as const;
 
 export type SubscriptionTier = (typeof SUBSCRIPTION_TIERS)[number];
 

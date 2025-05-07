@@ -1,8 +1,8 @@
 import { contacts } from '@/database/schemas/app-schema';
 
 // Base contact type from database schema
-export type Contact = typeof contacts.$inferSelect;
-export type NewContact = typeof contacts.$inferInsert;
+export type Contact = Omit<typeof contacts.$inferSelect, 'deletedAt'>;
+export type NewContact = Omit<typeof contacts.$inferInsert, 'organizationId' | 'deletedAt'>;
 
 export const CONTACT_STATUSES = ['active', 'inactive'] as const;
 

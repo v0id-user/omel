@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 import SignUpForm from './SignUpForm';
 import { AuthFooter } from '@/components/auth';
+
 export const metadata: Metadata = {
   title: 'أوميل - تسجيل الدخول',
   description: 'تسجيل الدخول إلى أوميل للبدء في إدارة علاقات العملاء الخاصة بك.',
@@ -39,11 +40,11 @@ export default function SignUp() {
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow flex flex-col items-center justify-center p-2">
         <Image
-          src="/images/logo_small.png"
+          src="/images/logo.png"
           alt="logo"
-          width={75}
-          height={75}
-          className="mb-16"
+          width={95}
+          height={95}
+          className="mb-14"
           priority
         />
         <SignUpContainer>

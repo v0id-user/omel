@@ -24,6 +24,8 @@ export function ProgressIndicator({ currentStep, clientType }: ProgressIndicator
 
   return (
     <>
+      {/* TODO: Simple TimeLine Progress With Icons */}
+
       {/* Progress bar */}
       <ProgressBar progress={getProgressPercentage()} />
 

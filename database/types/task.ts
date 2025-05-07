@@ -1,8 +1,8 @@
 import { tasks } from '@/database/schemas/app-schema';
 
 // Base task type from database schema
-export type Task = typeof tasks.$inferSelect;
-export type NewTask = typeof tasks.$inferInsert;
+export type Task = Omit<typeof tasks.$inferSelect, 'deletedAt'>;
+export type NewTask = Omit<typeof tasks.$inferInsert, 'organizationId' | 'deletedAt'>;
 
 // Task status options
 export const TASK_STATUSES = [

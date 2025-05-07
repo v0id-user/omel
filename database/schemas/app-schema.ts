@@ -6,12 +6,13 @@ import { TaskPriority, TaskStatus } from '@/database/types/task';
 import { SubscriptionTier, SubscriptionStatus } from '@/database/types/subscriptions';
 import { ContactType } from '@/database/types/contacts';
 import { ResourceType } from '@/database/types/usage';
+import { timestamps } from '@/database/schemas/timestamps';
+
 export const subscriptions = pgTable(
   'subscriptions',
   {
     id: text('id').primaryKey().default(createId()),
     email: text('email').notNull(),
-    deletedAt: timestamp('deleted_at'),
     userId: text('user_id')
       .notNull()
       .references(() => users.id),
@@ -19,8 +20,7 @@ export const subscriptions = pgTable(
     status: text('status').notNull().$type<SubscriptionStatus>(),
     startDate: timestamp('start_date').notNull(),
     endDate: timestamp('end_date'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    ...timestamps,
   },
   table => [
     index('subscription_user_id_idx').on(table.userId),
@@ -36,9 +36,6 @@ export const contacts = pgTable(
     name: text('name').notNull(),
     email: text('email'),
     phone: text('phone'),
-    deletedAt: timestamp('deleted_at'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     contactType: text('contact_type').$type<ContactType>().default('person'),
     createdBy: text('created_by')
       .notNull()
@@ -49,6 +46,7 @@ export const contacts = pgTable(
     organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id),
+    ...timestamps,
   },
   table => [
     index('contact_org_id_idx').on(table.organizationId),
@@ -62,9 +60,6 @@ export const categories = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
-    deletedAt: timestamp('deleted_at'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     createdBy: text('created_by')
       .notNull()
       .references(() => users.id),
@@ -74,6 +69,7 @@ export const categories = pgTable(
     organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id),
+    ...timestamps,
   },
   table => [
     index('category_org_id_idx').on(table.organizationId),
@@ -86,11 +82,8 @@ export const tasks = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
-    deletedAt: timestamp('deleted_at'),
     description: text('description'),
     category: text('category'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     dueDate: timestamp('due_date'),
     status: text('status').$type<TaskStatus>().notNull().default('pending'),
     priority: text('priority').$type<TaskPriority>().notNull().default('low'),
@@ -106,6 +99,7 @@ export const tasks = pgTable(
     organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id),
+    ...timestamps,
   },
   table => [
     index('task_org_id_idx').on(table.organizationId),
@@ -128,11 +122,10 @@ export const usageCounters = pgTable(
     limit: text('limit').notNull().default('0'),
     periodStart: timestamp('period_start').notNull(),
     periodEnd: timestamp('period_end').notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id),
+    ...timestamps,
   },
   table => [
     index('usage_counter_org_id_idx').on(table.organizationId),

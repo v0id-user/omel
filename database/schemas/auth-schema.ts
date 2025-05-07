@@ -1,5 +1,6 @@
 import { pgTable, text, integer, bigint, timestamp, boolean, index } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
+import { timestamps } from '@/database/schemas/timestamps';
 
 export const users = pgTable(
   'users',
@@ -9,12 +10,11 @@ export const users = pgTable(
     email: text('email').notNull().unique(),
     emailVerified: boolean('email_verified').notNull(),
     image: text('image'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     normalizedEmail: text('normalized_email').unique(),
     twoFactorEnabled: boolean('two_factor_enabled'),
     phoneNumber: text('phone_number').unique(),
     phoneNumberVerified: boolean('phone_number_verified'),
+    ...timestamps,
   },
   table => [index('user_email_idx').on(table.email)]
 );
@@ -25,8 +25,6 @@ export const sessions = pgTable(
     id: text('id').primaryKey().default(createId()),
     expiresAt: timestamp('expires_at').notNull(),
     token: text('token').notNull().unique(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
     ipAddress: text('ip_address'),
     userAgent: text('user_agent'),
     userId: text('user_id')
@@ -36,6 +34,7 @@ export const sessions = pgTable(
       onDelete: 'cascade',
     }),
     metadata: text('metadata'),
+    ...timestamps,
   },
   table => [
     index('session_token_idx').on(table.token),
@@ -60,8 +59,7 @@ export const accounts = pgTable(
     refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
     scope: text('scope'),
     password: text('password'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    ...timestamps,
   },
   table => [index('account_user_id_idx').on(table.userId)]
 );
@@ -71,8 +69,8 @@ export const organizations = pgTable('organizations', {
   name: text('name').notNull(),
   slug: text('slug').unique(),
   logo: text('logo'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
   metadata: text('metadata'),
+  ...timestamps,
 });
 
 export const members = pgTable('members', {
@@ -84,7 +82,7 @@ export const members = pgTable('members', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   role: text('role').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  ...timestamps,
 });
 
 export const invitations = pgTable('invitations', {
@@ -99,6 +97,7 @@ export const invitations = pgTable('invitations', {
   inviterId: text('inviter_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  ...timestamps,
 });
 
 export const verifications = pgTable(
@@ -108,8 +107,7 @@ export const verifications = pgTable(
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
     expiresAt: timestamp('expires_at').notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    ...timestamps,
   },
   table => [index('verification_identifier_idx').on(table.identifier)]
 );
@@ -123,6 +121,7 @@ export const twoFactors = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
+    ...timestamps,
   },
   table => [
     index('two_factor_user_id_idx').on(table.userId),
@@ -137,6 +136,7 @@ export const rateLimits = pgTable(
     key: text('key'),
     count: integer('count'),
     lastRequest: bigint('last_request', { mode: 'number' }),
+    ...timestamps,
   },
   table => [index('rate_limit_key_idx').on(table.key)]
 );
