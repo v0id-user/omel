@@ -5,6 +5,7 @@ import { X, Menu } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
 import { useRouter } from 'next/navigation';
 import Banner from '@/public/banner.svg';
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -49,9 +50,13 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`py-4 sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/90 backdrop-blur-md shadow-lg rounded-full px-8 py-3'
+          : 'bg-transparent'
+      }`}
     >
-      <div className="container-custom flex justify-between items-center">
+      <div className="flex justify-between items-center gap-8 min-w-[800px]">
         <Banner className="w-fit h-fit" />
 
         {/* Mobile menu button */}
@@ -98,9 +103,9 @@ const Navbar = () => {
             تواصل معنا
           </a>
           <a
-            href="#contact"
+            href="#empty"
             className="text-foreground/70 text-sm hover:text-foreground transition-colors"
-            onClick={e => handleAnchorClick(e, '#contact')}
+            onClick={e => handleAnchorClick(e, '#empty')}
           >
             {' ' /*Empty */}
           </a>
@@ -113,8 +118,8 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-16 right-0 left-0 bg-background border-b border-border rounded-xl shadow-sm animate-fade-in">
-          <div className="container-custom py-4 flex flex-col space-y-4">
+        <div className="md:hidden absolute top-16 right-0 left-0 bg-background border border-border rounded-xl shadow-lg animate-fade-in">
+          <div className="p-4 flex flex-col space-y-4">
             <a
               href="#features"
               className="text-foreground/70 hover:text-foreground py-2"
