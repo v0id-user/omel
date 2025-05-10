@@ -34,8 +34,8 @@ export const contacts = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
-    email: text('email'),
-    phone: text('phone'),
+    email: text('email').unique(),
+    phone: text('phone').unique(),
     contactType: text('contact_type').$type<ContactType>().default('person'),
     createdBy: text('created_by')
       .notNull()
