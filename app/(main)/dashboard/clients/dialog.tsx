@@ -14,6 +14,7 @@ import { BasicInfoStep } from './forms/BasicInfoStep';
 import { ContactInfoStep } from './forms/ContactInfoStep';
 import { CompanyDetailsStep } from './forms/CompanyDetailsStep';
 import { CompletionStep } from './forms/CompletionStep';
+import { trpc } from '@/trpc/client';
 
 export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   // State for current step and data
@@ -37,9 +38,28 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     },
   });
 
+  const { mutate: createContact, isPending } = trpc.crm.dashboard.contact.new.useMutation({
+    onSuccess: () => {
+      toast.success('تم إضافة العميل بنجاح');
+      onClose();
+    },
+    onError: error => {
+      console.error(error);
+      switch (error.data?.code) {
+        case 'BAD_REQUEST':
+          toast.error('الرجاء التحقق من البيانات المدخلة');
+          break;
+        case 'INTERNAL_SERVER_ERROR':
+          toast.error('حدث خطأ أثناء إضافة العميل');
+          break;
+        default:
+          toast.error('حدث خطأ أثناء إضافة العميل');
+      }
+    },
+  });
+
   // Form validation state
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle input changes
   const handleChange = (field: string, value: string) => {
@@ -195,18 +215,31 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   const handleSubmit = async () => {
     if (!validateStep()) return;
 
-    setIsSubmitting(true);
-
     try {
-      // TODO: Implement the actual client creation API call
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating API call
-      toast.success('تم إضافة العميل بنجاح');
-      onClose();
+      // TODO: Validate if this even works, and fix
+
+      // The success or error is handled in the mutation, TRPC IS FUCKING AWESOME
+      createContact({
+        name: clientData.name,
+        email: clientData.email,
+        phone: clientData.phone,
+        contactType: clientData.clientType,
+        address: clientData.address,
+        city: clientData.city,
+        region: clientData.region,
+        country: clientData.country,
+        postalCode: clientData.postalCode,
+        domain: clientData.companyFields?.domain || '',
+        additionalPhones: clientData.companyFields?.additionalPhones || [],
+        taxId: clientData.companyFields?.taxId || '',
+        businessType: clientData.companyFields?.businessType || '',
+        employees: clientData.companyFields?.employees || '',
+      });
     } catch (error) {
       console.error(error);
       toast.error('حدث خطأ أثناء إضافة العميل');
     } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -292,11 +325,16 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
           )}
 
           {currentStep !== 'complete' ? (
-            <OButton variant="primary" onClick={nextStep} className="flex items-center gap-1 px-2">
+            <OButton
+              variant="primary"
+              onClick={nextStep}
+              className="flex items-center gap-1 px-2"
+              isLoading={isPending}
+            >
               التالي <ArrowLeft className="w-3 h-3" />
             </OButton>
           ) : (
-            <OButton variant="primary" onClick={handleSubmit} isLoading={isSubmitting}>
+            <OButton variant="primary" onClick={handleSubmit} isLoading={isPending}>
               إضافة العميل
             </OButton>
           )}

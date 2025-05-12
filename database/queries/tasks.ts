@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { Task, CreateTaskInput, UpdateTaskInput } from '@/database/types/task';
 
 export async function getTasks(organizationId: string): Promise<Task[]> {
-  return db.$whereNotDeleted(tasks, eq(tasks.organizationId, organizationId));
+  return await db.$whereNotDeleted(tasks, eq(tasks.organizationId, organizationId));
 }
 
 export async function createTasks(
@@ -12,7 +12,7 @@ export async function createTasks(
   created_by: string,
   tasks_input: CreateTaskInput[]
 ) {
-  return db.insert(tasks).values(
+  return await db.insert(tasks).values(
     tasks_input.map(task => ({
       ...task,
       organizationId: organization_id,
@@ -23,12 +23,12 @@ export async function createTasks(
 }
 
 export async function updateTask(task_id: string, updated_by: string, task_input: UpdateTaskInput) {
-  return db
+  return await db
     .update(tasks)
     .set({ ...task_input, updatedBy: updated_by })
     .where(eq(tasks.id, task_id));
 }
 
 export async function deleteTask(task_id: string) {
-  return db.$softDelete(tasks, task_id);
+  return await db.$softDelete(tasks, task_id);
 }

@@ -13,7 +13,7 @@ export async function createContact(
   created_by: string,
   contact_input: CreateContactInput
 ) {
-  return db.insert(contacts).values({
+  return await db.insert(contacts).values({
     ...contact_input,
     organizationId: organization_id,
     createdBy: created_by,
@@ -26,12 +26,12 @@ export async function updateContact(
   updated_by: string,
   contact_input: UpdateContactInput
 ) {
-  return db
+  return await db
     .update(contacts)
     .set({ ...contact_input, updatedBy: updated_by })
     .where(eq(contacts.id, contact_id));
 }
 
 export async function deleteContact(contact_id: string) {
-  return db.$softDelete(contacts, contact_id);
+  return await db.$softDelete(contacts, contact_id);
 }

@@ -11,6 +11,8 @@ const contactUpdateInputSchema = z.object({
 
 export const contactRouter = createTRPCRouter({
   new: protectedProcedure.input(contactInputSchema).mutation(async ({ ctx, input }) => {
+    // TODO: Validate inputs and fields
+
     return createNewContact(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
   }),
   update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ ctx, input }) => {

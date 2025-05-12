@@ -1,4 +1,6 @@
-export type ClientType = 'person' | 'company';
+import { ContactType } from '@/database/types/contacts';
+
+export type ClientType = ContactType;
 
 // Client data model
 export interface ClientData {

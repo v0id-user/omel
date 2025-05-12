@@ -36,7 +36,17 @@ export const contacts = pgTable(
     name: text('name').notNull(),
     email: text('email').unique(),
     phone: text('phone').unique(),
+    address: text('address'),
+    city: text('city'),
+    region: text('region'),
+    country: text('country'),
+    postalCode: text('postal_code'),
     contactType: text('contact_type').$type<ContactType>().default('person'),
+    domain: text('domain'),
+    additionalPhones: text('additional_phones').array(),
+    taxId: text('tax_id'),
+    businessType: text('business_type'),
+    employees: text('employees'),
     createdBy: text('created_by')
       .notNull()
       .references(() => users.id),
@@ -52,6 +62,8 @@ export const contacts = pgTable(
     index('contact_org_id_idx').on(table.organizationId),
     index('contact_email_idx').on(table.email),
     index('contact_name_idx').on(table.name),
+    index('contact_phone_idx').on(table.phone),
+    index('contact_type_idx').on(table.contactType),
   ]
 );
 
