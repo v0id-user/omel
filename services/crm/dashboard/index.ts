@@ -1,2 +1,2 @@
-export * from './tasks/new';
-export * from './contacts/new';
+export * from './tasks';
+export * from './contacts';
