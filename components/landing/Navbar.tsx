@@ -3,12 +3,18 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Menu } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Banner from '@/public/banner.svg';
-const useScrollEffect = () => {
+
+const useScrollEffect = (disableEffect = false) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    if (disableEffect) {
+      setScrolled(true);
+      return;
+    }
+
     const handleScroll = () => {
       const offset = window.scrollY;
       setScrolled(offset > 10);
@@ -16,10 +22,11 @@ const useScrollEffect = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [disableEffect]);
 
   return scrolled;
 };
+
 const useAnchorNavigation = (
   setIsOpen: (isOpen: boolean) => void,
   router: ReturnType<typeof useRouter>
@@ -133,14 +140,20 @@ const DesktopMenu = ({
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const scrolled = useScrollEffect();
   const router = useRouter();
+  const pathname = usePathname();
+  const isLegalPage = pathname?.startsWith('/legal');
+  const scrolled = useScrollEffect(isLegalPage);
   const handleAnchorClick = useAnchorNavigation(setIsOpen, router);
 
   return (
     <nav
-      className={`fixed top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 z-[999] transition-all duration-300 ${
-        scrolled ? 'bg-white/90 backdrop-blur-md shadow-lg rounded-xl' : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-[999] transition-all duration-300 ${
+        isLegalPage
+          ? 'bg-white shadow-md'
+          : scrolled
+            ? 'top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 bg-white/90 backdrop-blur-md shadow-lg rounded-xl'
+            : 'top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 bg-transparent'
       }`}
     >
       <div className="flex justify-between items-center gap-4 md:gap-8 px-4 py-2 md:px-8 md:py-3 max-w-[1200px] mx-auto">

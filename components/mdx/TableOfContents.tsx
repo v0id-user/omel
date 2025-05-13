@@ -25,11 +25,10 @@ export const TableOfContents = ({ items }: { items: TocItem[] | undefined }) => 
                 href={item.href}
                 className={twMerge(
                   'flex flex-row-reverse gap-x-2 leading-normal text-gray-500 transition-colors duration-200 ease-in-out hover:text-gray-700',
-                  'aria-selected:text-gray-700 aria-selected:dark:text-white aria-selected:font-medium',
-                  'scroll-mt-24'
+                  'aria-selected:text-gray-700 aria-selected:dark:text-white aria-selected:font-medium'
                 )}
               >
-                {item.depth > 2 && <ArrowRight className="mt-[4px] rotate-180" />}
+                {item.depth > 2 && <ArrowRight className="w-3 h-3 mt-[4px]" />}
                 {item.value}
               </Link>
             </li>

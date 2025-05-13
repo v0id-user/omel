@@ -8,6 +8,12 @@ const TableOfContentsScrollSpy = () => {
     if (!article) return;
 
     const headings = article.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+    // Add scroll margin to all headings to prevent them from being hidden behind the navbar
+    headings.forEach(heading => {
+      heading.classList.add('scroll-mt-24');
+    });
+
     const callback = (entries: IntersectionObserverEntry[]) => {
       const intersectingEntries = entries.filter(entry => entry.isIntersecting);
       if (intersectingEntries.length === 0) return;

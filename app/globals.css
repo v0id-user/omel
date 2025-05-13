@@ -120,6 +120,16 @@
     @apply bg-background text-foreground;
   }
 
+  /* Add scroll margin to headings to prevent navbar overlap */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    scroll-margin-top: 6rem;
+  }
+
   :root {
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
