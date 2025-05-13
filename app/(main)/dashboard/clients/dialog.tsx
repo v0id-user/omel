@@ -216,9 +216,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     if (!validateStep()) return;
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating API call
       // TODO: Validate if this even works, and fix
-
       // The success or error is handled in the mutation, TRPC IS FUCKING AWESOME
       createContact({
         name: clientData.name,
