@@ -15,6 +15,7 @@ import { ContactInfoStep } from './forms/ContactInfoStep';
 import { CompanyDetailsStep } from './forms/CompanyDetailsStep';
 import { CompletionStep } from './forms/CompletionStep';
 import { trpc } from '@/trpc/client';
+import { companyFields } from './config/fieldConfigs';
 
 export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   // State for current step and data
@@ -47,7 +48,26 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       console.error(error);
       switch (error.data?.code) {
         case 'BAD_REQUEST':
-          toast.error('الرجاء التحقق من البيانات المدخلة');
+          if (error.message.includes('Email')) {
+            toast.error('البريد الإلكتروني غير صالح');
+            setErrors({ ...errors, email: 'البريد الإلكتروني غير صالح' });
+          } else if (error.message.includes('phone')) {
+            toast.error('رقم الهاتف غير صالح');
+            setErrors({ ...errors, phone: 'رقم الهاتف غير صالح' });
+          } else {
+            toast.error('الرجاء التحقق من البيانات المدخلة');
+          }
+          break;
+        case 'CONFLICT':
+          if (error.message.includes('email')) {
+            toast.error('البريد الإلكتروني مستخدم بالفعل');
+            setErrors({ ...errors, email: 'البريد الإلكتروني مستخدم بالفعل' });
+          } else if (error.message.includes('phone')) {
+            toast.error('رقم الهاتف مستخدم بالفعل');
+            setErrors({ ...errors, phone: 'رقم الهاتف مستخدم بالفعل' });
+          } else {
+            toast.error('البيانات المدخلة مستخدمة بالفعل');
+          }
           break;
         case 'INTERNAL_SERVER_ERROR':
           toast.error('حدث خطأ أثناء إضافة العميل');
@@ -148,7 +168,9 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     if (currentStep === 'basicInfo') {
       if (!clientData.name) newErrors.name = 'الاسم مطلوب';
 
-      if (clientData.email) {
+      if (!clientData.email) {
+        newErrors.email = 'البريد الإلكتروني مطلوب';
+      } else if (clientData.email) {
         const emailError = clientValidateEmailInput(clientData.email);
         if (emailError) newErrors.email = emailError;
       }
@@ -168,6 +190,16 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
         if (!result.success) {
           newErrors['companyFields.domain'] = 'عنوان الموقع غير صالح';
         }
+      } else {
+        newErrors['companyFields.domain'] = 'عنوان الموقع مطلوب للشركات';
+      }
+
+      if (!clientData.companyFields?.taxId) {
+        newErrors['companyFields.taxId'] = 'الرقم الضريبي مطلوب للشركات';
+      }
+
+      if (!clientData.companyFields?.businessType) {
+        newErrors['companyFields.businessType'] = 'نوع النشاط التجاري مطلوب للشركات';
       }
     }
 
@@ -216,6 +248,44 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     if (!validateStep()) return;
 
     try {
+      // Validate company fields if client type is company
+      if (clientData.clientType === 'company') {
+        const companyErrors: Record<string, string> = {};
+
+        // Use the field configs for validation rules
+        const requiredDomain = companyFields.find(
+          f => f.name === 'companyFields.domain'
+        )?.isRequired;
+        const requiredTaxId = companyFields.find(f => f.name === 'companyFields.taxId')?.isRequired;
+        const requiredBusinessType = companyFields.find(
+          f => f.name === 'companyFields.businessType'
+        )?.isRequired;
+
+        if (requiredDomain && !clientData.companyFields?.domain) {
+          companyErrors['companyFields.domain'] = 'عنوان الموقع مطلوب للشركات';
+        } else if (clientData.companyFields?.domain) {
+          const domainSchema = z.string().url().optional();
+          const result = domainSchema.safeParse(clientData.companyFields.domain);
+          if (!result.success) {
+            companyErrors['companyFields.domain'] = 'عنوان الموقع غير صالح';
+          }
+        }
+
+        if (requiredTaxId && !clientData.companyFields?.taxId) {
+          companyErrors['companyFields.taxId'] = 'الرقم الضريبي مطلوب للشركات';
+        }
+
+        if (requiredBusinessType && !clientData.companyFields?.businessType) {
+          companyErrors['companyFields.businessType'] = 'نوع النشاط التجاري مطلوب للشركات';
+        }
+
+        if (Object.keys(companyErrors).length > 0) {
+          setErrors({ ...errors, ...companyErrors });
+          toast.error('يرجى إكمال جميع حقول الشركة المطلوبة');
+          return;
+        }
+      }
+
       // TODO: Validate if this even works, and fix
       // The success or error is handled in the mutation, TRPC IS FUCKING AWESOME
       createContact({
@@ -332,7 +402,12 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
               التالي <ArrowLeft className="w-3 h-3" />
             </OButton>
           ) : (
-            <OButton variant="primary" onClick={handleSubmit} isLoading={isPending}>
+            <OButton
+              variant="primary"
+              className="px-2"
+              onClick={handleSubmit}
+              isLoading={isPending}
+            >
               إضافة العميل
             </OButton>
           )}

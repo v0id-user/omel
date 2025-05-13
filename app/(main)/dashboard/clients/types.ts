@@ -2,6 +2,16 @@ import { ContactType } from '@/database/types/contacts';
 
 export type ClientType = ContactType;
 
+// Form field configuration type
+export interface FormFieldConfig {
+  name: string;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  isRequired?: boolean;
+  validator?: (value: string) => string | undefined;
+}
+
 // Client data model
 export interface ClientData {
   // Basic info

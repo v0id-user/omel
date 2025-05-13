@@ -1,7 +1,10 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
+import { FormField } from '@/components/omel/FormField';
 import { StepProps } from '../types';
+import { Input } from '@/components/ui/input';
+import { companyFields } from '../config/fieldConfigs';
+import { X } from 'lucide-react';
 
 export function CompanyDetailsStep({
   clientData,
@@ -13,42 +16,39 @@ export function CompanyDetailsStep({
 }: StepProps) {
   if (!onAddPhone || !onRemovePhone || !onPhoneChange || !clientData.companyFields) return null;
 
+  // Function to get the value for a field based on its name
+  const getFieldValue = (fieldName: string): string => {
+    if (fieldName.includes('.')) {
+      const [parent, child] = fieldName.split('.');
+      if (parent === 'companyFields' && clientData.companyFields) {
+        const value = clientData.companyFields[child as keyof typeof clientData.companyFields];
+        // Check if the value is an array (like additionalPhones)
+        if (Array.isArray(value)) {
+          return '';
+        }
+        return value?.toString() || '';
+      }
+    }
+    return fieldName === 'name' ? clientData.name : '';
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-medium mb-4">معلومات الشركة</h2>
-      <div>
-        <Input
-          type="text"
-          placeholder="الموقع الإلكتروني"
-          value={clientData.companyFields.domain || ''}
-          onChange={e => onClientDataChange('companyFields.domain', e.target.value)}
-          className={errors['companyFields.domain'] ? 'border-red-500' : ''}
+
+      {companyFields.map(field => (
+        <FormField
+          key={field.name}
+          label={field.label}
+          name={field.name}
+          type={field.type}
+          value={getFieldValue(field.name)}
+          onChange={value => onClientDataChange(field.name, value)}
+          placeholder={field.placeholder || field.label}
+          isRequired={field.isRequired}
+          error={errors[field.name]}
         />
-        {errors['companyFields.domain'] && (
-          <p className="text-red-500 text-sm mt-1">{errors['companyFields.domain']}</p>
-        )}
-      </div>
-
-      <Input
-        type="text"
-        placeholder="الرقم الضريبي"
-        value={clientData.companyFields.taxId || ''}
-        onChange={e => onClientDataChange('companyFields.taxId', e.target.value)}
-      />
-
-      <Input
-        type="text"
-        placeholder="نوع النشاط التجاري"
-        value={clientData.companyFields.businessType || ''}
-        onChange={e => onClientDataChange('companyFields.businessType', e.target.value)}
-      />
-
-      <Input
-        type="text"
-        placeholder="عدد الموظفين"
-        value={clientData.companyFields.employees || ''}
-        onChange={e => onClientDataChange('companyFields.employees', e.target.value)}
-      />
+      ))}
 
       <div className="space-y-2">
         <h3 className="text-sm font-medium">أرقام هواتف إضافية</h3>
@@ -64,9 +64,9 @@ export function CompanyDetailsStep({
               <button
                 type="button"
                 onClick={() => onRemovePhone(index)}
-                className="bg-red-100 text-red-600 p-2 rounded-md hover:bg-red-200"
+                className="text-red-500 p-1 rounded-full hover:text-red-600 transition-colors text-xs cursor-pointer"
               >
-                حذف
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>

@@ -1,58 +1,77 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
+import { FormField } from '@/components/omel/FormField';
 import { StepProps } from '../types';
+import { contactInfoFields } from '../config/fieldConfigs';
 
 export function ContactInfoStep({ clientData, onClientDataChange, errors }: StepProps) {
+  // Filtering fields into main and grid sections
+  const mainFields = contactInfoFields.filter(field => ['phone', 'address'].includes(field.name));
+  const locationFields = contactInfoFields.filter(field => ['city', 'region'].includes(field.name));
+  const postalFields = contactInfoFields.filter(field =>
+    ['country', 'postalCode'].includes(field.name)
+  );
+
+  // Function to safely get field value, handling all possible types
+  const getFieldValue = (fieldName: string): string => {
+    const value = clientData[fieldName as keyof typeof clientData];
+
+    // Skip object or array values
+    if (typeof value === 'object' || Array.isArray(value)) {
+      return '';
+    }
+
+    return value?.toString() || '';
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-medium mb-4">معلومات الاتصال</h2>
-      <div>
-        <Input
-          type="text"
-          placeholder="رقم الهاتف"
-          value={clientData.phone}
-          onChange={e => onClientDataChange('phone', e.target.value)}
-          className={errors.phone ? 'border-red-500' : ''}
-        />
-        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-      </div>
 
-      <Input
-        type="text"
-        placeholder="العنوان"
-        value={clientData.address}
-        onChange={e => onClientDataChange('address', e.target.value)}
-      />
+      {mainFields.map(field => (
+        <FormField
+          key={field.name}
+          label={field.label}
+          name={field.name}
+          type={field.type}
+          value={getFieldValue(field.name)}
+          onChange={value => onClientDataChange(field.name, value)}
+          placeholder={field.placeholder || field.label}
+          isRequired={field.isRequired}
+          error={errors[field.name]}
+        />
+      ))}
 
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          type="text"
-          placeholder="المدينة"
-          value={clientData.city}
-          onChange={e => onClientDataChange('city', e.target.value)}
-        />
-        <Input
-          type="text"
-          placeholder="المنطقة"
-          value={clientData.region}
-          onChange={e => onClientDataChange('region', e.target.value)}
-        />
+        {locationFields.map(field => (
+          <FormField
+            key={field.name}
+            label={field.label}
+            name={field.name}
+            type={field.type}
+            value={getFieldValue(field.name)}
+            onChange={value => onClientDataChange(field.name, value)}
+            placeholder={field.placeholder || field.label}
+            isRequired={field.isRequired}
+            error={errors[field.name]}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          type="text"
-          placeholder="البلد"
-          value={clientData.country}
-          onChange={e => onClientDataChange('country', e.target.value)}
-        />
-        <Input
-          type="text"
-          placeholder="الرمز البريدي"
-          value={clientData.postalCode}
-          onChange={e => onClientDataChange('postalCode', e.target.value)}
-        />
+        {postalFields.map(field => (
+          <FormField
+            key={field.name}
+            label={field.label}
+            name={field.name}
+            type={field.type}
+            value={getFieldValue(field.name)}
+            onChange={value => onClientDataChange(field.name, value)}
+            placeholder={field.placeholder || field.label}
+            isRequired={field.isRequired}
+            error={errors[field.name]}
+          />
+        ))}
       </div>
     </div>
   );

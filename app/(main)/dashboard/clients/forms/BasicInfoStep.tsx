@@ -1,33 +1,51 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
+import { FormField } from '@/components/omel/FormField';
 import { StepProps } from '../types';
+import { basicInfoFields } from '../config/fieldConfigs';
 
 export function BasicInfoStep({ clientData, onClientDataChange, errors }: StepProps) {
+  // Function to safely get field value, handling all possible types
+  const getFieldValue = (fieldName: string): string => {
+    const value = clientData[fieldName as keyof typeof clientData];
+
+    // Skip object or array values
+    if (typeof value === 'object' || Array.isArray(value)) {
+      return '';
+    }
+
+    return value?.toString() || '';
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-medium mb-4">المعلومات الأساسية</h2>
-      <div>
-        <Input
-          type="text"
-          placeholder={clientData.clientType === 'person' ? 'الاسم الكامل' : 'اسم الشركة'}
-          value={clientData.name}
-          onChange={e => onClientDataChange('name', e.target.value)}
-          className={errors.name ? 'border-red-500' : ''}
-        />
-        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-      </div>
 
-      <div>
-        <Input
-          type="email"
-          placeholder="البريد الإلكتروني"
-          value={clientData.email}
-          onChange={e => onClientDataChange('email', e.target.value)}
-          className={errors.email ? 'border-red-500' : ''}
+      {basicInfoFields.map(field => (
+        <FormField
+          key={field.name}
+          label={
+            field.name === 'name'
+              ? clientData.clientType === 'person'
+                ? 'الاسم الكامل'
+                : 'اسم الشركة'
+              : field.label
+          }
+          name={field.name}
+          type={field.type}
+          value={getFieldValue(field.name)}
+          onChange={value => onClientDataChange(field.name, value)}
+          placeholder={
+            field.name === 'name'
+              ? clientData.clientType === 'person'
+                ? 'الاسم الكامل'
+                : 'اسم الشركة'
+              : field.placeholder || field.label
+          }
+          isRequired={field.isRequired}
+          error={errors[field.name]}
         />
-        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-      </div>
+      ))}
     </div>
   );
 }
