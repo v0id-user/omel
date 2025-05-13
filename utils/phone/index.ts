@@ -1,3 +1,3 @@
-import { validatePhone } from './validate';
+import { validatePhoneArab } from './validate';
 
-export { validatePhone };
+export { validatePhoneArab };

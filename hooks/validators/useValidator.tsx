@@ -11,7 +11,7 @@ export function useClientValidations() {
   const [isLoading, setIsLoading] = useState(false);
 
   const emailValidationRpc = trpc.validations.validateEmail.useMutation();
-  const phoneValidationRpc = trpc.validations.validatePhone.useMutation();
+  const phoneValidationRpc = trpc.validations.validatePhoneArab.useMutation();
   const validators = {
     [ValidationType.Email]: async (value: string) => {
       const isValidInput = clientValidateEmailInput(value);

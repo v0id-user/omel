@@ -3,8 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { auth } from '@/lib/betterauth/auth';
 import { OrganizationMetadata } from '@/interfaces/organization';
 import { validateEmail } from '@/utils/emails';
-import { validatePhone } from '@/utils/phone';
-import { headers } from 'next/headers';
+import { validatePhoneArab } from '@/utils/phone';
 
 const isValidCompanyName = (name: string) => {
   const regex = /^[A-Za-z0-9&.,'’\-\s]{2,100}$/;
@@ -32,7 +31,7 @@ export async function validateUserInput(input: NewCRMUserInfo) {
 
   // Validate the phone
   console.log('Validating phone:', input.personalInfo.phone);
-  if (!(await validatePhone(input.personalInfo.phone))) {
+  if (!(await validatePhoneArab(input.personalInfo.phone))) {
     console.log('Phone validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',

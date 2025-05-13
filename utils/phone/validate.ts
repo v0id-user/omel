@@ -21,7 +21,7 @@ const arabRegions = [
   'PS',
 ];
 
-function validatePhone(input: string) {
+function validatePhoneArab(input: string) {
   // TODO: This is not good, refactor it
   const phone = clientValidatePhoneInput(input);
   if (phone !== undefined) return false;
@@ -38,4 +38,12 @@ function validatePhone(input: string) {
   return false;
 }
 
-export { validatePhone };
+function validatePhoneGeneral(input: string) {
+  const phone = clientValidatePhoneInput(input);
+  if (phone !== undefined) return false;
+
+  const parsedPhone = parsePhoneNumberFromString(input);
+  if (!parsedPhone?.country) return false;
+}
+
+export { validatePhoneArab, validatePhoneGeneral };
