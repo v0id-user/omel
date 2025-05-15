@@ -15,13 +15,8 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Pencil, Trash2 } from 'lucide-react';
+import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -80,6 +75,32 @@ export default function ClientsPage() {
     console.log('Editing:', selectedRows);
   };
 
+  const formatPhoneNumber = (phone: string) => {
+    const phoneNumber = parsePhoneNumberFromString(phone);
+    if (!phoneNumber) return <span>{phone}</span>;
+
+    const countryCode = phoneNumber.countryCallingCode;
+    const nationalNumber = phoneNumber.nationalNumber;
+
+    // Convert to Arabic numerals
+    const toArabicNumbers = (num: string) => {
+      return num.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
+    };
+
+    return (
+      <>
+        <span className="flex flex-row-reverse items-center justify-end w-fit mx-auto">
+          <div className="flex flex-row-reverse items-center justify-end bg-gray-200 text-gray-800 px-2 py-1 rounded-md">
+            <span className="text-sm">+</span>
+            <span className="ml-1">{toArabicNumbers(countryCode.toString())}</span>
+          </div>
+          <span className="mx-1">{toArabicNumbers(nationalNumber.slice(0, 3))}</span>
+          <span>{toArabicNumbers(nationalNumber.slice(3))}</span>
+        </span>
+      </>
+    );
+  };
+
   return (
     <DashboardContent
       title="العملاء"
@@ -110,7 +131,7 @@ export default function ClientsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="text-gray-700 hover:text-gray-900"
+              className="text-gray-700 hover:text-gray-900 cursor-pointer"
               onClick={handleBulkEdit}
             >
               <Pencil className="w-4 h-4 ml-1" />
@@ -119,7 +140,7 @@ export default function ClientsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="text-red-600 hover:text-red-700"
+              className="text-red-600 hover:text-red-700 cursor-pointer"
               onClick={handleBulkDelete}
             >
               <Trash2 className="w-4 h-4 ml-1" />
@@ -128,72 +149,55 @@ export default function ClientsPage() {
           </div>
         )}
 
-        <Table>
+        <Table className="space-y-4">
           <TableHeader>
-            <TableRow>
+            <TableRow className="py-4">
               <TableHead className="w-[50px] text-center">
                 <Checkbox
                   checked={selectedRows.length === contacts.length}
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              <TableHead className="text-right font-medium text-gray-600">الاسم</TableHead>
-              <TableHead className="text-right font-medium text-gray-600">
+              <TableHead className="text-right font-medium text-gray-600 py-4">الاسم</TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4">
                 البريد الإلكتروني
               </TableHead>
-              <TableHead className="text-right font-medium text-gray-600">الهاتف</TableHead>
-              <TableHead className="text-right font-medium text-gray-600">المدينة</TableHead>
-              <TableHead className="text-right font-medium text-gray-600">الدولة</TableHead>
-              <TableHead className="text-center font-medium text-gray-600">إجراءات</TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4">الهاتف</TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4">المدينة</TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4">الدولة</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="space-y-2">
             {contacts.map(contact => (
               <TableRow
                 key={contact.id}
                 data-state={selectedRows.includes(contact.id) ? 'selected' : undefined}
-                className="hover:bg-gray-50/80"
+                className="hover:bg-gray-50/80 py-4"
               >
-                <TableCell className="text-center">
+                <TableCell className="text-center py-4">
                   <Checkbox
                     checked={selectedRows.includes(contact.id)}
                     onCheckedChange={() => handleSelectRow(contact.id)}
                   />
                 </TableCell>
-                <TableCell className="text-right font-medium">{contact.name}</TableCell>
-                <TableCell className="text-right text-gray-600">{contact.email}</TableCell>
-                <TableCell className="text-right text-gray-600">{contact.phone}</TableCell>
-                <TableCell className="text-right text-gray-600">{contact.city}</TableCell>
-                <TableCell className="text-right text-gray-600">{contact.country}</TableCell>
-                <TableCell>
-                  <div className="flex items-center justify-center">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="flex h-8 w-8 p-0 data-[state=open]:bg-gray-100"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">فتح القائمة</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuItem className="text-right">
-                          <Eye className="ml-2 h-4 w-4" />
-                          <span>عرض</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-right">
-                          <Pencil className="ml-2 h-4 w-4" />
-                          <span>تعديل</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-right text-red-600">
-                          <Trash2 className="ml-2 h-4 w-4" />
-                          <span>حذف</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                <TableCell className="text-right font-medium py-4">{contact.name}</TableCell>
+                <TableCell className="text-right text-gray-600 py-4">
+                  {contact.email.split('@').map((part, index) => (
+                    <span
+                      key={index}
+                      className={
+                        index === 1 ? 'bg-blue-500/10 text-blue-500 rounded-md px-0.5 py-0.5' : ''
+                      }
+                    >
+                      {index === 0 ? part : '@' + part}
+                    </span>
+                  ))}
                 </TableCell>
+                <TableCell className="text-right text-gray-600 py-4">
+                  {formatPhoneNumber(contact.phone)}
+                </TableCell>
+                <TableCell className="text-right text-gray-600 py-4">{contact.city}</TableCell>
+                <TableCell className="text-right text-gray-600 py-4">{contact.country}</TableCell>
               </TableRow>
             ))}
           </TableBody>
