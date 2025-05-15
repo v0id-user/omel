@@ -5,10 +5,45 @@ import { UserPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { AddClientsDialog } from './dialog';
 import AddGroup from '@/public/icons/iso/add-group.svg';
-import { Table } from '@/components/ui/table';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table';
+import { Pencil, Trash2 } from 'lucide-react';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const contacts = [
+    {
+      id: '1',
+      name: 'شركة التقنية الحديثة',
+      email: 'info@tech.com',
+      phone: '+966501234567',
+      city: 'الرياض',
+      country: 'السعودية',
+    },
+    {
+      id: '2',
+      name: 'مؤسسة الحلول الذكية',
+      email: 'contact@smart.com',
+      phone: '+966555987654',
+      city: 'جدة',
+      country: 'السعودية',
+    },
+    {
+      id: '3',
+      name: 'نهج الابتكار',
+      email: 'support@innovation.com',
+      phone: '+971501234567',
+      city: 'دبي',
+      country: 'الإمارات',
+    },
+  ];
 
   return (
     <DashboardContent
@@ -32,7 +67,37 @@ export default function ClientsPage() {
       }}
       dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
-      <Table>{/* TODO */}</Table>
+      {/* TODO: Make things grayer */}
+      {/* TODO: This is just a mockup */}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>الاسم</TableHead>
+            <TableHead>البريد الإلكتروني</TableHead>
+            <TableHead>الهاتف</TableHead>
+            <TableHead>المدينة</TableHead>
+            <TableHead>الدولة</TableHead>
+            <TableHead className="text-center">إجراءات</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {contacts.map(contact => (
+            <TableRow key={contact.id}>
+              <TableCell>{contact.name}</TableCell>
+              <TableCell>{contact.email}</TableCell>
+              <TableCell>{contact.phone}</TableCell>
+              <TableCell>{contact.city}</TableCell>
+              <TableCell>{contact.country}</TableCell>
+              <TableCell>
+                <div className="flex items-center justify-center gap-2">
+                  <Pencil className="w-4 h-4 cursor-pointer text-blue-600" />
+                  <Trash2 className="w-4 h-4 cursor-pointer text-red-600" />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </DashboardContent>
   );
 }
