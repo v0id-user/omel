@@ -4,12 +4,10 @@ import { DashboardContent } from '@/components/dashboard';
 import { UserPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { AddClientsDialog } from './dialog';
-import { Task } from '@/database/types/task';
 import AddGroup from '@/public/icons/iso/add-group.svg';
+import { Table } from '@/components/ui/table';
 
 export default function ClientsPage() {
-  // Placeholder for future task management logic
-  const tasks: Task[] = [];
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   return (
@@ -34,15 +32,7 @@ export default function ClientsPage() {
       }}
       dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
-      {tasks.length > 0 ? (
-        <div className="space-y-4">
-          {/* Placeholder for contact list */}
-          {tasks.map(task => (
-            // Make cards
-            <div key={task.id}>Task item placeholder</div>
-          ))}
-        </div>
-      ) : null}
+      <Table>{/* TODO */}</Table>
     </DashboardContent>
   );
 }
