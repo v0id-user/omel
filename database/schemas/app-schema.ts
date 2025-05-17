@@ -1,4 +1,4 @@
-import { text, timestamp } from 'drizzle-orm/pg-core';
+import { jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { pgTable, index } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { users, organizations } from '@/database/schemas/auth-schema';
@@ -7,6 +7,7 @@ import { SubscriptionTier, SubscriptionStatus } from '@/database/types/subscript
 import { ContactType } from '@/database/types/contacts';
 import { ResourceType } from '@/database/types/usage';
 import { timestamps } from '@/database/schemas/timestamps';
+import { sql } from 'drizzle-orm';
 
 export const subscriptions = pgTable(
   'subscriptions',
@@ -142,5 +143,54 @@ export const usageCounters = pgTable(
   table => [
     index('usage_counter_org_id_idx').on(table.organizationId),
     index('usage_counter_user_resource_idx').on(table.userId, table.resourceType),
+  ]
+);
+
+/**
+ * Activity Log Schema Mental Model
+ * -------------------------------
+ * The activity log tracks user and system actions with the following structure:
+ *
+ * Actor (Who):
+ * - actor_type: The type of entity performing the action (user, system, bot)
+ * - actor_id: Unique identifier of the actor
+ *
+ * Target (What):
+ * - target_type: The type of entity being acted upon
+ * - target_id: Unique identifier of the target
+ *
+ * Action:
+ * - action: The specific operation or change that occurred
+ *
+ * Context:
+ * - metadata: Optional JSON data providing additional details about the action
+ */
+export const activityLogs = pgTable(
+  'activity_logs',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+
+    // Who did the action (can be user, system, bot, etc.)
+    actorType: text('actor_type').notNull(),
+    actorId: text('actor_id').notNull(),
+
+    // What the action was done to
+    targetType: text('target_type').notNull(),
+    targetId: text('target_id').notNull(),
+
+    // What happened
+    action: text('action').notNull(),
+
+    // Additional metadata
+    metadata: jsonb('metadata'),
+
+    // When it happened
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  table => [
+    index('activity_logs_actor_idx').on(table.actorType, table.actorId),
+    index('activity_logs_target_idx').on(table.targetType, table.targetId),
   ]
 );
