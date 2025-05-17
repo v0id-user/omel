@@ -1,27 +1,24 @@
 'use client';
 
 import { DashboardContent } from '@/components/dashboard';
-import { UserPlus, Mail, Phone, MapPin, Globe, Pen } from 'lucide-react';
-import { useState } from 'react';
+import { UserPlus } from 'lucide-react';
+import React, { useState } from 'react';
 import { AddClientsDialog } from './dialog';
 import AddGroup from '@/public/icons/iso/add-group.svg';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from 'lucide-react';
-import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
-import { motion } from 'motion/react';
+import { ClientsTable } from './components';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  const handleEdit = (ids: string[]) => {
+    // Implement bulk edit logic
+    console.log('Editing:', ids);
+  };
+
+  const handleDelete = (ids: string[]) => {
+    // Implement bulk delete logic
+    console.log('Deleting:', ids);
+  };
 
   const contacts = [
     {
@@ -48,59 +45,15 @@ export default function ClientsPage() {
       city: 'دبي',
       country: 'الإمارات',
     },
+    {
+      id: '4',
+      name: 'نهج الابتكار',
+      email: 'support@innovation-vercel.uk.app',
+      phone: '+971501234567',
+      city: 'دبي',
+      country: 'الإمارات',
+    },
   ];
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === contacts.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(contacts.map(contact => contact.id));
-    }
-  };
-
-  const handleSelectRow = (id: string) => {
-    if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
-    } else {
-      setSelectedRows([...selectedRows, id]);
-    }
-  };
-
-  const handleBulkDelete = () => {
-    // Implement bulk delete logic
-    console.log('Deleting:', selectedRows);
-  };
-
-  const handleBulkEdit = () => {
-    // Implement bulk edit logic
-    console.log('Editing:', selectedRows);
-  };
-
-  const formatPhoneNumber = (phone: string) => {
-    const phoneNumber = parsePhoneNumberFromString(phone);
-    if (!phoneNumber) return <span>{phone}</span>;
-
-    const countryCode = phoneNumber.countryCallingCode;
-    const nationalNumber = phoneNumber.nationalNumber;
-
-    // Convert to Arabic numerals
-    const toArabicNumbers = (num: string) => {
-      return num.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
-    };
-
-    return (
-      <>
-        <span className="flex flex-row-reverse items-end justify-end w-fit text-xs">
-          <div className="flex flex-row-reverse items-start justify-start bg-gray-200 text-gray-800 px-0.5 rounded-md">
-            <span className="text-sm">+</span>
-            <span className="ml-1">{toArabicNumbers(countryCode.toString())}</span>
-          </div>
-          <span className="mx-1">{toArabicNumbers(nationalNumber.slice(0, 3))}</span>
-          <span>{toArabicNumbers(nationalNumber.slice(3))}</span>
-        </span>
-      </>
-    );
-  };
 
   return (
     <DashboardContent
@@ -123,120 +76,7 @@ export default function ClientsPage() {
       }}
       dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
-      <div className="relative">
-        {selectedRows.length > 0 && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white rounded-lg shadow-lg p-3 border border-gray-200 z-50"
-          >
-            <span className="text-sm text-gray-600 ml-2">
-              تم تحديد {selectedRows.length} {selectedRows.length === 1 ? 'عميل' : 'عملاء'}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-700 hover:text-gray-900 cursor-pointer"
-              onClick={handleBulkEdit}
-            >
-              <Pencil className="w-4 h-4 ml-1" />
-              تعديل
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red-600 hover:text-red-700 cursor-pointer"
-              onClick={handleBulkDelete}
-            >
-              <Trash2 className="w-4 h-4 ml-1" />
-              حذف
-            </Button>
-          </motion.div>
-        )}
-
-        <Table className="space-y-4 border-b">
-          <TableHeader>
-            <TableRow className="py-4">
-              <TableHead className="w-[50px] text-center">
-                <Checkbox
-                  checked={selectedRows.length === contacts.length}
-                  onCheckedChange={handleSelectAll}
-                />
-              </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
-                <div className="flex items-center justify-start gap-2">
-                  <Pen className="w-4 h-4" />
-                  <span>الاسم</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
-                <div className="flex items-center justify-start gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>البريد الإلكتروني</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
-                <div className="flex items-center justify-start gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>الهاتف</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
-                <div className="flex items-center justify-start gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>المدينة</span>
-                </div>
-              </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">
-                <div className="flex items-center justify-start gap-2">
-                  <Globe className="w-4 h-4" />
-                  <span>الدولة</span>
-                </div>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="space-y-2">
-            {contacts.map(contact => (
-              <TableRow
-                key={contact.id}
-                data-state={selectedRows.includes(contact.id) ? 'selected' : undefined}
-                className="hover:bg-gray-50/80 py-4"
-              >
-                <TableCell className="text-center py-4">
-                  <Checkbox
-                    checked={selectedRows.includes(contact.id)}
-                    onCheckedChange={() => handleSelectRow(contact.id)}
-                  />
-                </TableCell>
-                <TableCell className="text-right font-medium py-4 border-l">
-                  {contact.name}
-                </TableCell>
-                <TableCell className="text-right text-gray-600 py-4 border-l">
-                  {contact.email.split('@').map((part, index) => (
-                    <span
-                      key={index}
-                      className={
-                        index === 1 ? 'bg-blue-500/10 text-blue-500 rounded-md px-0.5 py-0.5' : ''
-                      }
-                    >
-                      {index === 0 ? part : '@' + part}
-                    </span>
-                  ))}
-                </TableCell>
-                <TableCell className="text-right text-gray-600 py-4 border-l">
-                  {formatPhoneNumber(contact.phone)}
-                </TableCell>
-                <TableCell className="text-right text-gray-600 py-4 border-l">
-                  {contact.city}
-                </TableCell>
-                <TableCell className="text-right text-gray-600 py-4">{contact.country}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <ClientsTable contacts={contacts} onEdit={handleEdit} onDelete={handleDelete} />
     </DashboardContent>
   );
 }
