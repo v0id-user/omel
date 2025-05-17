@@ -18,6 +18,42 @@ import { toast } from 'react-hot-toast';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useResizableColumns } from '@/hooks/use-resizable-columns';
 
+interface CopyableProps {
+  value: string;
+  maxWidth?: string;
+  onCopied?: () => void;
+  children: React.ReactNode;
+}
+
+const Copyable: React.FC<CopyableProps> = ({ value, maxWidth = 'none', onCopied, children }) => {
+  return (
+    <div className="ring-1 ring-blue-500/20 hover:bg-blue-500/10 rounded-md w-fit px-1 py-0.5 group relative overflow-hidden transition-colors duration-400">
+      <span className={`text-xs font-semibold text-blue-500 truncate block`} style={{ maxWidth }}>
+        {children}
+      </span>
+      <div className="absolute right-0 top-0 bottom-0 w-5 flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-gradient-to-l from-blue-50 via-blue-50/90 to-transparent rounded-r-md
+            transition-all duration-300 ease-in-out
+            translate-x-[150%] opacity-0 backdrop-blur-[4px]
+            group-hover:translate-x-0 group-hover:opacity-100"
+        >
+          <Copy
+            className="w-3.5 h-3.5 text-blue-500 absolute inset-0 m-auto cursor-pointer
+              transition-all duration-300 ease-in-out
+              translate-x-[150%] opacity-0 
+              group-hover:translate-x-0 group-hover:opacity-100"
+            onClick={() => {
+              navigator.clipboard.writeText(value);
+              onCopied?.();
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface Contact {
   id: string;
   name: string;
@@ -119,17 +155,31 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, on
       return num.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
     };
 
+    const formattedContent = (
+      <span className="flex items-center gap-1 text-xs font-semibold">
+        <span>{toArabicNumbers(nationalNumber.slice(3))}</span>
+        <span>{toArabicNumbers(nationalNumber.slice(0, 3))}</span>
+        <span>+{toArabicNumbers(countryCode.toString())}</span>
+      </span>
+    );
+
     return (
-      <>
-        <span className="flex flex-row-reverse items-end justify-end w-fit text-xs">
-          <div className="flex flex-row-reverse items-start justify-start bg-gray-200 text-gray-800 px-0.5 rounded-md">
-            <span className="text-sm">+</span>
-            <span className="ml-1">{toArabicNumbers(countryCode.toString())}</span>
-          </div>
-          <span className="mx-1">{toArabicNumbers(nationalNumber.slice(0, 3))}</span>
-          <span>{toArabicNumbers(nationalNumber.slice(3))}</span>
-        </span>
-      </>
+      <Copyable value={phone} onCopied={() => toast.success('تم نسخ رقم الهاتف')}>
+        {formattedContent}
+      </Copyable>
+    );
+  };
+
+  const formatEmail = (email: string, isMobile: boolean, isTablet: boolean) => {
+    const maxWidth = isMobile ? '100px' : isTablet ? '120px' : '160px';
+    return (
+      <Copyable
+        value={email}
+        maxWidth={maxWidth}
+        onCopied={() => toast.success('تم نسخ البريد الإلكتروني')}
+      >
+        {email}
+      </Copyable>
     );
   };
 
@@ -272,32 +322,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, on
                   className="text-right py-2 border-l"
                   style={{ width: `${columnWidths.email}%` }}
                 >
-                  <div className="ring-1 ring-blue-500/20 hover:bg-blue-500/10 rounded-md w-fit px-1 py-0.5 group relative overflow-hidden transition-colors duration-400">
-                    <span
-                      className={`text-xs font-medium text-blue-500 truncate block ${isMobile ? 'max-w-[100px]' : isTablet ? 'max-w-[120px]' : 'max-w-[160px]'}`}
-                    >
-                      {contact.email}
-                    </span>
-                    <div className="absolute right-0 top-0 bottom-0 w-5 flex items-center justify-center">
-                      <div
-                        className="absolute inset-0 bg-gradient-to-l from-blue-50 via-blue-50/90 to-transparent rounded-r-md
-                          transition-all duration-300 ease-in-out
-                          translate-x-[150%] opacity-0 backdrop-blur-[4px]
-                          group-hover:translate-x-0 group-hover:opacity-100"
-                      >
-                        <Copy
-                          className="w-3.5 h-3.5 text-blue-500 absolute inset-0 m-auto cursor-pointer
-                            transition-all duration-300 ease-in-out
-                            translate-x-[150%] opacity-0 
-                            group-hover:translate-x-0 group-hover:opacity-100"
-                          onClick={() => {
-                            navigator.clipboard.writeText(contact.email);
-                            toast.success('تم نسخ البريد الإلكتروني');
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  {formatEmail(contact.email, isMobile, isTablet)}
                 </TableCell>
                 <TableCell
                   className="text-right text-gray-600 py-2 border-l"
