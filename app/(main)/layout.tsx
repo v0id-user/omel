@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <SidebarProvider>
       <ClientDashBoard />
       <SidebarInset>
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto">
           <DashboardBreadcrumb />
           {children}
         </main>

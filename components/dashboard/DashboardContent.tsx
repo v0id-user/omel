@@ -37,7 +37,7 @@ export function DashboardContent({
 
   return (
     <div className="w-full min-h-[80vh] relative" dir="rtl">
-      <div className="flex justify-between items-center border-y border-gray-200 py-4 mt-5">
+      <div className="flex justify-between items-center border-y border-gray-200 py-3.5 px-4 mt-5">
         {sortOptions && (
           <div className="flex items-center">
             <Sorter

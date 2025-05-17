@@ -1,7 +1,7 @@
 'use client';
 
 import { DashboardContent } from '@/components/dashboard';
-import { UserPlus } from 'iconoir-react';
+import { UserPlus, Mail, Phone, MapPin, Globe, Pen } from 'lucide-react';
 import { useState } from 'react';
 import { AddClientsDialog } from './dialog';
 import AddGroup from '@/public/icons/iso/add-group.svg';
@@ -17,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -156,7 +156,7 @@ export default function ClientsPage() {
           </motion.div>
         )}
 
-        <Table className="space-y-4">
+        <Table className="space-y-4 border-b">
           <TableHeader>
             <TableRow className="py-4">
               <TableHead className="w-[50px] text-center">
@@ -165,13 +165,36 @@ export default function ClientsPage() {
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">الاسم</TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">
-                البريد الإلكتروني
+              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
+                <div className="flex items-center justify-start gap-2">
+                  <Pen className="w-4 h-4" />
+                  <span>الاسم</span>
+                </div>
               </TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">الهاتف</TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">المدينة</TableHead>
-              <TableHead className="text-right font-medium text-gray-600 py-4">الدولة</TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
+                <div className="flex items-center justify-start gap-2">
+                  <Mail className="w-4 h-4" />
+                  <span>البريد الإلكتروني</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
+                <div className="flex items-center justify-start gap-2">
+                  <Phone className="w-4 h-4" />
+                  <span>الهاتف</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4 border-l">
+                <div className="flex items-center justify-start gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>المدينة</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-right font-medium text-gray-600 py-4">
+                <div className="flex items-center justify-start gap-2">
+                  <Globe className="w-4 h-4" />
+                  <span>الدولة</span>
+                </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="space-y-2">
@@ -187,8 +210,10 @@ export default function ClientsPage() {
                     onCheckedChange={() => handleSelectRow(contact.id)}
                   />
                 </TableCell>
-                <TableCell className="text-right font-medium py-4">{contact.name}</TableCell>
-                <TableCell className="text-right text-gray-600 py-4">
+                <TableCell className="text-right font-medium py-4 border-l">
+                  {contact.name}
+                </TableCell>
+                <TableCell className="text-right text-gray-600 py-4 border-l">
                   {contact.email.split('@').map((part, index) => (
                     <span
                       key={index}
@@ -200,10 +225,12 @@ export default function ClientsPage() {
                     </span>
                   ))}
                 </TableCell>
-                <TableCell className="text-right text-gray-600 py-4">
+                <TableCell className="text-right text-gray-600 py-4 border-l">
                   {formatPhoneNumber(contact.phone)}
                 </TableCell>
-                <TableCell className="text-right text-gray-600 py-4">{contact.city}</TableCell>
+                <TableCell className="text-right text-gray-600 py-4 border-l">
+                  {contact.city}
+                </TableCell>
                 <TableCell className="text-right text-gray-600 py-4">{contact.country}</TableCell>
               </TableRow>
             ))}
