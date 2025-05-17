@@ -17,6 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
+import { motion } from 'framer-motion';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -89,8 +90,8 @@ export default function ClientsPage() {
 
     return (
       <>
-        <span className="flex flex-row-reverse items-center justify-end w-fit mx-auto">
-          <div className="flex flex-row-reverse items-center justify-end bg-gray-200 text-gray-800 px-2 py-1 rounded-md">
+        <span className="flex flex-row-reverse items-end justify-end w-fit text-xs">
+          <div className="flex flex-row-reverse items-start justify-start bg-gray-200 text-gray-800 px-0.5 rounded-md">
             <span className="text-sm">+</span>
             <span className="ml-1">{toArabicNumbers(countryCode.toString())}</span>
           </div>
@@ -124,7 +125,13 @@ export default function ClientsPage() {
     >
       <div className="relative">
         {selectedRows.length > 0 && (
-          <div className="fixed bottom-6 left-6 flex items-center gap-2 bg-white rounded-lg shadow-lg p-3 border border-gray-200 z-50">
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white rounded-lg shadow-lg p-3 border border-gray-200 z-50"
+          >
             <span className="text-sm text-gray-600 ml-2">
               تم تحديد {selectedRows.length} {selectedRows.length === 1 ? 'عميل' : 'عملاء'}
             </span>
@@ -146,7 +153,7 @@ export default function ClientsPage() {
               <Trash2 className="w-4 h-4 ml-1" />
               حذف
             </Button>
-          </div>
+          </motion.div>
         )}
 
         <Table className="space-y-4">

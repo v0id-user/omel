@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { isNull, SQL, and, eq, Table, InferSelectModel, AnyColumn } from 'drizzle-orm';
+import { isNull, SQL, and, eq, gt, lt, Table, InferSelectModel, AnyColumn } from 'drizzle-orm';
 
 const sql = neon(process.env.DATABASE_URL!);
 const baseDb = drizzle({ client: sql });
@@ -35,6 +35,26 @@ export const db = baseDb as typeof baseDb & {
     table: TTable,
     where: SQL
   ) => Promise<RemoveDeletedAt<InferSelectModel<TTable>>[]>;
+
+  /**
+   * Cursor-based pagination helper. Returns `limit` rows that are **not** soft-deleted
+   * and an opaque `nextCursor` string that can be supplied in the next call.
+   *
+   * – `cursor` should be the `id` of the last item from the previous page.
+   * – `direction` defaults to `'asc'`. If `'desc'`, results are reversed accordingly.
+   */
+  $paginateCursor: <TTable extends SoftDeleteTable>(
+    table: TTable,
+    opts: {
+      where?: SQL;
+      cursor?: string | null;
+      limit?: number;
+      direction?: 'asc' | 'desc';
+    }
+  ) => Promise<{
+    data: RemoveDeletedAt<InferSelectModel<TTable>>[];
+    nextCursor: string | null;
+  }>;
 };
 
 db.$softDelete = async <TTable extends SoftDeleteTable>(table: TTable, id: string) => {
@@ -52,8 +72,60 @@ db.$whereNotDeleted = async <TTable extends SoftDeleteTable>(
   return (await baseDb
     .select()
     .from(table as Table)
-    .where(and(isNull(table.deletedAt), where))
+    .where(and(isNull(table.deletedAt), where) as SQL)
     .execute()) as RemoveDeletedAt<InferSelectModel<TTable>>[];
+};
+
+db.$paginateCursor = async <TTable extends SoftDeleteTable>(
+  table: TTable,
+  {
+    where,
+    cursor,
+    limit = 20,
+    direction = 'asc',
+  }: {
+    where?: SQL;
+    cursor?: string | null;
+    limit?: number;
+    direction?: 'asc' | 'desc';
+  }
+) => {
+  // Build the base predicate: not soft-deleted
+  let predicate: SQL = isNull(table.deletedAt);
+
+  if (where) predicate = and(predicate, where) as SQL;
+
+  // Apply cursor filter based on the id column.
+  if (cursor) {
+    const cursorCondition = (
+      direction === 'asc' ? gt(table.id, cursor!) : lt(table.id, cursor!)
+    ) as SQL;
+
+    predicate = and(predicate, cursorCondition) as SQL;
+  }
+
+  // Build the query (always ordered ascending by `id`)
+  const rows = (await baseDb
+    .select()
+    .from(table as Table)
+    .where(predicate)
+    // Cast column to `any` to satisfy generic differences between dialects
+    .orderBy((table as any).id as any)
+    .limit(limit + 1)
+    .execute()) as RemoveDeletedAt<InferSelectModel<TTable>>[];
+
+  // Reverse rows if descending order requested
+  if (direction === 'desc') {
+    rows.reverse();
+  }
+
+  let nextCursor: string | null = null;
+  if (rows.length > limit) {
+    const next = rows.pop()!;
+    nextCursor = (next as any).id as string;
+  }
+
+  return { data: rows, nextCursor };
 };
 
 // Stand-alone alias if other modules ever need it

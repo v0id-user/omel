@@ -5,6 +5,7 @@ import { CreateContactInput, UpdateContactInput } from '@/database/types/contact
 import { validateEmail } from '@/utils/emails';
 import { TRPCError } from '@trpc/server';
 import { validatePhoneGeneral } from '@/utils/phone/validate';
+import { getContacts } from '@/database/queries/contacts';
 
 const contactInputSchema = z.custom<CreateContactInput>();
 const contactUpdateInputSchema = z.object({
@@ -52,5 +53,8 @@ export const contactRouter = createTRPCRouter({
   update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ ctx, input }) => {
     await validateContactInput(input.contact_input);
     return updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
+  }),
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return getContacts(ctx.session.session.activeOrganizationId!);
   }),
 });
