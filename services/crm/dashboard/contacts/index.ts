@@ -3,6 +3,7 @@ import {
   createContact,
   updateContact as updateContactQuery,
   getContactsWithCursor as getContactsWithCursorQuery,
+  getTotalContactPages as getTotalContactPagesQuery,
 } from '@/database/queries/contacts';
 
 export async function createNewContact(
@@ -23,4 +24,8 @@ export async function updateContact(
 
 export async function getContactsWithCursor(organizationId: string, cursor: string | null) {
   return getContactsWithCursorQuery(organizationId, cursor);
+}
+
+export async function getTotalContactPages(organizationId: string, length: number) {
+  return getTotalContactPagesQuery(organizationId, length);
 }

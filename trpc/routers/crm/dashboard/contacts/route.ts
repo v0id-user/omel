@@ -1,6 +1,11 @@
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 import { z } from 'zod';
-import { createNewContact, updateContact, getContactsWithCursor } from '@/services/crm/dashboard';
+import {
+  createNewContact,
+  updateContact,
+  getContactsWithCursor,
+  getTotalContactPages,
+} from '@/services/crm/dashboard';
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { validateEmail } from '@/utils/emails';
 import { TRPCError } from '@trpc/server';
@@ -14,6 +19,10 @@ const contactUpdateInputSchema = z.object({
 
 const contactGetInputSchema = z.object({
   cursor: z.string().nullable(),
+});
+
+const contactPagesInputSchema = z.object({
+  length: z.number().min(1).max(100).default(10),
 });
 
 // Middleware for validating contact inputs
@@ -62,7 +71,7 @@ export const contactRouter = createTRPCRouter({
     return await updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
   }),
   get: protectedProcedure.input(contactGetInputSchema).query(async ({ ctx, input }) => {
-    const { data, nextCursor } = await getContactsWithCursor(
+    const { data, nextCursor, hasMore } = await getContactsWithCursor(
       ctx.session.session.activeOrganizationId!,
       input.cursor
     );
@@ -73,6 +82,10 @@ export const contactRouter = createTRPCRouter({
       });
     }
 
-    return { data, nextCursor };
+    return { data, nextCursor, hasMore };
+  }),
+
+  pages: protectedProcedure.input(contactPagesInputSchema).query(async ({ ctx, input }) => {
+    return await getTotalContactPages(ctx.session.session.activeOrganizationId!, input.length);
   }),
 });

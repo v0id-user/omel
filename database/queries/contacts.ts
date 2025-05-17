@@ -1,21 +1,21 @@
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { contacts } from '@/database/schemas/app-schema';
 import { db } from '@/database/db';
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { and, count, eq, isNull } from 'drizzle-orm';
 import { Contact } from '@/database/types/contacts';
 
 export async function getContactsWithCursor(
   organizationId: string,
   cursor: string | null
-): Promise<{ data: Contact[]; nextCursor: string | null }> {
-  const { data, nextCursor } = await db.$paginateCursor(contacts, {
+): Promise<{ data: Contact[]; nextCursor: string | null; hasMore: boolean }> {
+  const { data, nextCursor, hasMore } = await db.$paginateCursor(contacts, {
     where: and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)),
     cursor,
     limit: 10,
     direction: 'desc',
   });
 
-  return { data, nextCursor };
+  return { data, nextCursor, hasMore };
 }
 
 export async function createContact(
@@ -44,4 +44,16 @@ export async function updateContact(
 
 export async function deleteContact(contact_id: string) {
   return await db.$softDelete(contacts, contact_id);
+}
+
+export async function getTotalContactPages(organizationId: string, length: number) {
+  if (length <= 0) throw new Error('Page length must be greater than zero');
+
+  const total = await db
+    .select({ count: count() })
+    .from(contacts)
+    .where(and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)));
+
+  const rawCount = Number(total[0].count);
+  return Math.ceil(rawCount / length);
 }

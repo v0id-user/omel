@@ -1,6 +1,18 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { isNull, SQL, and, eq, gt, lt, Table, InferSelectModel, AnyColumn } from 'drizzle-orm';
+import {
+  isNull,
+  SQL,
+  and,
+  eq,
+  gt,
+  lt,
+  Table,
+  InferSelectModel,
+  AnyColumn,
+  desc,
+  asc,
+} from 'drizzle-orm';
 
 const sql = neon(process.env.DATABASE_URL!);
 const baseDb = drizzle({ client: sql });
@@ -14,6 +26,14 @@ type SoftDeleteTable = Table & {
   id: AnyColumn;
   deletedAt: AnyColumn;
 };
+
+// Interface for tables that support pagination
+interface PaginatedTable {
+  id: AnyColumn;
+}
+
+// Define pagination direction type
+type PaginationDirection = 'asc' | 'desc';
 
 // Create the extended db object
 export const db = baseDb as typeof baseDb & {
@@ -42,18 +62,21 @@ export const db = baseDb as typeof baseDb & {
    *
    * – `cursor` should be the `id` of the last item from the previous page.
    * – `direction` defaults to `'asc'`. If `'desc'`, results are reversed accordingly.
+   *
+   * Note: This function enforces ordering by id for consistent pagination.
    */
-  $paginateCursor: <TTable extends SoftDeleteTable>(
+  $paginateCursor: <TTable extends SoftDeleteTable & PaginatedTable>(
     table: TTable,
     opts: {
       where?: SQL;
       cursor?: string | null;
       limit?: number;
-      direction?: 'asc' | 'desc';
+      direction?: PaginationDirection;
     }
   ) => Promise<{
     data: RemoveDeletedAt<InferSelectModel<TTable>>[];
     nextCursor: string | null;
+    hasMore: boolean;
   }>;
 };
 
@@ -76,7 +99,7 @@ db.$whereNotDeleted = async <TTable extends SoftDeleteTable>(
     .execute()) as RemoveDeletedAt<InferSelectModel<TTable>>[];
 };
 
-db.$paginateCursor = async <TTable extends SoftDeleteTable>(
+db.$paginateCursor = async <TTable extends SoftDeleteTable & PaginatedTable>(
   table: TTable,
   {
     where,
@@ -87,7 +110,7 @@ db.$paginateCursor = async <TTable extends SoftDeleteTable>(
     where?: SQL;
     cursor?: string | null;
     limit?: number;
-    direction?: 'asc' | 'desc';
+    direction?: PaginationDirection;
   }
 ) => {
   // Build the base predicate: not soft-deleted
@@ -104,28 +127,28 @@ db.$paginateCursor = async <TTable extends SoftDeleteTable>(
     predicate = and(predicate, cursorCondition) as SQL;
   }
 
-  // Build the query (always ordered ascending by `id`)
-  const rows = (await baseDb
+  // Build the query with DB-level sorting
+  const query = baseDb
     .select()
     .from(table as Table)
     .where(predicate)
-    // Cast column to `any` to satisfy generic differences between dialects
-    .orderBy((table as any).id as any)
-    .limit(limit + 1)
-    .execute()) as RemoveDeletedAt<InferSelectModel<TTable>>[];
+    .limit(limit + 1);
 
-  // Reverse rows if descending order requested
-  if (direction === 'desc') {
-    rows.reverse();
-  }
+  // Add order by clause based on direction
+  const rows = (await (
+    direction === 'asc' ? query.orderBy(asc(table.id)) : query.orderBy(desc(table.id))
+  ).execute()) as RemoveDeletedAt<InferSelectModel<TTable>>[];
 
   let nextCursor: string | null = null;
+  let hasMore = false;
+
   if (rows.length > limit) {
     const next = rows.pop()!;
     nextCursor = (next as any).id as string;
+    hasMore = true;
   }
 
-  return { data: rows, nextCursor };
+  return { data: rows, nextCursor, hasMore };
 };
 
 // Stand-alone alias if other modules ever need it

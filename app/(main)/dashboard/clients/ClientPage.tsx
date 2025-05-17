@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { AddClientsDialog } from './dialog';
 import AddGroup from '@/public/icons/iso/add-group.svg';
 import { ClientsTable } from './components';
+// import { trpc } from '@/trpc/client';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
