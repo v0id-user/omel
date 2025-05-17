@@ -1,11 +1,10 @@
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 import { z } from 'zod';
-import { createNewContact, updateContact } from '@/services/crm/dashboard';
+import { createNewContact, updateContact, getContactsWithCursor } from '@/services/crm/dashboard';
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { validateEmail } from '@/utils/emails';
 import { TRPCError } from '@trpc/server';
 import { validatePhoneGeneral } from '@/utils/phone/validate';
-import { getContacts } from '@/database/queries/contacts';
 
 const contactInputSchema = z.custom<CreateContactInput>();
 const contactUpdateInputSchema = z.object({
@@ -13,12 +12,16 @@ const contactUpdateInputSchema = z.object({
   contact_input: z.custom<UpdateContactInput>(),
 });
 
+const contactGetInputSchema = z.object({
+  cursor: z.string().nullable(),
+});
+
 // Middleware for validating contact inputs
 const validateContactInput = async (input: CreateContactInput | UpdateContactInput) => {
   if (!input.email || !input.phone) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Email and phone are required',
+      message: 'البريد الإلكتروني ورقم الهاتف مطلوبين',
     });
   }
 
@@ -28,7 +31,7 @@ const validateContactInput = async (input: CreateContactInput | UpdateContactInp
     console.log('Email validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid email - validation failed',
+      message: 'البريد الإلكتروني غير صالح',
     });
   }
   console.log('Email validation successful');
@@ -39,7 +42,7 @@ const validateContactInput = async (input: CreateContactInput | UpdateContactInp
     console.log('Phone validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid phone number - validation failed',
+      message: 'رقم الهاتف غير صالح',
     });
   }
   console.log('Phone validation successful');
@@ -48,13 +51,28 @@ const validateContactInput = async (input: CreateContactInput | UpdateContactInp
 export const contactRouter = createTRPCRouter({
   new: protectedProcedure.input(contactInputSchema).mutation(async ({ ctx, input }) => {
     await validateContactInput(input);
-    return createNewContact(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
+    return await createNewContact(
+      ctx.session.session.activeOrganizationId!,
+      ctx.session.user.id,
+      input
+    );
   }),
   update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ ctx, input }) => {
     await validateContactInput(input.contact_input);
-    return updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
+    return await updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
   }),
-  get: protectedProcedure.query(async ({ ctx }) => {
-    return getContacts(ctx.session.session.activeOrganizationId!);
+  get: protectedProcedure.input(contactGetInputSchema).query(async ({ ctx, input }) => {
+    const { data, nextCursor } = await getContactsWithCursor(
+      ctx.session.session.activeOrganizationId!,
+      input.cursor
+    );
+    if (data.length === 0) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'لا يوجد عملاء بعد! أنشئ عميلك الأول للبدء.',
+      });
+    }
+
+    return { data, nextCursor };
   }),
 });

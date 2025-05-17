@@ -1,11 +1,21 @@
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { contacts } from '@/database/schemas/app-schema';
 import { db } from '@/database/db';
-import { eq } from 'drizzle-orm';
+import { desc, and, eq, isNull } from 'drizzle-orm';
 import { Contact } from '@/database/types/contacts';
 
-export async function getContacts(organizationId: string): Promise<Contact[]> {
-  return db.$whereNotDeleted(contacts, eq(contacts.organizationId, organizationId));
+export async function getContactsWithCursor(
+  organizationId: string,
+  cursor: string | null
+): Promise<{ data: Contact[]; nextCursor: string | null }> {
+  const { data, nextCursor } = await db.$paginateCursor(contacts, {
+    where: and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)),
+    cursor,
+    limit: 10,
+    direction: 'desc',
+  });
+
+  return { data, nextCursor };
 }
 
 export async function createContact(

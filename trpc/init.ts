@@ -51,7 +51,7 @@ export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.resHeaders) {
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
-      message: 'Response headers not available',
+      message: 'لا يوجد رؤوس الاستجابة',
     });
   }
 
@@ -62,14 +62,14 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: 'You must be logged in to access this resource.',
+      message: 'يجب أن تكون مسجلًا الدخول للوصول إلى هذه الموارد.',
     });
   }
 
   if (!ctx.session.session.activeOrganizationId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: 'No active organization found',
+      message: 'لا يوجد مؤسسة مفعلة',
     });
   }
 
@@ -78,7 +78,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!PassedRatelimit) {
     throw new TRPCError({
       code: 'TOO_MANY_REQUESTS',
-      message: 'You have made too many requests. Please try again later.',
+      message: 'لقد قمت بإرسال طلبات كثيرة جدًا. يرجى المحاولة مرة أخرى لاحقًا.',
     });
   }
 

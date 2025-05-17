@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2, Mail, Phone, MapPin, Globe, Pen, Copy } from 'lucide-react';
+import { Trash2, Mail, Phone, MapPin, Globe, Pen, Copy } from 'lucide-react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 import { motion } from 'motion/react';
 import { toast } from 'react-hot-toast';
@@ -65,11 +65,11 @@ interface Contact {
 
 interface ClientsTableProps {
   contacts: Contact[];
-  onEdit?: (ids: string[]) => void;
+  //   onEdit?: (ids: string[]) => void;
   onDelete?: (ids: string[]) => void;
 }
 
-export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, onDelete }) => {
+export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [columnWidths, setColumnWidths] = useState({
     name: 20, // percentage
@@ -139,9 +139,9 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, on
     onDelete?.(selectedRows);
   };
 
-  const handleBulkEdit = () => {
-    onEdit?.(selectedRows);
-  };
+  //   const handleBulkEdit = () => {
+  //     onEdit?.(selectedRows);
+  //   };
 
   const formatPhoneNumber = (phone: string) => {
     const phoneNumber = parsePhoneNumberFromString(phone);
@@ -194,10 +194,15 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, on
           className={`fixed ${isMobile ? 'bottom-4 left-4 right-4 translate-x-0' : 'bottom-6 left-1/2 -translate-x-1/2'} flex items-center ${isMobile ? 'justify-between' : 'gap-2'} bg-white rounded-lg shadow-lg p-3 border border-gray-200 z-50`}
         >
           <span className={`text-sm text-gray-600 ${isMobile ? 'mr-0' : 'ml-2'}`}>
-            تم تحديد {selectedRows.length} {selectedRows.length === 1 ? 'عميل' : 'عملاء'}
+            تم تحديد{' '}
+            {selectedRows.length === 1
+              ? 'عميل'
+              : selectedRows.length === 2
+                ? 'عميلين'
+                : `${selectedRows.length} عملاء`}
           </span>
           <div className="flex gap-2">
-            <Button
+            {/* <Button
               variant="outline"
               size={isMobile ? 'icon' : 'sm'}
               className="text-gray-700 hover:text-gray-900 cursor-pointer"
@@ -205,7 +210,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onEdit, on
             >
               <Pencil className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} ml-1`} />
               {!isMobile && 'تعديل'}
-            </Button>
+            </Button> */}
             <Button
               variant="outline"
               size={isMobile ? 'icon' : 'sm'}

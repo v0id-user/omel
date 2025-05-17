@@ -8,6 +8,10 @@ const taskInputSchema = z.array(z.custom<CreateTaskInput>());
 
 export const taskRouter = createTRPCRouter({
   new: protectedProcedure.input(taskInputSchema).mutation(async ({ ctx, input }) => {
-    return createNewTasks(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
+    return await createNewTasks(
+      ctx.session.session.activeOrganizationId!,
+      ctx.session.user.id,
+      input
+    );
   }),
 });

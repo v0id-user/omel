@@ -10,12 +10,25 @@ import { ClientsTable } from './components';
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const handleEdit = (ids: string[]) => {
-    // Implement bulk edit logic
-    console.log('Editing:', ids);
-  };
+  // const { data: clients, fetchNextPage, hasNextPage, isFetchingNextPage } = trpc.crm.dashboard.contact.get.useInfiniteQuery(
+  //   {
+  //     length: 10,
+  //   },
+  //   {
+  //     getNextPageParam: lastPage => lastPage.nextCursor,
+  //   }
+  // );
+
+  // const handleEdit = (ids: string[]) => {
+  //   // TODO: Just make a trpc endpoint that accept array, if it's one or multiable does the same thing
+  //   // TODO: prompt mutliable dialogs for edits and save them to edtiable, then perform the edit on trpc
+  //   // TODO: Just don't do it like that for know even hide the edit button but keep the logic for later
+  //   // Implement bulk edit logic
+  //   console.log('Editing:', ids);
+  // };
 
   const handleDelete = (ids: string[]) => {
+    // TODO: Just make a trpc endpoint that accept array, if it's one or multiable does the same thing
     // Implement bulk delete logic
     console.log('Deleting:', ids);
   };
@@ -30,6 +43,14 @@ export default function ClientsPage() {
       country: 'السعودية',
     },
     {
+      id: '4',
+      name: '#V0ID',
+      email: 'hey@v0id.me',
+      phone: '+966501760925',
+      city: 'جدة',
+      country: 'السعودية',
+    },
+    {
       id: '2',
       name: 'مؤسسة الحلول الذكية',
       email: 'contact@smart.com',
@@ -41,14 +62,6 @@ export default function ClientsPage() {
       id: '3',
       name: 'نهج الابتكار',
       email: 'support@innovation.com',
-      phone: '+971501234567',
-      city: 'دبي',
-      country: 'الإمارات',
-    },
-    {
-      id: '4',
-      name: 'نهج الابتكار',
-      email: 'support@innovation-vercel.uk.app',
       phone: '+971501234567',
       city: 'دبي',
       country: 'الإمارات',
@@ -76,7 +89,7 @@ export default function ClientsPage() {
       }}
       dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
-      <ClientsTable contacts={contacts} onEdit={handleEdit} onDelete={handleDelete} />
+      <ClientsTable contacts={contacts} onDelete={handleDelete} />
     </DashboardContent>
   );
 }

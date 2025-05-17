@@ -35,7 +35,7 @@ export async function validateUserInput(input: NewCRMUserInfo) {
     console.log('Phone validation failed');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid phone number - validation failed',
+      message: 'رقم الهاتف غير صالح',
     });
   }
   console.log('Phone validation successful');
@@ -46,7 +46,7 @@ export async function validateUserInput(input: NewCRMUserInfo) {
     console.log('Password validation failed - too short');
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Password must be at least 8 characters long',
+      message: 'يجب أن يكون كلمة المرور على الأقل 8 أحرف',
     });
   }
   console.log('Password validation successful');
@@ -68,7 +68,7 @@ export function determineOrganizationName(input: NewCRMUserInfo) {
       console.log('Company name validation failed');
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: 'Invalid company name',
+        message: 'اسم الشركة غير صالح',
       });
     }
     console.log('Company name validation successful');
@@ -79,7 +79,7 @@ export function determineOrganizationName(input: NewCRMUserInfo) {
       console.log('Individual name validation failed');
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: 'Invalid name',
+        message: 'اسم الشخص غير صالح',
       });
     }
     console.log('Individual name validation successful');
@@ -106,7 +106,7 @@ export async function createUser(input: NewCRMUserInfo, name: string) {
       console.log('User creation failed - no user or token returned');
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to create user - missing user data',
+        message: 'فشل في إنشاء المستخدم - لا يوجد بيانات المستخدم',
       });
     }
     console.log('User created successfully');
@@ -125,13 +125,13 @@ export async function createUser(input: NewCRMUserInfo, name: string) {
       if (message.includes('already exists') || message.includes('already taken')) {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: 'User with this email already exists',
+          message: 'المستخدم بهذا البريد الإلكتروني موجود بالفعل',
         });
       }
 
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: message || 'Failed to create user',
+        message: message || 'فشل في إنشاء المستخدم',
       });
     }
 
@@ -234,13 +234,13 @@ export async function createOrganization(
       if (message.includes('already exists') || message.includes('already taken')) {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: 'Organization with this name already exists',
+          message: 'المؤسسة بهذا الاسم موجودة بالفعل',
         });
       }
 
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: message || 'Failed to create organization',
+        message: message || 'فشل في إنشاء المؤسسة',
       });
     }
 

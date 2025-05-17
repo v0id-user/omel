@@ -48,7 +48,7 @@ export const headerTestRouter = createTRPCRouter({
       if (!ctx.resHeaders) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Response headers not available',
+          message: 'لا يوجد رؤوس الاستجابة',
         });
       }
 
@@ -72,7 +72,7 @@ export const headerTestRouter = createTRPCRouter({
       if (!ctx.req) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'Request object not available',
+          message: 'لا يوجد كائن الطلب',
         });
       }
 
@@ -97,7 +97,7 @@ export const headerTestRouter = createTRPCRouter({
     if (!ctx.req) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Request object not available',
+        message: 'لا يوجد كائن الطلب',
       });
     }
 

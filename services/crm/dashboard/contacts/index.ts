@@ -1,5 +1,9 @@
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
-import { createContact, updateContact as updateContactQuery } from '@/database/queries/contacts';
+import {
+  createContact,
+  updateContact as updateContactQuery,
+  getContactsWithCursor as getContactsWithCursorQuery,
+} from '@/database/queries/contacts';
 
 export async function createNewContact(
   organization_id: string,
@@ -15,4 +19,8 @@ export async function updateContact(
   contact_input: UpdateContactInput
 ) {
   return updateContactQuery(contact_id, updated_by, contact_input);
+}
+
+export async function getContactsWithCursor(organizationId: string, cursor: string | null) {
+  return getContactsWithCursorQuery(organizationId, cursor);
 }

@@ -104,13 +104,13 @@ async function createNewCRM(input: NewCRMUserInfo) {
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: message || 'Failed to create new CRM',
+          message: message || 'فشل في إنشاء حساب جديد',
         });
       }
 
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Unknown error occurred',
+        message: 'فشل في إنشاء حساب جديد',
       });
     }
 
