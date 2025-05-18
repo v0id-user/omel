@@ -18,7 +18,7 @@ const contactUpdateInputSchema = z.object({
 });
 
 const contactGetInputSchema = z.object({
-  cursor: z.string().nullable(),
+  cursor: z.string().nullish(),
 });
 
 const contactPagesInputSchema = z.object({
@@ -73,7 +73,7 @@ export const contactRouter = createTRPCRouter({
   get: protectedProcedure.input(contactGetInputSchema).query(async ({ ctx, input }) => {
     const { data, nextCursor, hasMore } = await getContactsWithCursor(
       ctx.session.session.activeOrganizationId!,
-      input.cursor
+      input.cursor ?? null
     );
     if (data.length === 0) {
       throw new TRPCError({

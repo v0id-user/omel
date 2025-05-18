@@ -27,7 +27,13 @@ interface CopyableProps {
 
 const Copyable: React.FC<CopyableProps> = ({ value, maxWidth = 'none', onCopied, children }) => {
   return (
-    <div className="ring-1 ring-blue-500/20 hover:bg-blue-500/10 rounded-md w-fit px-1 py-0.5 group relative overflow-hidden transition-colors duration-400">
+    <div
+      className="ring-1 ring-blue-500/20 hover:bg-blue-500/10 cursor-pointer rounded-md w-fit px-1 py-0.5 group relative overflow-hidden transition-colors duration-400"
+      onClick={() => {
+        navigator.clipboard.writeText(value);
+        onCopied?.();
+      }}
+    >
       <span className={`text-xs font-semibold text-blue-500 truncate block`} style={{ maxWidth }}>
         {children}
       </span>

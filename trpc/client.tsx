@@ -2,7 +2,7 @@
 // ^-- to make sure we can mount the Provider from a server component
 import type { QueryClient } from '@tanstack/react-query';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
+import { httpBatchLink, retryLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import { useState } from 'react';
 import { makeQueryClient } from './query-client';
@@ -40,12 +40,21 @@ export function TRPCProvider(
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
+        retryLink({
+          retry(opts) {
+            if (opts.error.data?.code === 'NOT_FOUND') {
+              return false;
+            }
+            return opts.attempts <= 3;
+          },
+          retryDelayMs: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+        }),
         httpBatchLink({
           transformer: superjson,
           url: getUrl(),
           async headers() {
             const headers = new Headers();
-            headers.set('x-trpc-source', 'client-made-trpc-request');
+            headers.set('x-trpc-source', '1');
             return headers;
           },
         }),
