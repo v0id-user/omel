@@ -12,7 +12,6 @@ import { toast } from 'react-hot-toast';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  // TODO: it's over, use them BABYYYY ALL
   const { data: pages } = trpc.crm.dashboard.contact.pages.useQuery({
     length: 10,
   });
