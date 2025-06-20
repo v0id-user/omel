@@ -8,11 +8,19 @@ import { useRouter } from 'next/navigation';
 import { useRouterEvents } from '@/lib/hooks/useRouterEvents';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { Spinner } from '@/components/omel/Spinner';
+import { log } from '@/utils/logs';
 
 const ERROR_COUNT_KEY = 'auth_error_count';
 const MAX_ERROR_COUNT = 3;
 
 function handleAuthError() {
+  console.log(
+    log({
+      component: 'clock-in',
+      message: 'Handling auth error',
+      data: { currentCount: parseInt(localStorage.getItem(ERROR_COUNT_KEY) || '0') },
+    })
+  );
   const currentCount = parseInt(localStorage.getItem(ERROR_COUNT_KEY) || '0');
   const newCount = currentCount + 1;
   localStorage.setItem(ERROR_COUNT_KEY, newCount.toString());
@@ -20,6 +28,12 @@ function handleAuthError() {
 }
 
 function clearErrorCount() {
+  console.log(
+    log({
+      component: 'clock-in',
+      message: 'Clearing error count',
+    })
+  );
   localStorage.removeItem(ERROR_COUNT_KEY);
 }
 
@@ -31,8 +45,16 @@ function RouterEventsHandler({ onRouteChange }: { onRouteChange: () => void }) {
 
 export default function ClockInPage() {
   const router = useRouter();
-  const myOrganization = authClient.useListOrganizations();
-  const mySession = authClient.useSession();
+  const {
+    data: myOrganization,
+    error: myOrganizationError,
+    isPending: myOrganizationIsPending,
+  } = authClient.useListOrganizations();
+  const {
+    data: mySession,
+    error: mySessionError,
+    isPending: mySessionIsPending,
+  } = authClient.useSession();
   const setUserInfo = useUserInfoStore(state => state.setUserInfo);
   const handleRouteChange = useCallback(() => {
     clearErrorCount();
@@ -46,9 +68,46 @@ export default function ClockInPage() {
   );
 
   useEffect(() => {
-    if (myOrganization.error) {
+    if (myOrganizationIsPending || mySessionIsPending) {
+      console.log(
+        log({
+          component: 'clock-in',
+          message: 'Organization or session is pending',
+        })
+      );
+      return;
+    }
+
+    if (mySession === null || mySessionError) {
+      console.log(
+        log({
+          component: 'clock-in',
+          message: 'Session is null or there is an error',
+        })
+      );
+      // Redirect immediately if session is null or there is an error
+      authClient.signOut().then(() => {
+        clearErrorCount();
+
+        router.push('/sign-in');
+      });
+    }
+
+    if (myOrganizationError) {
+      console.log(
+        log({
+          component: 'clock-in',
+          message: 'Organization error',
+        })
+      );
       const shouldSignOut = handleAuthError();
       if (shouldSignOut) {
+        console.log(
+          log({
+            component: 'clock-in',
+            message: 'Organization error, logging out',
+          })
+        );
         // If error threshold reached, log out and redirect
         authClient.signOut().then(() => {
           router.push('/sign-in');
@@ -57,15 +116,28 @@ export default function ClockInPage() {
       return;
     }
 
-    if (!myOrganization.isPending && myOrganization.data?.length && mySession.data?.user) {
+    if (!myOrganizationIsPending && myOrganization?.length && mySession?.user) {
+      console.log(
+        log({
+          component: 'clock-in',
+          message: 'Setting active organization',
+          data: { organizationId: myOrganization[0].id, organizationName: myOrganization[0].name },
+        })
+      );
       // Set first organization as active
-      const activeOrg = myOrganization.data[0];
+      const activeOrg = myOrganization[0];
       authClient.organization
         .setActive({
           organizationId: activeOrg.id,
         })
         .then(() => {
-          if (!mySession.data?.user) {
+          if (!mySession?.user) {
+            console.log(
+              log({
+                component: 'clock-in',
+                message: 'Session user is null after setting active organization',
+              })
+            );
             const shouldSignOut = handleAuthError();
             if (shouldSignOut) {
               // If error threshold reached, log out and redirect
@@ -76,14 +148,21 @@ export default function ClockInPage() {
             return;
           }
 
+          console.log(
+            log({
+              component: 'clock-in',
+              message: 'Saving user info to local store',
+              data: { userId: mySession.user.id, email: mySession.user.email },
+            })
+          );
           // Save data to local store
           setUserInfo({
-            userId: mySession.data.user.id,
-            email: mySession.data.user.email,
+            userId: mySession.user.id,
+            email: mySession.user.email,
             personalInfo: {
-              firstName: mySession.data.user.name?.split(' ')[0] || '',
-              lastName: mySession.data.user.name?.split(' ').slice(1).join(' ') || '',
-              phone: mySession.data.user.phoneNumber || '',
+              firstName: mySession.user.name?.split(' ')[0] || '',
+              lastName: mySession.user.name?.split(' ').slice(1).join(' ') || '',
+              phone: mySession.user.phoneNumber || '',
             },
             companyInfo: {
               name: activeOrg.name,
@@ -98,9 +177,22 @@ export default function ClockInPage() {
               id: activeOrg.id,
             },
           });
+          console.log(
+            log({
+              component: 'clock-in',
+              message: 'Redirecting to dashboard',
+            })
+          );
           router.push('/dashboard');
         })
         .catch(() => {
+          console.log(
+            log({
+              component: 'clock-in',
+              message: 'Error setting active organization',
+              level: 'error',
+            })
+          );
           const shouldSignOut = handleAuthError();
           if (shouldSignOut) {
             // If error threshold reached, log out and redirect
@@ -109,7 +201,13 @@ export default function ClockInPage() {
             });
           }
         });
-    } else if (!myOrganization.isPending && !myOrganization.data?.length) {
+    } else if (!myOrganizationIsPending && !myOrganization?.length) {
+      console.log(
+        log({
+          component: 'clock-in',
+          message: 'No organizations found',
+        })
+      );
       const shouldSignOut = handleAuthError();
       if (shouldSignOut) {
         // If error threshold reached, log out and redirect
@@ -119,11 +217,17 @@ export default function ClockInPage() {
       }
     }
   }, [
-    myOrganization.isPending,
-    myOrganization.data,
-    myOrganization.error,
+    // Organization
+    myOrganizationIsPending,
+    myOrganizationError,
+    myOrganization,
+
+    // Session
+    mySessionError,
+    mySessionIsPending,
+    mySession,
+
     router,
-    mySession.data,
     setUserInfo,
   ]);
 

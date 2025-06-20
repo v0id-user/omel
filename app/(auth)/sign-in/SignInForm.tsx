@@ -10,6 +10,8 @@ import { useAuthStore } from '@/store/auth/userInfo';
 import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { authClient } from '@/lib/betterauth/auth-client';
+import { log } from '@/utils/logs';
+
 export default function SignInClientPage() {
   const { userInfo, formState, formStep, setFormState, setFormStep } = useAuthStore();
   const { validator, isLoading, setIsLoading } = useClientValidations();
@@ -61,12 +63,35 @@ export default function SignInClientPage() {
         return;
       }
 
-      const signInResponse = await authClient.signIn.email({
+      const { data: signInResponse, error: signInError } = await authClient.signIn.email({
         email: userInfo.email,
         password: userInfo.password,
       });
 
-      console.log('signInResponse', signInResponse);
+      console.log(
+        log({
+          component: 'sign-in',
+          message: 'signInResponse',
+          data: signInResponse,
+        })
+      );
+
+      console.log(
+        log({
+          component: 'sign-in',
+          message: 'signInError',
+          data: signInError,
+        })
+      );
+
+      if (signInError) {
+        toast.error('خطأ في تسجيل الدخول');
+        setIsLoading(false);
+        setFormState({
+          buttonText: 'تسجيل الدخول',
+        });
+        return;
+      }
 
       setTimeout(() => {
         toast.success('تم تسجيل الدخول بنجاح');
