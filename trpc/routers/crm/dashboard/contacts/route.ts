@@ -5,6 +5,7 @@ import {
   updateContact,
   getContactsByPage,
   getTotalContactPages,
+  getContactsByIds,
 } from '@/services/crm/dashboard';
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { validateEmail } from '@/utils/emails';
@@ -14,8 +15,21 @@ import { Contact } from '@/database/types/contacts';
 
 const contactInputSchema = z.custom<CreateContactInput>();
 const contactUpdateInputSchema = z.object({
-  contact_id: z.string(),
-  contact_input: z.custom<UpdateContactInput>(),
+  id: z.string(),
+  name: z.string(),
+  email: z.string().nullish(),
+  phone: z.string().nullish(),
+  city: z.string().nullish(),
+  country: z.string().nullish(),
+  address: z.string().nullish(),
+  region: z.string().nullish(),
+  postalCode: z.string().nullish(),
+  contactType: z.enum(['person', 'company']).nullish(),
+  domain: z.string().nullish(),
+  additionalPhones: z.array(z.string()).nullish(),
+  taxId: z.string().nullish(),
+  businessType: z.string().nullish(),
+  employees: z.string().nullish(),
 });
 
 const contactPagesInputSchema = z.object({
@@ -25,6 +39,10 @@ const contactPagesInputSchema = z.object({
 const contactPageInputSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(50).default(10),
+});
+
+const contactIdsInputSchema = z.object({
+  ids: z.array(z.string()).min(1).max(50),
 });
 
 // Middleware for validating contact inputs
@@ -69,8 +87,9 @@ export const contactRouter = createTRPCRouter({
     );
   }),
   update: protectedProcedure.input(contactUpdateInputSchema).mutation(async ({ ctx, input }) => {
-    await validateContactInput(input.contact_input);
-    return await updateContact(input.contact_id, ctx.session.user.id, input.contact_input);
+    const { id, ...contactData } = input;
+    await validateContactInput(contactData);
+    return await updateContact(id, ctx.session.user.id, contactData);
   }),
 
   getByPage: protectedProcedure.input(contactPageInputSchema).query(async ({ ctx, input }) => {
@@ -79,6 +98,10 @@ export const contactRouter = createTRPCRouter({
       input.page,
       input.limit
     );
+  }),
+
+  getByIds: protectedProcedure.input(contactIdsInputSchema).query(async ({ ctx, input }) => {
+    return await getContactsByIds(ctx.session.session.activeOrganizationId!, input.ids);
   }),
 
   pages: protectedProcedure.input(contactPagesInputSchema).query(async ({ ctx, input }) => {

@@ -4,6 +4,7 @@ import { DashboardContent } from '@/components/dashboard';
 import { UserPlus } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { AddClientsDialog } from './dialog';
+import { EditContactsDialog } from './EditContactsDialog';
 import AddGroup from '@/public/icons/iso/add-group.svg';
 import { ClientsTable } from './components';
 import { trpc } from '@/trpc/client';
@@ -13,6 +14,8 @@ import { Pagination } from '@/components/ui/pagination';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageLimit = 10;
 
@@ -43,13 +46,12 @@ export default function ClientsPage() {
     }
   }, [clientsError]);
 
-  // const handleEdit = (ids: string[]) => {
-  //   // TODO: Just make a trpc endpoint that accept array, if it's one or multiable does the same thing
-  //   // TODO: prompt mutliable dialogs for edits and save them to edtiable, then perform the edit on trpc
-  //   // TODO: Just don't do it like that for know even hide the edit button but keep the logic for later
-  //   // Implement bulk edit logic
-  //   console.log('Editing:', ids);
-  // };
+  const handleEdit = (ids: string[]) => {
+    console.log('handleEdit called with ids:', ids);
+    setSelectedContactIds(ids);
+    setEditDialogOpen(true);
+    console.log('Edit dialog should be open now');
+  };
 
   const handleDelete = (ids: string[]) => {
     // TODO: Just make a trpc endpoint that accept array, if it's one or multiable does the same thing
@@ -77,19 +79,29 @@ export default function ClientsPage() {
         icon: <AddGroup className="w-[100px] h-[100px]" />,
       }}
       dialogs={
-        <AddClientsDialog
-          isOpen={isDialogOpen}
-          onClose={() => {
-            setDialogOpen(false);
-          }}
-        />
+        <>
+          <AddClientsDialog
+            isOpen={isDialogOpen}
+            onClose={() => {
+              setDialogOpen(false);
+            }}
+          />
+          <EditContactsDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => {
+              setEditDialogOpen(false);
+              setSelectedContactIds([]);
+            }}
+            contactIds={selectedContactIds}
+          />
+        </>
       }
     >
       {/* Show content only if we have data and no errors except 404 which is handled by the empty state */}
       {!isPending ? (
         clientsError?.data?.code === 'NOT_FOUND' ? null : clients?.length ? (
           <>
-            <ClientsTable data={clients} onDelete={handleDelete} />
+            <ClientsTable data={clients} onEdit={handleEdit} onDelete={handleDelete} />
 
             {/* Pagination */}
             {paginatedClients && (

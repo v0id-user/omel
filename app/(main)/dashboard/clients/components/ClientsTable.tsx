@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Trash2, Mail, Phone, MapPin, Globe, Pen, Copy } from 'lucide-react';
+import { Trash2, Mail, Phone, MapPin, Globe, Pen, Copy, Pencil } from 'lucide-react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 import { motion } from 'motion/react';
 import { toast } from 'react-hot-toast';
@@ -64,11 +64,11 @@ const Copyable: React.FC<CopyableProps> = ({ value, maxWidth = 'none', onCopied,
 
 interface ClientsTableProps {
   data: Contact[];
-  //   onEdit?: (ids: string[]) => void;
+  onEdit?: (ids: string[]) => void;
   onDelete?: (ids: string[]) => void;
 }
 
-export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onDelete }) => {
+export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDelete }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [columnWidths, setColumnWidths] = useState({
     name: 20, // percentage
@@ -138,9 +138,9 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onDelete }) =>
     onDelete?.(selectedRows);
   };
 
-  //   const handleBulkEdit = () => {
-  //     onEdit?.(selectedRows);
-  //   };
+  const handleBulkEdit = () => {
+    onEdit?.(selectedRows);
+  };
 
   const formatPhoneNumber = (phone: string) => {
     const phoneNumber = parsePhoneNumberFromString(phone);
@@ -196,7 +196,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onDelete }) =>
                 : `${selectedRows.length} عملاء`}
           </span>
           <div className="flex gap-2">
-            {/* <Button
+            <Button
               variant="outline"
               size={isMobile ? 'icon' : 'sm'}
               className="text-gray-700 hover:text-gray-900 cursor-pointer"
@@ -204,7 +204,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onDelete }) =>
             >
               <Pencil className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} ml-1`} />
               {!isMobile && 'تعديل'}
-            </Button> */}
+            </Button>
             <Button
               variant="outline"
               size={isMobile ? 'icon' : 'sm'}

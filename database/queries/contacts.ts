@@ -67,6 +67,26 @@ export async function deleteContact(contact_id: string) {
   return await db.$softDelete(contacts, contact_id);
 }
 
+export async function getContactsByIds(
+  organizationId: string,
+  contactIds: string[]
+): Promise<Contact[]> {
+  if (contactIds.length === 0) return [];
+
+  const { inArray } = await import('drizzle-orm');
+
+  return await db
+    .select()
+    .from(contacts)
+    .where(
+      and(
+        eq(contacts.organizationId, organizationId),
+        inArray(contacts.id, contactIds),
+        isNull(contacts.deletedAt)
+      )
+    );
+}
+
 export async function getTotalContactPages(organizationId: string, length: number) {
   if (length <= 0) throw new Error('Page length must be greater than zero');
 

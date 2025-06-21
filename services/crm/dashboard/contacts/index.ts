@@ -4,6 +4,7 @@ import {
   updateContact as updateContactQuery,
   getContactsByPage as getContactsByPageQuery,
   getTotalContactPages as getTotalContactPagesQuery,
+  getContactsByIds as getContactsByIdsQuery,
 } from '@/database/queries/contacts';
 
 export async function createNewContact(
@@ -28,4 +29,8 @@ export async function getContactsByPage(organizationId: string, page: number, li
 
 export async function getTotalContactPages(organizationId: string, length: number) {
   return await getTotalContactPagesQuery(organizationId, length);
+}
+
+export async function getContactsByIds(organizationId: string, contactIds: string[]) {
+  return await getContactsByIdsQuery(organizationId, contactIds);
 }
