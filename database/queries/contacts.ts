@@ -1,21 +1,42 @@
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { contacts } from '@/database/schemas/app-schema';
 import { db } from '@/database/db';
-import { and, count, eq, isNull } from 'drizzle-orm';
+import { and, count, eq, isNull, desc } from 'drizzle-orm';
 import { Contact } from '@/database/types/contacts';
 
-export async function getContactsWithCursor(
+export async function getContactsByPage(
   organizationId: string,
-  cursor: string | null
-): Promise<{ data: Contact[]; nextCursor: string | null; hasMore: boolean }> {
-  const { data, nextCursor, hasMore } = await db.$paginateCursor(contacts, {
-    where: and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)),
-    cursor,
-    limit: 10,
-    direction: 'desc',
-  });
+  page: number,
+  limit: number = 10
+): Promise<{ data: Contact[]; total: number; currentPage: number; totalPages: number }> {
+  if (page < 1) throw new Error('Page must be greater than 0');
+  if (limit <= 0) throw new Error('Limit must be greater than 0');
 
-  return { data, nextCursor, hasMore };
+  const offset = (page - 1) * limit;
+
+  const [data, totalResult] = await Promise.all([
+    db
+      .select()
+      .from(contacts)
+      .where(and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt)))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(contacts.createdAt)),
+    db
+      .select({ count: count() })
+      .from(contacts)
+      .where(and(eq(contacts.organizationId, organizationId), isNull(contacts.deletedAt))),
+  ]);
+
+  const total = Number(totalResult[0].count);
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data,
+    total,
+    currentPage: page,
+    totalPages,
+  };
 }
 
 export async function createContact(

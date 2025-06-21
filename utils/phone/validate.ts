@@ -42,8 +42,7 @@ function validatePhoneGeneral(input: string) {
   const phone = clientValidatePhoneInput(input);
   if (phone !== undefined) return false;
 
-  const parsedPhone = parsePhoneNumberFromString(input);
-  if (!parsedPhone?.country) return false;
+  return phone;
 }
 
 export { validatePhoneArab, validatePhoneGeneral };

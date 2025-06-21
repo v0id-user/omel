@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { allowedRegions } from '@/lib/countryCodes';
+import { toArabicNumerals, toEnglishNumerals } from '@/utils';
+import { log } from '@/utils/logs';
 
 // Custom FormInput for phone field to match Select height
 const PhoneFormInput = (props: React.ComponentProps<typeof AuthFormInput>) => {
@@ -234,7 +236,9 @@ const PhoneSelect = ({
         {allowedRegions.map(region => (
           <SelectItem key={region.code} value={region.phoneCode} className="relative" dir="rtl">
             <div className="flex w-full items-center gap-2">
-              <span className="text-gray-500 text-xs font-mono">{region.phoneCode}</span>
+              <span className="text-gray-500 text-xs font-mono">
+                {toArabicNumerals(region.phoneCode)}+
+              </span>
               <span className="text-sm">{region.name}</span>
             </div>
           </SelectItem>
@@ -246,7 +250,7 @@ const PhoneSelect = ({
 
 export const PhoneField = () => {
   const { userInfo, setUserInfo } = useAuthStore();
-  const [selectedDialCode, setSelectedDialCode] = useState<string>('+966'); // Default to Saudi Arabia
+  const [selectedDialCode, setSelectedDialCode] = useState<string>('966'); // Default to Saudi Arabia
   const [rawNumber, setRawNumber] = useState<string>('');
   const form = useForm({
     defaultValues: userInfo,
@@ -283,6 +287,12 @@ export const PhoneField = () => {
         onChange: ({ value }) => {
           const phoneNumber = clientValidatePhoneInput(value);
           if (phoneNumber !== undefined) {
+            console.log(
+              log({
+                component: 'PhoneField',
+                message: `Phone number was not vaild ${value}`,
+              })
+            );
             return 'رقم الهاتف غير صحيح';
           }
         },
@@ -291,25 +301,24 @@ export const PhoneField = () => {
       {field => (
         <>
           <div className="flex gap-4 items-center px-2">
-            <div className="flex flex-col">
-              <PhoneSelect
-                value={selectedDialCode}
-                onValueChange={value => {
-                  setSelectedDialCode(value);
-                  validateAndUpdatePhone(rawNumber, value);
-                }}
-              />
-            </div>
             <div className="flex-1">
               <PhoneFormInput
                 type="tel"
-                value={rawNumber}
+                value={toArabicNumerals(rawNumber)}
                 onBlur={() => {
                   field.handleBlur();
                   validateAndUpdatePhone(rawNumber, selectedDialCode);
                 }}
                 onChange={number => {
-                  const cleanNumber = number.replace(/[^\d]/g, '');
+                  // Values here depend on whatever in the value
+                  const numberEn = toEnglishNumerals(number);
+                  const cleanNumber = numberEn.replace(/[^\d]/g, '');
+                  console.log(
+                    log({
+                      component: 'PhoneField',
+                      message: `cleaned phone number ${cleanNumber}`,
+                    })
+                  );
                   setRawNumber(cleanNumber);
 
                   const fullPhoneNumber = `${selectedDialCode}${cleanNumber}`;
@@ -319,6 +328,15 @@ export const PhoneField = () => {
                 }}
                 placeholder="أدخل رقم هاتفك"
                 icon={<Phone className="h-5 w-5 text-gray-400" />}
+              />
+            </div>
+            <div className="flex flex-col">
+              <PhoneSelect
+                value={selectedDialCode}
+                onValueChange={value => {
+                  setSelectedDialCode(value);
+                  validateAndUpdatePhone(rawNumber, value);
+                }}
               />
             </div>
           </div>

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:trigger": "bunx trigger.dev@latest dev",
+    "migration": "bunx drizzle-kit generate && bunx drizzle-kit migrate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

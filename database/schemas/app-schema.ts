@@ -35,8 +35,8 @@ export const contacts = pgTable(
   {
     id: text('id').primaryKey().default(createId()),
     name: text('name').notNull(),
-    email: text('email').unique(),
-    phone: text('phone').unique(),
+    email: text('email'),
+    phone: text('phone'),
     address: text('address'),
     city: text('city'),
     region: text('region'),

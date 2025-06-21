@@ -16,9 +16,12 @@ import { CompanyDetailsStep } from './forms/CompanyDetailsStep';
 import { CompletionStep } from './forms/CompletionStep';
 import { trpc } from '@/trpc/client';
 import { companyFields } from './config/fieldConfigs';
+import { log } from '@/utils/logs';
+import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/unstable-core-do-not-import';
 
 export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   // State for current step and data
+  const utils = trpc.useUtils();
   const [currentStep, setCurrentStep] = useState<FormStep>('type');
   const [clientData, setClientData] = useState<ClientData>({
     name: '',
@@ -41,17 +44,31 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   const { mutate: createContact, isPending } = trpc.crm.dashboard.contact.new.useMutation({
     onSuccess: () => {
+      console.log(
+        log({
+          component: 'AddClientsDialog',
+          message: 'Contact created successfully',
+        })
+      );
       toast.success('تم إضافة العميل بنجاح');
+      // re fetch data
+      utils.crm.dashboard.contact.invalidate();
       onClose();
     },
     onError: error => {
+      console.log(
+        log({
+          component: 'AddClientsDialog',
+          message: `Contact creation failed: ${error.message}`,
+        })
+      );
       console.error(error);
       switch (error.data?.code) {
         case 'BAD_REQUEST':
-          if (error.message.includes('Email')) {
+          if (error.message.includes('Email') || error.message.includes('بريد')) {
             toast.error('البريد الإلكتروني غير صالح');
             setErrors({ ...errors, email: 'البريد الإلكتروني غير صالح' });
-          } else if (error.message.includes('phone')) {
+          } else if (error.message.includes('phone') || error.message.includes('رقم')) {
             toast.error('رقم الهاتف غير صالح');
             setErrors({ ...errors, phone: 'رقم الهاتف غير صالح' });
           } else {
@@ -76,6 +93,21 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
           toast.error('حدث خطأ أثناء إضافة العميل');
       }
     },
+    retry: (failureCount, error) => {
+      console.log(
+        log({
+          component: 'trpc.crm.dashboard.contact.new.useMutation',
+          message: `got an error ${error}`,
+        })
+      );
+      if (
+        error.data?.code === 'BAD_REQUEST' ||
+        error.shape?.code === TRPC_ERROR_CODES_BY_KEY.BAD_REQUEST
+      ) {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 
   // Form validation state
@@ -83,6 +115,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Handle input changes
   const handleChange = (field: string, value: string) => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Field changed: ${field} = ${value}`,
+      })
+    );
+
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       if (parent === 'companyFields' && clientData.companyFields) {
@@ -112,6 +151,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Handle client type selection
   const handleClientTypeChange = (type: ClientType) => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Client type changed to: ${type}`,
+      })
+    );
+
     setClientData({
       ...clientData,
       clientType: type,
@@ -120,6 +166,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Add additional phone for company
   const handleAddPhone = () => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: 'Adding additional phone field',
+      })
+    );
+
     if (clientData.companyFields) {
       setClientData({
         ...clientData,
@@ -133,6 +186,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Remove an additional phone
   const handleRemovePhone = (index: number) => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Removing phone at index: ${index}`,
+      })
+    );
+
     if (clientData.companyFields) {
       const newPhones = [...clientData.companyFields.additionalPhones];
       newPhones.splice(index, 1);
@@ -148,6 +208,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Handle phone input change for additional phones
   const handlePhoneChange = (index: number, value: string) => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Additional phone changed at index ${index}: ${value}`,
+      })
+    );
+
     if (clientData.companyFields) {
       const newPhones = [...clientData.companyFields.additionalPhones];
       newPhones[index] = value;
@@ -163,6 +230,13 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Validate the current step
   const validateStep = (): boolean => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Validating step: ${currentStep}`,
+      })
+    );
+
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 'basicInfo') {
@@ -204,11 +278,27 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const isValid = Object.keys(newErrors).length === 0;
+
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Step validation result: ${isValid ? 'valid' : 'invalid'}`,
+      })
+    );
+
+    return isValid;
   };
 
   // Move to the next step
   const nextStep = () => {
+    console.log(
+      log({
+        component: 'AddClientsDialog',
+        message: `Moving to next step from: ${currentStep}`,
+      })
+    );
+
     if (!validateStep()) return;
 
     if (currentStep === 'type') {
@@ -245,7 +335,15 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Submit the form
   const handleSubmit = async () => {
-    if (!validateStep()) return;
+    if (!validateStep()) {
+      const errorMessages = Object.values(errors).filter(error => error);
+      if (errorMessages.length > 0) {
+        toast.error(errorMessages[0]);
+      } else {
+        toast.error('يرجى التحقق من البيانات المدخلة');
+      }
+      return;
+    }
 
     try {
       // Validate company fields if client type is company
@@ -287,7 +385,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       }
 
       // TODO: Validate if this even works, and fix
-      // The success or error is handled in the mutation, TRPC IS FUCKING AWESOME
+      // The success or error is handled in the mutation in the use above, TRPC IS FUCKING AWESOME
       createContact({
         name: clientData.name,
         email: clientData.email,

@@ -17,6 +17,8 @@ import { motion } from 'motion/react';
 import { toast } from 'react-hot-toast';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useResizableColumns } from '@/hooks/use-resizable-columns';
+import { toArabicNumerals } from '@/utils';
+import { Contact } from '@/database/types/contacts';
 
 interface CopyableProps {
   value: string;
@@ -60,22 +62,13 @@ const Copyable: React.FC<CopyableProps> = ({ value, maxWidth = 'none', onCopied,
   );
 };
 
-interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  city: string;
-  country: string;
-}
-
 interface ClientsTableProps {
-  contacts: Contact[];
+  data: Contact[];
   //   onEdit?: (ids: string[]) => void;
   onDelete?: (ids: string[]) => void;
 }
 
-export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }) => {
+export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onDelete }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [columnWidths, setColumnWidths] = useState({
     name: 20, // percentage
@@ -126,10 +119,10 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }
   }, [isMobile, isTablet]);
 
   const handleSelectAll = () => {
-    if (selectedRows.length === contacts.length) {
+    if (selectedRows.length === data.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(contacts.map(contact => contact.id));
+      setSelectedRows(data.map(contact => contact.id));
     }
   };
 
@@ -156,16 +149,11 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }
     const countryCode = phoneNumber.countryCallingCode;
     const nationalNumber = phoneNumber.nationalNumber;
 
-    // Convert to Arabic numerals
-    const toArabicNumbers = (num: string) => {
-      return num.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
-    };
-
     const formattedContent = (
       <span className="flex items-center gap-1 text-xs font-semibold">
-        <span>{toArabicNumbers(nationalNumber.slice(3))}</span>
-        <span>{toArabicNumbers(nationalNumber.slice(0, 3))}</span>
-        <span>+{toArabicNumbers(countryCode.toString())}</span>
+        <span>{toArabicNumerals(nationalNumber.slice(3))}</span>
+        <span>{toArabicNumerals(nationalNumber.slice(0, 3))}</span>
+        <span>+{toArabicNumerals(countryCode.toString())}</span>
       </span>
     );
 
@@ -235,7 +223,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }
             <TableRow className="py-2">
               <TableHead className="w-[40px] text-center">
                 <Checkbox
-                  checked={selectedRows.length === contacts.length}
+                  checked={selectedRows.length === data.length}
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
@@ -311,54 +299,56 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ contacts, onDelete }
             </TableRow>
           </TableHeader>
           <TableBody className="space-y-1">
-            {contacts.map(contact => (
-              <TableRow
-                key={contact.id}
-                data-state={selectedRows.includes(contact.id) ? 'selected' : undefined}
-                className="hover:bg-gray-50/80 py-2"
-              >
-                <TableCell className="text-center py-2">
-                  <Checkbox
-                    checked={selectedRows.includes(contact.id)}
-                    onCheckedChange={() => handleSelectRow(contact.id)}
-                  />
-                </TableCell>
-                <TableCell
-                  className="text-right font-medium py-2 border-l"
-                  style={{ width: `${columnWidths.name}%` }}
+            {data
+              .filter((contact: Contact) => contact.name && contact.email && contact.phone)
+              .map((contact: Contact) => (
+                <TableRow
+                  key={contact.id}
+                  data-state={selectedRows.includes(contact.id) ? 'selected' : undefined}
+                  className="hover:bg-gray-50/80 py-2"
                 >
-                  <span className="text-sm">{contact.name}</span>
-                </TableCell>
-                <TableCell
-                  className="text-right py-2 border-l"
-                  style={{ width: `${columnWidths.email}%` }}
-                >
-                  {formatEmail(contact.email, isMobile, isTablet)}
-                </TableCell>
-                <TableCell
-                  className="text-right text-gray-600 py-2 border-l"
-                  style={{ width: `${columnWidths.phone}%` }}
-                >
-                  {formatPhoneNumber(contact.phone)}
-                </TableCell>
-                {columnWidths.city > 0 && (
+                  <TableCell className="text-center py-2">
+                    <Checkbox
+                      checked={selectedRows.includes(contact.id)}
+                      onCheckedChange={() => handleSelectRow(contact.id)}
+                    />
+                  </TableCell>
+                  <TableCell
+                    className="text-right font-medium py-2 border-l"
+                    style={{ width: `${columnWidths.name}%` }}
+                  >
+                    <span className="text-sm">{contact.name}</span>
+                  </TableCell>
+                  <TableCell
+                    className="text-right py-2 border-l"
+                    style={{ width: `${columnWidths.email}%` }}
+                  >
+                    {formatEmail(contact.email!, isMobile, isTablet)}
+                  </TableCell>
                   <TableCell
                     className="text-right text-gray-600 py-2 border-l"
-                    style={{ width: `${columnWidths.city}%` }}
+                    style={{ width: `${columnWidths.phone}%` }}
                   >
-                    {contact.city}
+                    {formatPhoneNumber(contact.phone!)}
                   </TableCell>
-                )}
-                {columnWidths.country > 0 && (
-                  <TableCell
-                    className="text-right text-gray-600 py-2"
-                    style={{ width: `${columnWidths.country}%` }}
-                  >
-                    {contact.country}
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
+                  {columnWidths.city > 0 && (
+                    <TableCell
+                      className="text-right text-gray-600 py-2 border-l"
+                      style={{ width: `${columnWidths.city}%` }}
+                    >
+                      {contact.city}
+                    </TableCell>
+                  )}
+                  {columnWidths.country > 0 && (
+                    <TableCell
+                      className="text-right text-gray-600 py-2"
+                      style={{ width: `${columnWidths.country}%` }}
+                    >
+                      {contact.country}
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

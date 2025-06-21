@@ -29,6 +29,7 @@ export const basicInfoFields: FormFieldConfig[] = [
 export const contactInfoFields: FormFieldConfig[] = [
   {
     name: 'phone',
+    type: 'phone',
     label: 'رقم الهاتف',
     validator: value => {
       if (value) {

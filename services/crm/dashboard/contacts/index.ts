@@ -2,7 +2,7 @@ import { CreateContactInput, UpdateContactInput } from '@/database/types/contact
 import {
   createContact,
   updateContact as updateContactQuery,
-  getContactsWithCursor as getContactsWithCursorQuery,
+  getContactsByPage as getContactsByPageQuery,
   getTotalContactPages as getTotalContactPagesQuery,
 } from '@/database/queries/contacts';
 
@@ -11,7 +11,7 @@ export async function createNewContact(
   created_by: string,
   contact_input: CreateContactInput
 ) {
-  return createContact(organization_id, created_by, contact_input);
+  return await createContact(organization_id, created_by, contact_input);
 }
 
 export async function updateContact(
@@ -19,13 +19,13 @@ export async function updateContact(
   updated_by: string,
   contact_input: UpdateContactInput
 ) {
-  return updateContactQuery(contact_id, updated_by, contact_input);
+  return await updateContactQuery(contact_id, updated_by, contact_input);
 }
 
-export async function getContactsWithCursor(organizationId: string, cursor: string | null) {
-  return getContactsWithCursorQuery(organizationId, cursor);
+export async function getContactsByPage(organizationId: string, page: number, limit: number = 10) {
+  return await getContactsByPageQuery(organizationId, page, limit);
 }
 
 export async function getTotalContactPages(organizationId: string, length: number) {
-  return getTotalContactPagesQuery(organizationId, length);
+  return await getTotalContactPagesQuery(organizationId, length);
 }

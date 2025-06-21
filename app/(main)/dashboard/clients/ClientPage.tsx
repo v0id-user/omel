@@ -9,31 +9,32 @@ import { ClientsTable } from './components';
 import { trpc } from '@/trpc/client';
 import { Spinner } from '@/components/omel/Spinner';
 import { toast } from 'react-hot-toast';
+import { Pagination } from '@/components/ui/pagination';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { data: pages } = trpc.crm.dashboard.contact.pages.useQuery({
-    length: 10,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageLimit = 10;
+
+  // Page-based query
   const {
-    data: clients,
+    data: paginatedClients,
     error: clientsError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
     isPending,
-  } = trpc.crm.dashboard.contact.get.useInfiniteQuery(
+  } = trpc.crm.dashboard.contact.getByPage.useQuery(
     {
-      cursor: null,
+      page: currentPage,
+      limit: pageLimit,
     },
     {
-      getNextPageParam: lastPage => lastPage.nextCursor,
       retry: (failureCount, error) => {
-        // Retry only if NOT a 404 / NOT end of pagination
         return error?.data?.code !== 'NOT_FOUND' && failureCount < 3;
       },
     }
   );
+
+  // Extract clients data
+  const clients = paginatedClients?.data;
 
   // Handle error toast in useEffect
   useEffect(() => {
@@ -56,41 +57,6 @@ export default function ClientsPage() {
     console.log('Deleting:', ids);
   };
 
-  const contacts = [
-    {
-      id: '1',
-      name: 'شركة التقنية الحديثة',
-      email: 'info@tech.com',
-      phone: '+966501234567',
-      city: 'الرياض',
-      country: 'السعودية',
-    },
-    {
-      id: '4',
-      name: '#V0ID',
-      email: 'hey@v0id.me',
-      phone: '+966501760925',
-      city: 'جدة',
-      country: 'السعودية',
-    },
-    {
-      id: '2',
-      name: 'مؤسسة الحلول الذكية',
-      email: 'contact@smart.com',
-      phone: '+966555987654',
-      city: 'جدة',
-      country: 'السعودية',
-    },
-    {
-      id: '3',
-      name: 'نهج الابتكار',
-      email: 'support@innovation.com',
-      phone: '+971501234567',
-      city: 'دبي',
-      country: 'الإمارات',
-    },
-  ];
-
   return (
     <DashboardContent
       title="العملاء"
@@ -110,19 +76,29 @@ export default function ClientsPage() {
         text: 'لايوجد عملاء بعد! أنشئ عميلك الأول للبدء.',
         icon: <AddGroup className="w-[100px] h-[100px]" />,
       }}
-      dialogs={<AddClientsDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
+      dialogs={
+        <AddClientsDialog
+          isOpen={isDialogOpen}
+          onClose={() => {
+            setDialogOpen(false);
+          }}
+        />
+      }
     >
       {/* Show content only if we have data and no errors except 404 which is handled by the empty state */}
-      {!isPending && !isFetchingNextPage ? (
-        clientsError?.data?.code === 'NOT_FOUND' ? null : clients?.pages?.length ? (
+      {!isPending ? (
+        clientsError?.data?.code === 'NOT_FOUND' ? null : clients?.length ? (
           <>
-            <ClientsTable contacts={contacts} onDelete={handleDelete} />
+            <ClientsTable data={clients} onDelete={handleDelete} />
 
-            {/* Pagination | TODO: OFC Make it better like real pagination */}
-            {(hasNextPage || (pages && pages > 0)) && (
-              <button onClick={() => fetchNextPage()} className="mt-4 text-primary hover:underline">
-                تحميل المزيد
-              </button>
+            {/* Pagination */}
+            {paginatedClients && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={paginatedClients.totalPages}
+                onPageChange={setCurrentPage}
+                isLoading={isPending}
+              />
             )}
           </>
         ) : null
