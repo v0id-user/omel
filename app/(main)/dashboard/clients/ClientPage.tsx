@@ -11,6 +11,7 @@ import { trpc } from '@/trpc/client';
 import { Spinner } from '@/components/omel/Spinner';
 import { toast } from 'react-hot-toast';
 import { Pagination } from '@/components/ui/pagination';
+import { log } from '@/utils/logs';
 
 export default function ClientsPage() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -47,10 +48,20 @@ export default function ClientsPage() {
   }, [clientsError]);
 
   const handleEdit = (ids: string[]) => {
-    console.log('handleEdit called with ids:', ids);
+    console.log(
+      log({
+        component: 'ClientsPage',
+        message: 'handleEdit called with ids:' + ids,
+      })
+    );
     setSelectedContactIds(ids);
     setEditDialogOpen(true);
-    console.log('Edit dialog should be open now');
+    console.log(
+      log({
+        component: 'ClientsPage',
+        message: 'Edit dialog should be open now',
+      })
+    );
   };
 
   const handleDelete = (ids: string[]) => {
@@ -97,26 +108,23 @@ export default function ClientsPage() {
         </>
       }
     >
-      {/* Show content only if we have data and no errors except 404 which is handled by the empty state */}
-      {!isPending ? (
-        clientsError?.data?.code === 'NOT_FOUND' ? null : clients?.length ? (
-          <>
-            <ClientsTable data={clients} onEdit={handleEdit} onDelete={handleDelete} />
-
-            {/* Pagination */}
-            {paginatedClients && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={paginatedClients.totalPages}
-                onPageChange={setCurrentPage}
-                isLoading={isPending}
-              />
-            )}
-          </>
-        ) : null
-      ) : (
+      {isPending ? (
         <Spinner />
-      )}
+      ) : clientsError?.data?.code === 'NOT_FOUND' ? null : clients && clients.length > 0 ? (
+        <>
+          <ClientsTable data={clients} onEdit={handleEdit} onDelete={handleDelete} />
+
+          {/* Pagination */}
+          {paginatedClients && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={paginatedClients.totalPages}
+              onPageChange={setCurrentPage}
+              isLoading={isPending}
+            />
+          )}
+        </>
+      ) : null}
     </DashboardContent>
   );
 }

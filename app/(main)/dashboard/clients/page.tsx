@@ -1,9 +1,18 @@
 import { trpc } from '@/trpc/server';
+import { Suspense } from 'react';
 import ClientsPage from './ClientPage';
+import { Spinner } from '@/components/omel/Spinner';
 
-export default function ClientsPageServer() {
-  trpc.crm.dashboard.contact.pages.prefetch({
-    length: 10,
+export default async function ClientsPageServer() {
+  // Prefetch the data on the server
+  await trpc.crm.dashboard.contact.getByPage.prefetch({
+    limit: 10,
+    page: 1,
   });
-  return <ClientsPage />;
+
+  return (
+    <Suspense fallback={<Spinner />}>
+      <ClientsPage />
+    </Suspense>
+  );
 }

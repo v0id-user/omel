@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardBreadcrumb } from '@/components/dashboard';
+import { HydrateClient } from '@/trpc/server';
 import ClientDashBoard from './ClientDashBoard';
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <SidebarInset>
         <main className="flex-1 overflow-y-auto">
           <DashboardBreadcrumb />
-          {children}
+          <HydrateClient>{children}</HydrateClient>
         </main>
       </SidebarInset>
     </SidebarProvider>
