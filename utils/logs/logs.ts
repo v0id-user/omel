@@ -6,7 +6,7 @@ interface LogParams {
   timestamp?: boolean;
 }
 
-export const log = ({ component, message, data, level = 'info', timestamp = false }: LogParams) => {
+export function log({ component, message, data, level = 'info', timestamp = false }: LogParams) {
   if (process.env.NEXT_PUBLIC_ENV === 'dev') {
     const timestampStr = timestamp ? `[${new Date().toISOString()}]` : '';
     const componentStr = `[${component}]`;
@@ -22,4 +22,4 @@ export const log = ({ component, message, data, level = 'info', timestamp = fals
   }
 
   return '';
-};
+}
