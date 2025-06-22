@@ -4,7 +4,7 @@ import { FormField } from '@/components/omel/FormField';
 import { useState } from 'react';
 import { clientValidateEmailInput, clientValidatePhoneInput } from '@/utils/client/validators';
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
+import { X, Building, User } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
 import { Contact } from '@/database/types/contacts';
 
@@ -77,9 +77,14 @@ export function EditContactForm({ contact, onContactChange }: EditContactFormPro
     <div className="space-y-5">
       {/* Header with contact name */}
       <div className="text-center pb-3 border-b border-gray-100">
-        <h3 className="text-sm font-medium text-gray-600">
-          {contact.contactType === 'company' ? 'شركة' : 'عميل'}: {contact.name}
-        </h3>
+        <div className="flex items-center justify-center gap-2">
+          {contact.contactType === 'company' ? (
+            <Building className="w-4 h-4 text-gray-700" />
+          ) : (
+            <User className="w-4 h-4 text-gray-700" />
+          )}
+          <h3 className="text-sm font-medium text-gray-700">{contact.name}</h3>
+        </div>
       </div>
 
       {/* Basic Information */}

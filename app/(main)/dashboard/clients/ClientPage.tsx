@@ -91,20 +91,24 @@ export default function ClientsPage() {
       }}
       dialogs={
         <>
-          <AddClientsDialog
-            isOpen={isDialogOpen}
-            onClose={() => {
-              setDialogOpen(false);
-            }}
-          />
-          <EditContactsDialog
-            isOpen={isEditDialogOpen}
-            onClose={() => {
-              setEditDialogOpen(false);
-              setSelectedContactIds([]);
-            }}
-            contactIds={selectedContactIds}
-          />
+          {isDialogOpen && (
+            <AddClientsDialog
+              isOpen={isDialogOpen}
+              onClose={() => {
+                setDialogOpen(false);
+              }}
+            />
+          )}
+          {isEditDialogOpen && (
+            <EditContactsDialog
+              isOpen={isEditDialogOpen}
+              onClose={() => {
+                setEditDialogOpen(false);
+                setSelectedContactIds([]);
+              }}
+              contactIds={selectedContactIds}
+            />
+          )}
         </>
       }
     >
