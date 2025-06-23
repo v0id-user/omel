@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { trpc } from '@/trpc/client';
 import { EditContactForm } from './forms/EditContactForm';
 import { Contact } from '@/database/types/contacts';
+import { useList } from 'react-use';
 
 interface EditContactsDialogProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ interface EditContactsDialogProps {
 
 export function EditContactsDialog({ isOpen, onClose, contactIds }: EditContactsDialogProps) {
   const [currentContactIndex, setCurrentContactIndex] = useState(0);
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, { set: setContacts, updateAt }] = useList<Contact>([]);
   const utils = trpc.useUtils();
 
   // Fetch contacts data when dialog opens
@@ -47,7 +48,7 @@ export function EditContactsDialog({ isOpen, onClose, contactIds }: EditContacts
     if (contactsData) {
       setContacts(contactsData);
     }
-  }, [contactsData]);
+  }, [contactsData, setContacts]);
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -55,7 +56,7 @@ export function EditContactsDialog({ isOpen, onClose, contactIds }: EditContacts
       setCurrentContactIndex(0);
       setContacts([]);
     }
-  }, [isOpen]);
+  }, [isOpen, setContacts]);
 
   const currentContact = contacts[currentContactIndex];
   const totalContacts = contacts.length;
@@ -73,9 +74,7 @@ export function EditContactsDialog({ isOpen, onClose, contactIds }: EditContacts
   };
 
   const handleContactUpdate = (updatedContact: Contact) => {
-    const updatedContacts = [...contacts];
-    updatedContacts[currentContactIndex] = updatedContact;
-    setContacts(updatedContacts);
+    updateAt(currentContactIndex, updatedContact);
   };
 
   const handleSave = () => {

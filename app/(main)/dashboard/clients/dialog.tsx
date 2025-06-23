@@ -18,6 +18,7 @@ import { trpc } from '@/trpc/client';
 import { companyFields } from './config/fieldConfigs';
 import { log } from '@/utils/logs';
 import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/unstable-core-do-not-import';
+import { useList } from 'react-use';
 
 export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   // State for current step and data
@@ -41,6 +42,12 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       employees: '',
     },
   });
+
+  // Use useList for managing additional phones
+  const [
+    additionalPhones,
+    { set: setAdditionalPhones, push: pushPhone, removeAt: removePhoneAt, updateAt: updatePhoneAt },
+  ] = useList<string>(['']);
 
   const { mutate: createContact, isPending } = trpc.crm.dashboard.contact.new.useMutation({
     onSuccess: () => {
@@ -162,6 +169,11 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       ...clientData,
       clientType: type,
     });
+
+    // Initialize additional phones when switching to company
+    if (type === 'company') {
+      setAdditionalPhones(['']);
+    }
   };
 
   // Add additional phone for company
@@ -173,15 +185,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       })
     );
 
-    if (clientData.companyFields) {
-      setClientData({
-        ...clientData,
-        companyFields: {
-          ...clientData.companyFields,
-          additionalPhones: [...clientData.companyFields.additionalPhones, ''],
-        },
-      });
-    }
+    pushPhone('');
   };
 
   // Remove an additional phone
@@ -193,17 +197,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       })
     );
 
-    if (clientData.companyFields) {
-      const newPhones = [...clientData.companyFields.additionalPhones];
-      newPhones.splice(index, 1);
-      setClientData({
-        ...clientData,
-        companyFields: {
-          ...clientData.companyFields,
-          additionalPhones: newPhones,
-        },
-      });
-    }
+    removePhoneAt(index);
   };
 
   // Handle phone input change for additional phones
@@ -215,17 +209,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       })
     );
 
-    if (clientData.companyFields) {
-      const newPhones = [...clientData.companyFields.additionalPhones];
-      newPhones[index] = value;
-      setClientData({
-        ...clientData,
-        companyFields: {
-          ...clientData.companyFields,
-          additionalPhones: newPhones,
-        },
-      });
-    }
+    updatePhoneAt(index, value);
   };
 
   // Validate the current step
@@ -397,7 +381,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
         country: clientData.country,
         postalCode: clientData.postalCode,
         domain: clientData.companyFields?.domain || '',
-        additionalPhones: clientData.companyFields?.additionalPhones || [],
+        additionalPhones: additionalPhones,
         taxId: clientData.companyFields?.taxId || '',
         businessType: clientData.companyFields?.businessType || '',
         employees: clientData.companyFields?.employees || '',
@@ -449,6 +433,7 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
             onAddPhone={handleAddPhone}
             onRemovePhone={handleRemovePhone}
             onPhoneChange={handlePhoneChange}
+            additionalPhones={additionalPhones}
           />
         );
 

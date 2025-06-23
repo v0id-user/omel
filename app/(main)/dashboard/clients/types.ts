@@ -52,4 +52,5 @@ export interface StepProps {
   onAddPhone?: () => void;
   onRemovePhone?: (index: number) => void;
   onPhoneChange?: (index: number, value: string) => void;
+  additionalPhones?: string[];
 }

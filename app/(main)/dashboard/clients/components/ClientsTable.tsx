@@ -19,6 +19,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useResizableColumns } from '@/hooks/use-resizable-columns';
 import { toArabicNumerals } from '@/utils';
 import { Contact } from '@/database/types/contacts';
+import { useList } from 'react-use';
 
 interface CopyableProps {
   value: string;
@@ -81,6 +82,13 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isTablet = useMediaQuery('(max-width: 1024px)');
 
+  const [list, { set }] = useList(data);
+
+  // Sync list with data prop changes
+  useEffect(() => {
+    set(data);
+  }, [data, set]);
+
   // Reusable RTL-aware resize handler
   const handleMouseDown = useResizableColumns(isMobile, isTablet, columnWidths, setColumnWidths);
 
@@ -119,10 +127,10 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
   }, [isMobile, isTablet]);
 
   const handleSelectAll = () => {
-    if (selectedRows.length === data.length) {
+    if (selectedRows.length === list.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(data.map(contact => contact.id));
+      setSelectedRows(list.map(contact => contact.id));
     }
   };
 
@@ -223,7 +231,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
             <TableRow className="py-2">
               <TableHead className="w-[40px] text-center">
                 <Checkbox
-                  checked={selectedRows.length === data.length}
+                  checked={selectedRows.length === list.length}
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
@@ -299,7 +307,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
             </TableRow>
           </TableHeader>
           <TableBody className="space-y-1">
-            {data
+            {list
               .filter((contact: Contact) => contact.name && contact.email && contact.phone)
               .map((contact: Contact) => (
                 <TableRow

@@ -13,8 +13,16 @@ export function CompanyDetailsStep({
   onAddPhone,
   onRemovePhone,
   onPhoneChange,
+  additionalPhones,
 }: StepProps) {
-  if (!onAddPhone || !onRemovePhone || !onPhoneChange || !clientData.companyFields) return null;
+  if (
+    !onAddPhone ||
+    !onRemovePhone ||
+    !onPhoneChange ||
+    !clientData.companyFields ||
+    !additionalPhones
+  )
+    return null;
 
   // Function to get the value for a field based on its name
   const getFieldValue = (fieldName: string): string => {
@@ -52,7 +60,7 @@ export function CompanyDetailsStep({
 
       <div className="space-y-2">
         <h3 className="text-sm font-medium">أرقام هواتف إضافية</h3>
-        {clientData.companyFields.additionalPhones.map((phone, index) => (
+        {additionalPhones.map((phone, index) => (
           <div key={index} className="flex gap-2">
             <Input
               type="text"
