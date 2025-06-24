@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DashboardDialog } from '@/components/dashboard';
 import { OButton } from '@/components/omel/Button';
 import { trpc } from '@/trpc/client';
@@ -77,12 +77,15 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   );
 
   // Function to move selected contact to top and sort
-  const moveSelectedToTop = (contacts: Contact[]) => {
-    if (!selectedClient) return contacts;
+  const moveSelectedToTop = useCallback(
+    (contacts: Contact[]) => {
+      if (!selectedClient) return contacts;
 
-    const filtered = contacts.filter(contact => contact.id !== selectedClient.id);
-    return [selectedClient, ...filtered];
-  };
+      const filtered = contacts.filter(contact => contact.id !== selectedClient.id);
+      return [selectedClient, ...filtered];
+    },
+    [selectedClient]
+  );
 
   // Update contact list based on search state
   useEffect(() => {
@@ -106,7 +109,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     searchResults,
     bulkContacts,
     searchError,
-    selectedClient,
     moveSelectedToTop,
     setContactList,
     clearContactList,
