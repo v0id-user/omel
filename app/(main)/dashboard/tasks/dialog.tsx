@@ -76,19 +76,29 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     }
   );
 
+  // Function to move selected contact to top and sort
+  const moveSelectedToTop = (contacts: Contact[]) => {
+    if (!selectedClient) return contacts;
+
+    const filtered = contacts.filter(contact => contact.id !== selectedClient.id);
+    return [selectedClient, ...filtered];
+  };
+
   // Update contact list based on search state
   useEffect(() => {
     if (clientSearchTerm.trim().length > 0) {
       // User is searching - use search results
       if (searchResults?.data) {
-        setContactList(searchResults.data);
+        const sortedContacts = moveSelectedToTop(searchResults.data);
+        setContactList(sortedContacts);
       } else if (searchError?.data?.code === 'NOT_FOUND') {
         clearContactList();
       }
     } else {
       // No search term - use bulk contacts
       if (bulkContacts) {
-        setContactList(bulkContacts);
+        const sortedContacts = moveSelectedToTop(bulkContacts);
+        setContactList(sortedContacts);
       }
     }
   }, [
@@ -96,6 +106,8 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     searchResults,
     bulkContacts,
     searchError,
+    selectedClient,
+    moveSelectedToTop,
     setContactList,
     clearContactList,
   ]);
@@ -313,46 +325,69 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                       )
                     ) : (
                       <div className="space-y-1">
-                        {contactList.map(contact => (
-                          <button
-                            key={contact.id}
-                            onClick={() => {
-                              setSelectedClient(contact);
-                              setClientSearchTerm('');
-                            }}
-                            className="w-full text-right p-2 hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:bg-gray-100"
-                          >
-                            <div className="text-sm font-medium text-gray-900">{contact.name}</div>
-                            {contact.email && (
-                              <div className="text-xs text-gray-500">{contact.email}</div>
-                            )}
-                          </button>
-                        ))}
+                        {contactList.map(contact => {
+                          const isSelected = selectedClient?.id === contact.id;
+                          return (
+                            <button
+                              key={contact.id}
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedClient(null);
+                                } else {
+                                  setSelectedClient(contact);
+                                }
+                                setClientSearchTerm('');
+                              }}
+                              className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none relative ${
+                                isSelected
+                                  ? 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                                  : 'hover:bg-gray-100 focus:bg-gray-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                {/* Selection indicator */}
+                                {isSelected && (
+                                  <div className="w-2 h-2 bg-black rounded-full flex-shrink-0"></div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div
+                                    className={`text-sm font-medium truncate ${
+                                      isSelected ? 'text-black font-bold' : 'text-gray-900'
+                                    }`}
+                                  >
+                                    {contact.name}
+                                  </div>
+                                  {contact.email && (
+                                    <div
+                                      className={`text-xs truncate ${
+                                        isSelected ? 'text-gray-700' : 'text-gray-500'
+                                      }`}
+                                    >
+                                      {contact.email}
+                                    </div>
+                                  )}
+                                </div>
+                                {/* Checkmark for selected */}
+                                {isSelected && (
+                                  <svg
+                                    className="w-4 h-4 text-black flex-shrink-0"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
-
-                  {/* Selected Client Display */}
-                  {selectedClient && (
-                    <div className="border-t pt-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {selectedClient.name}
-                          </div>
-                          {selectedClient.email && (
-                            <div className="text-xs text-gray-500">{selectedClient.email}</div>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => setSelectedClient(null)}
-                          className="text-xs text-red-600 hover:text-red-800"
-                        >
-                          إلغاء
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </PopoverContent>
             </Popover>
