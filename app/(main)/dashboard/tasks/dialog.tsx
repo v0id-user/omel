@@ -1,17 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardDialog } from '@/components/dashboard';
 import { OButton } from '@/components/omel/Button';
 import { trpc } from '@/trpc/client';
 import toast from 'react-hot-toast';
-import { Calendar as CalendarIcon, AtSignCircle, MultiplePagesPlus } from 'iconoir-react';
+import {
+  Calendar as CalendarIcon,
+  AtSignCircle,
+  MultiplePagesPlus,
+  Community,
+  Search,
+} from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
 import { Switch } from '@/components/omel/Switch';
 import { CreateTaskInput } from '@/database/types/task';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/omel/Spinner';
+import { Contact } from '@/database/types/contacts';
+import { useList } from 'react-use';
 
 interface TaskDialogProps {
   isOpen: boolean;
@@ -22,11 +31,84 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const utils = trpc.useUtils();
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
   const [assignedUser, setAssignedUser] = useState<{ id: string; name: string } | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
+  const [clientSearchTerm, setClientSearchTerm] = useState<string>('');
   const [moreTasks, setMoreTasks] = useState<boolean>(false);
   const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
   const [description, setDescription] = useState<string>('');
   const userInfo = useUserInfoStore();
   const router = useRouter();
+
+  // Use useList for efficient contact list management
+  const [contactList, { set: setContactList, clear: clearContactList }] = useList<Contact>([]);
+
+  // Get bulk contacts for initial list
+  const {
+    data: bulkContacts,
+    error: bulkError,
+    isPending: isBulkPending,
+  } = trpc.crm.dashboard.contact.getBulk.useQuery(
+    {
+      limit: 50,
+    },
+    {
+      retry: (failureCount, error) => {
+        return error?.data?.code !== 'NOT_FOUND' && failureCount < 3;
+      },
+    }
+  );
+
+  // Search clients query
+  const {
+    data: searchResults,
+    error: searchError,
+    isPending: isSearchPending,
+  } = trpc.crm.dashboard.contact.search.useQuery(
+    {
+      searchTerm: clientSearchTerm,
+      limit: 20,
+    },
+    {
+      enabled: clientSearchTerm.trim().length > 0,
+      retry: (failureCount, error) => {
+        return error?.data?.code !== 'NOT_FOUND' && failureCount < 3;
+      },
+    }
+  );
+
+  // Update contact list based on search state
+  useEffect(() => {
+    if (clientSearchTerm.trim().length > 0) {
+      // User is searching - use search results
+      if (searchResults?.data) {
+        setContactList(searchResults.data);
+      } else if (searchError?.data?.code === 'NOT_FOUND') {
+        clearContactList();
+      }
+    } else {
+      // No search term - use bulk contacts
+      if (bulkContacts) {
+        setContactList(bulkContacts);
+      }
+    }
+  }, [
+    clientSearchTerm,
+    searchResults,
+    bulkContacts,
+    searchError,
+    setContactList,
+    clearContactList,
+  ]);
+
+  // Handle errors
+  useEffect(() => {
+    if (searchError && searchError.data?.code !== 'NOT_FOUND') {
+      toast.error(searchError.message);
+    }
+    if (bulkError && bulkError.data?.code !== 'NOT_FOUND') {
+      toast.error(bulkError.message);
+    }
+  }, [searchError, bulkError]);
 
   const createTask = trpc.crm.dashboard.task.new.useMutation({
     onSuccess: () => {
@@ -169,6 +251,108 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                     <option value="user2">سارة علي</option>
                     <option value="user3">محمد خالد</option>
                   </select>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Client linked to tasks */}
+            <Popover>
+              <PopoverTrigger
+                asChild
+                className="cursor-pointer py-1.5 px-2.5 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                <label className="flex items-center gap-2 font-medium">
+                  <Community className="h-4 w-4" />
+                  {selectedClient ? selectedClient.name : 'ربط بعميل'}
+                </label>
+              </PopoverTrigger>
+              <PopoverContent
+                className="bg-white p-3 w-80 z-[999]"
+                align="end"
+                side="bottom"
+                sideOffset={10}
+                avoidCollisions={false}
+                sticky="always"
+              >
+                <div className="space-y-3">
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="ابحث عن عميل..."
+                      value={clientSearchTerm}
+                      onChange={e => setClientSearchTerm(e.target.value)}
+                      className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      dir="rtl"
+                    />
+                  </div>
+
+                  {/* Search Results */}
+                  <div className="max-h-48 overflow-y-auto">
+                    {/* Show spinner when searching */}
+                    {clientSearchTerm.trim().length > 0 && isSearchPending ? (
+                      <div className="flex justify-center py-4">
+                        <Spinner size="sm" containerClassName="flex items-center justify-center" />
+                      </div>
+                    ) : /* Show spinner when loading bulk contacts initially */
+                    clientSearchTerm.trim().length === 0 && isBulkPending ? (
+                      <div className="flex justify-center py-4">
+                        <Spinner size="sm" containerClassName="flex items-center justify-center" />
+                      </div>
+                    ) : /* Show no results message when search returns empty */
+                    contactList.length === 0 ? (
+                      clientSearchTerm.trim().length > 0 ? (
+                        <p className="text-sm text-gray-500 text-center py-4">
+                          لم يتم العثور على عملاء
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-500 text-center py-4">
+                          لا توجد عملاء متاحين
+                        </p>
+                      )
+                    ) : (
+                      <div className="space-y-1">
+                        {contactList.map(contact => (
+                          <button
+                            key={contact.id}
+                            onClick={() => {
+                              setSelectedClient(contact);
+                              setClientSearchTerm('');
+                            }}
+                            className="w-full text-right p-2 hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:bg-gray-100"
+                          >
+                            <div className="text-sm font-medium text-gray-900">{contact.name}</div>
+                            {contact.email && (
+                              <div className="text-xs text-gray-500">{contact.email}</div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Client Display */}
+                  {selectedClient && (
+                    <div className="border-t pt-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {selectedClient.name}
+                          </div>
+                          {selectedClient.email && (
+                            <div className="text-xs text-gray-500">{selectedClient.email}</div>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => setSelectedClient(null)}
+                          className="text-xs text-red-600 hover:text-red-800"
+                        >
+                          إلغاء
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </PopoverContent>
             </Popover>

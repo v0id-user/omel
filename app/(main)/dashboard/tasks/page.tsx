@@ -1,7 +1,10 @@
 import TasksPage from './ClientPage';
+import { trpc } from '@/trpc/server';
 
-export default function TasksPageWrapper() {
-  // TODO: Perform some server logic, like trpc prefetch
+export default async function TasksPageWrapper() {
+  await trpc.crm.dashboard.contact.getBulk.prefetch({
+    limit: 50,
+  });
 
   return <TasksPage />;
 }

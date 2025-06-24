@@ -6,12 +6,13 @@ import {
   getContactsByPage,
   getTotalContactPages,
   getContactsByIds,
+  getBulkContacts,
+  searchContacts,
 } from '@/services/crm/dashboard';
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { validateEmail } from '@/utils/emails';
 import { TRPCError } from '@trpc/server';
 import { validatePhoneGeneral } from '@/utils/phone/validate';
-import { Contact } from '@/database/types/contacts';
 
 const contactInputSchema = z.custom<CreateContactInput>();
 const contactUpdateInputSchema = z.object({
@@ -43,6 +44,16 @@ const contactPageInputSchema = z.object({
 
 const contactIdsInputSchema = z.object({
   ids: z.array(z.string()).min(1).max(50),
+});
+
+const bulkContactsInputSchema = z.object({
+  limit: z.number().min(10).max(100).default(50),
+});
+
+const searchContactsInputSchema = z.object({
+  searchTerm: z.string().min(1).trim(),
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
 });
 
 // Middleware for validating contact inputs
@@ -95,6 +106,19 @@ export const contactRouter = createTRPCRouter({
   getByPage: protectedProcedure.input(contactPageInputSchema).query(async ({ ctx, input }) => {
     return await getContactsByPage(
       ctx.session.session.activeOrganizationId!,
+      input.page,
+      input.limit
+    );
+  }),
+
+  getBulk: protectedProcedure.input(bulkContactsInputSchema).query(async ({ ctx, input }) => {
+    return await getBulkContacts(ctx.session.session.activeOrganizationId!, input.limit);
+  }),
+
+  search: protectedProcedure.input(searchContactsInputSchema).query(async ({ ctx, input }) => {
+    return await searchContacts(
+      ctx.session.session.activeOrganizationId!,
+      input.searchTerm,
       input.page,
       input.limit
     );

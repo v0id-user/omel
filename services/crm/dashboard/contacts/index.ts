@@ -5,6 +5,8 @@ import {
   getContactsByPage as getContactsByPageQuery,
   getTotalContactPages as getTotalContactPagesQuery,
   getContactsByIds as getContactsByIdsQuery,
+  getBulkContacts as getBulkContactsQuery,
+  searchContacts as searchContactsQuery,
 } from '@/database/queries/contacts';
 
 export async function createNewContact(
@@ -33,4 +35,17 @@ export async function getTotalContactPages(organizationId: string, length: numbe
 
 export async function getContactsByIds(organizationId: string, contactIds: string[]) {
   return await getContactsByIdsQuery(organizationId, contactIds);
+}
+
+export async function getBulkContacts(organizationId: string, limit: number = 50) {
+  return await getBulkContactsQuery(organizationId, limit);
+}
+
+export async function searchContacts(
+  organizationId: string,
+  searchTerm: string,
+  page: number = 1,
+  limit: number = 20
+) {
+  return await searchContactsQuery(organizationId, searchTerm, page, limit);
 }
