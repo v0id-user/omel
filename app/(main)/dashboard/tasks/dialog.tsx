@@ -333,56 +333,34 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                             <button
                               key={contact.id}
                               onClick={() => {
-                                if (isSelected) {
-                                  setSelectedClient(null);
-                                } else {
-                                  setSelectedClient(contact);
-                                }
+                                setSelectedClient(isSelected ? null : contact);
                                 setClientSearchTerm('');
                               }}
-                              className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none relative ${
+                              className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none group ${
                                 isSelected
-                                  ? 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                                  ? 'bg-gray-100 hover:bg-gray-200'
                                   : 'hover:bg-gray-100 focus:bg-gray-100'
                               }`}
                             >
                               <div className="flex items-center gap-2">
-                                {/* Selection indicator */}
-                                {isSelected && (
-                                  <div className="w-2 h-2 bg-black rounded-full flex-shrink-0"></div>
-                                )}
                                 <div className="flex-1 min-w-0">
-                                  <div
-                                    className={`text-sm font-medium truncate ${
-                                      isSelected ? 'text-black font-bold' : 'text-gray-900'
-                                    }`}
-                                  >
+                                  <div className="text-sm font-medium text-gray-900 truncate">
                                     {contact.name}
                                   </div>
                                   {contact.email && (
-                                    <div
-                                      className={`text-xs truncate ${
-                                        isSelected ? 'text-gray-700' : 'text-gray-500'
-                                      }`}
-                                    >
+                                    <div className="text-xs text-gray-500 truncate">
                                       {contact.email}
                                     </div>
                                   )}
                                 </div>
-                                {/* Checkmark for selected */}
-                                {isSelected && (
-                                  <svg
-                                    className="w-4 h-4 text-black flex-shrink-0"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                )}
+                                {/* Selection indicator with hover preview */}
+                                <div
+                                  className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                    isSelected
+                                      ? 'bg-black group-hover:bg-gray-700'
+                                      : 'bg-gray-400 opacity-0 group-hover:opacity-100'
+                                  }`}
+                                ></div>
                               </div>
                             </button>
                           );
