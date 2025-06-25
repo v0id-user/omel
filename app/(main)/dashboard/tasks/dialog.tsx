@@ -21,7 +21,7 @@ import { useUserInfoStore } from '@/store/persist/userInfo';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/omel/Spinner';
 import { Contact } from '@/database/types/contacts';
-import { useList, useToggle } from 'react-use';
+import { useList, useKey, useToggle } from 'react-use';
 import { authClient } from '@/lib/betterauth/auth-client';
 
 interface TaskDialogProps {
@@ -52,6 +52,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     error: orgError,
   } = authClient.useActiveOrganization();
   const router = useRouter();
+  useKey('Escape', () => onClose());
 
   // Use useList for efficient contact list management
   const [contactList, { set: setContactList, clear: clearContactList }] = useList<Contact>([]);
