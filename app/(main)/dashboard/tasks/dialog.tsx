@@ -11,6 +11,7 @@ import {
   MultiplePagesPlus,
   Community,
   Search,
+  Xmark,
 } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
@@ -20,27 +21,43 @@ import { useUserInfoStore } from '@/store/persist/userInfo';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/omel/Spinner';
 import { Contact } from '@/database/types/contacts';
-import { useList } from 'react-use';
+import { useList, useToggle } from 'react-use';
+import { authClient } from '@/lib/betterauth/auth-client';
 
 interface TaskDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface OrganizationMember {
+  id: string;
+  name: string;
+  email?: string;
+}
+
 export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const utils = trpc.useUtils();
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
-  const [assignedUser, setAssignedUser] = useState<{ id: string; name: string } | null>(null);
+  const [assignedUsers, setAssignedUsers] = useState<OrganizationMember[]>([]);
+  const [assigneeSearchTerm, setAssigneeSearchTerm] = useState<string>('');
   const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
   const [clientSearchTerm, setClientSearchTerm] = useState<string>('');
-  const [moreTasks, setMoreTasks] = useState<boolean>(false);
+  const [moreTasks, toggleMoreTasks] = useToggle(false);
   const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
   const [description, setDescription] = useState<string>('');
   const userInfo = useUserInfoStore();
+  const {
+    data: organization,
+    isPending: isOrgPending,
+    error: orgError,
+  } = authClient.useActiveOrganization();
   const router = useRouter();
 
   // Use useList for efficient contact list management
   const [contactList, { set: setContactList, clear: clearContactList }] = useList<Contact>([]);
+
+  // Use useList for efficient assignee list management
+  const [assigneeList, { set: setAssigneeList }] = useList<OrganizationMember>([]);
 
   // Get bulk contacts for initial list
   const {
@@ -87,6 +104,35 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     [selectedClient]
   );
 
+  // Function to filter assignees based on search and move selected to top
+  const getFilteredAssignees = useCallback(() => {
+    if (!organization?.members) return [];
+
+    // Transform organization members to our OrganizationMember interface
+    let members: OrganizationMember[] = organization.members.slice(0, 50).map(member => ({
+      id: member.userId,
+      name: member.user.name,
+      email: member.user.email,
+    }));
+
+    // Filter by search term if provided
+    if (assigneeSearchTerm.trim().length > 0) {
+      const searchLower = assigneeSearchTerm.toLowerCase();
+      members = members.filter(
+        member =>
+          member.name.toLowerCase().includes(searchLower) ||
+          (member.email && member.email.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Move assigned users to top
+    const assignedIds = assignedUsers.map(user => user.id);
+    const assigned = members.filter(member => assignedIds.includes(member.id));
+    const unassigned = members.filter(member => !assignedIds.includes(member.id));
+
+    return [...assigned, ...unassigned];
+  }, [organization?.members, assigneeSearchTerm, assignedUsers]);
+
   // Update contact list based on search state
   useEffect(() => {
     if (clientSearchTerm.trim().length > 0) {
@@ -114,6 +160,12 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     clearContactList,
   ]);
 
+  // Update assignee list based on organization data and search
+  useEffect(() => {
+    const filteredAssignees = getFilteredAssignees();
+    setAssigneeList(filteredAssignees);
+  }, [getFilteredAssignees, setAssigneeList]);
+
   // Handle errors
   useEffect(() => {
     if (searchError && searchError.data?.code !== 'NOT_FOUND') {
@@ -122,7 +174,10 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     if (bulkError && bulkError.data?.code !== 'NOT_FOUND') {
       toast.error(bulkError.message);
     }
-  }, [searchError, bulkError]);
+    if (orgError) {
+      toast.error(orgError.message);
+    }
+  }, [searchError, bulkError, orgError]);
 
   const createTask = trpc.crm.dashboard.task.new.useMutation({
     onSuccess: () => {
@@ -131,7 +186,11 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       utils.invalidate();
       // Reset form
       setDueDate(new Date());
-      setAssignedUser(null);
+      setAssignedUsers([]);
+      setSelectedClient(null);
+      setDescription('');
+      setAssigneeSearchTerm('');
+      setClientSearchTerm('');
     },
     onError: err => toast.error(err.message || 'حدث خطأ'),
   });
@@ -154,7 +213,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       name: description.slice(0, 100) || 'مهمة جديدة',
       description,
       dueDate: dueDate || null,
-      assignedTo: assignedUser?.id || '',
+      assignedTo: assignedUsers.map(user => user.id).join(','), // Multiple assignees as comma-separated string
       status: 'pending',
       category: null,
       priority: 'low',
@@ -164,6 +223,20 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     if (!moreTasks) {
       createTask.mutate(tasks);
     }
+  };
+
+  const handleAssigneeToggle = (member: OrganizationMember) => {
+    const isAssigned = assignedUsers.some(user => user.id === member.id);
+
+    if (isAssigned) {
+      setAssignedUsers(prev => prev.filter(user => user.id !== member.id));
+    } else {
+      setAssignedUsers(prev => [...prev, member]);
+    }
+  };
+
+  const handleRemoveAssignee = (memberId: string) => {
+    setAssignedUsers(prev => prev.filter(user => user.id !== memberId));
   };
 
   return (
@@ -226,45 +299,118 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                 <label className="flex items-center gap-2 font-medium">
                   <AtSignCircle className="h-4 w-4" />
                   تعيين إلى
+                  {assignedUsers.length > 0 && (
+                    <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                      {assignedUsers.length}
+                    </span>
+                  )}
                 </label>
               </PopoverTrigger>
               <PopoverContent
-                className="bg-white p-3 w-fit z-[999]"
+                className="bg-white p-3 w-80 z-[999]"
                 align="end"
                 side="bottom"
                 sideOffset={10}
                 avoidCollisions={false}
                 sticky="always"
               >
-                <div className="w-48">
-                  <select
-                    name="assignedTo"
-                    className="w-full border p-2 rounded text-sm focus:outline-none font-medium"
-                    value={assignedUser?.id || ''}
-                    onChange={e => {
-                      const selectedId = e.target.value;
-                      if (!selectedId) {
-                        setAssignedUser(null);
-                        return;
-                      }
+                <div className="space-y-3">
+                  {/* Selected Assignees Tags */}
+                  {assignedUsers.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {assignedUsers.map(user => (
+                        <span
+                          key={user.id}
+                          className="inline-flex items-center h-5 rounded-md px-1.5 gap-1 bg-gray-100 border border-gray-200 text-gray-600 text-xs"
+                        >
+                          <span className="inline-flex items-center justify-center w-3 h-3 rounded-full bg-gray-400 text-white text-[8px] font-medium">
+                            #
+                          </span>
+                          <span className="text-xs font-medium truncate max-w-20">{user.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveAssignee(user.id)}
+                            className="inline-flex items-center justify-center w-3 h-3 hover:bg-gray-200 rounded-sm transition-colors"
+                            aria-label="Remove assignee"
+                          >
+                            <Xmark className="w-2 h-2" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                      const options = [
-                        { id: 'user1', name: 'أحمد محمد' },
-                        { id: 'user2', name: 'سارة علي' },
-                        { id: 'user3', name: 'محمد خالد' },
-                      ];
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="ابحث عن أعضاء الفريق..."
+                      value={assigneeSearchTerm}
+                      onChange={e => setAssigneeSearchTerm(e.target.value)}
+                      className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      dir="rtl"
+                    />
+                  </div>
 
-                      const selected = options.find(user => user.id === selectedId);
-                      if (selected) {
-                        setAssignedUser(selected);
-                      }
-                    }}
-                  >
-                    <option value="">تعيين إلى</option>
-                    <option value="user1">أحمد محمد</option>
-                    <option value="user2">سارة علي</option>
-                    <option value="user3">محمد خالد</option>
-                  </select>
+                  {/* Search Results */}
+                  <div className="max-h-48 overflow-y-auto">
+                    {/* Show spinner when loading organization */}
+                    {isOrgPending ? (
+                      <div className="flex justify-center py-4">
+                        <Spinner size="sm" containerClassName="flex items-center justify-center" />
+                      </div>
+                    ) : /* Show no results message when no members found */
+                    assigneeList.length === 0 ? (
+                      assigneeSearchTerm.trim().length > 0 ? (
+                        <p className="text-sm text-gray-500 text-center py-4">
+                          لم يتم العثور على أعضاء
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-500 text-center py-4">
+                          لا توجد أعضاء متاحين
+                        </p>
+                      )
+                    ) : (
+                      <div className="space-y-1">
+                        {assigneeList.map(member => {
+                          const isAssigned = assignedUsers.some(user => user.id === member.id);
+                          return (
+                            <button
+                              key={member.id}
+                              onClick={() => handleAssigneeToggle(member)}
+                              className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none group ${
+                                isAssigned
+                                  ? 'bg-gray-100 hover:bg-gray-200'
+                                  : 'hover:bg-gray-100 focus:bg-gray-100'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium text-gray-900 truncate">
+                                    {member.name}
+                                  </div>
+                                  {member.email && (
+                                    <div className="text-xs text-gray-500 truncate">
+                                      {member.email}
+                                    </div>
+                                  )}
+                                </div>
+                                {/* Selection indicator with hover preview */}
+                                <div
+                                  className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                    isAssigned
+                                      ? 'bg-black group-hover:bg-gray-700'
+                                      : 'bg-gray-400 opacity-0 group-hover:opacity-100'
+                                  }`}
+                                ></div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
@@ -376,7 +522,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
             {/* Add more */}
             <Switch
               checked={moreTasks}
-              onChange={() => setMoreTasks(!moreTasks)}
+              onChange={() => toggleMoreTasks()}
               label="اصنع المزيد"
               labelClassName="text-sm text-gray-500 font-medium"
             />
@@ -384,8 +530,8 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
             {/* Cancel Button */}
             <OButton
               variant="ghost"
-              type="submit"
-              isLoading={createTask.isPending}
+              type="button"
+              onClick={() => onClose()}
               className="flex items-center gap-2 px-2 font-medium text-sm"
             >
               الغاء

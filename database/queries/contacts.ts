@@ -133,7 +133,7 @@ export async function searchContacts(
   page: number = 1,
   limit: number = 20
 ): Promise<{ data: Contact[]; total: number; currentPage: number; totalPages: number }> {
-  return Effect.runPromise(
+  return await Effect.runPromise(
     Effect.gen(function* () {
       const validated = yield* Effect.try(() =>
         searchContactsSchema.parse({ organizationId, searchTerm, page, limit })
