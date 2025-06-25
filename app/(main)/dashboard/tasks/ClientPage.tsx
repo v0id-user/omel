@@ -1,15 +1,121 @@
 'use client';
 
 import { DashboardContent } from '@/components/dashboard';
+import { TasksList } from './components/TasksList';
 import { MultiplePagesPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { TaskDialog } from './dialog';
 import { Task } from '@/database/types/task';
 import AddCircle from '@/public/icons/iso/add-circle.svg';
+
+// Extended type for display purposes (includes client name for UI)
+type TaskWithClient = Task & {
+  assignedToName?: string;
+  clientName?: string;
+};
+
+// Placeholder data for tasks with varied due dates to showcase sections
+const mockTasks: TaskWithClient[] = [
+  {
+    id: '1',
+    name: 'متابعة مع عميل الشركة الكبرى',
+    description: 'مراجعة العقد وتحديد المتطلبات الجديدة للمشروع القادم',
+    status: 'pending',
+    priority: 'high',
+    dueDate: new Date(), // Today
+    assignedTo: 'user_1',
+    assignedToName: 'أحمد محمد',
+    clientName: 'شركة التقنية المتقدمة',
+    category: null,
+    createdBy: 'user_admin',
+    updatedBy: 'user_admin',
+    organizationId: 'org_1',
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-10'),
+  },
+  {
+    id: '2',
+    name: 'إعداد تقرير المبيعات الشهري',
+    description: 'تجميع بيانات المبيعات وإعداد التقرير التفصيلي',
+    status: 'completed',
+    priority: 'medium',
+    dueDate: new Date('2024-01-12'),
+    assignedTo: 'user_2',
+    assignedToName: 'فاطمة أحمد',
+    clientName: 'مؤسسة الابتكار',
+    category: null,
+    createdBy: 'user_admin',
+    updatedBy: 'user_admin',
+    organizationId: 'org_1',
+    createdAt: new Date('2024-01-08'),
+    updatedAt: new Date('2024-01-12'),
+  },
+  {
+    id: '3',
+    name: 'اجتماع مع فريق التطوير',
+    description: 'مناقشة التحديثات الجديدة ومراجعة الجدول الزمني',
+    status: 'in_progress',
+    priority: 'high',
+    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
+    assignedTo: 'user_3',
+    assignedToName: 'عمر سالم',
+    clientName: 'شركة المستقبل الرقمي',
+    category: null,
+    createdBy: 'user_admin',
+    updatedBy: 'user_admin',
+    organizationId: 'org_1',
+    createdAt: new Date('2024-01-11'),
+    updatedAt: new Date('2024-01-11'),
+  },
+  {
+    id: '4',
+    name: 'تحديث قاعدة بيانات العملاء',
+    description: 'تنظيف وتحديث معلومات العملاء في النظام',
+    status: 'pending',
+    priority: 'low',
+    dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Overdue (2 days ago)
+    assignedTo: 'user_4',
+    assignedToName: 'سارة محمود',
+    clientName: 'شركة الحلول الذكية',
+    category: null,
+    createdBy: 'user_admin',
+    updatedBy: 'user_admin',
+    organizationId: 'org_1',
+    createdAt: new Date('2024-01-13'),
+    updatedAt: new Date('2024-01-13'),
+  },
+  {
+    id: '5',
+    name: 'اختبار المهام',
+    description: 'مهمة اختبار لليوم',
+    status: 'pending',
+    priority: 'medium',
+    dueDate: new Date(), // Today
+    assignedTo: 'user_5',
+    assignedToName: 'V0ID',
+    clientName: 'عميل تجريبي',
+    category: null,
+    createdBy: 'user_admin',
+    updatedBy: 'user_admin',
+    organizationId: 'org_1',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 export default function TasksPage() {
-  // Placeholder for future task management logic
-  const tasks: Task[] = [];
+  const tasks = mockTasks; // Replace with actual data later
   const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleTaskToggle = (taskId: string) => {
+    // Placeholder for task toggle logic
+    console.log('Toggle task:', taskId);
+  };
+
+  const handleTaskClick = (task: TaskWithClient) => {
+    // Placeholder for task click logic
+    console.log('Clicked task:', task);
+  };
 
   return (
     <DashboardContent
@@ -34,13 +140,7 @@ export default function TasksPage() {
       dialogs={<TaskDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
       {tasks.length > 0 ? (
-        <div className="space-y-4">
-          {/* Placeholder for task list */}
-          {tasks.map(task => (
-            // TODO: Make cards
-            <div key={task.id}>Task item placeholder</div>
-          ))}
-        </div>
+        <TasksList tasks={tasks} onTaskToggle={handleTaskToggle} onTaskClick={handleTaskClick} />
       ) : null}
     </DashboardContent>
   );
