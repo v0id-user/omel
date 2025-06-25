@@ -205,14 +205,14 @@ export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) 
       {/* Single Header at Top */}
       <div className="bg-white">
         <div className="w-full grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 py-2.5 px-3 border-b border-gray-200">
-          <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">المهمة</div>
-          <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
+          <div className="text-xs font-medium text-[#75777C] uppercase tracking-wider">المهمة</div>
+          <div className="text-xs font-medium text-[#75777C] uppercase tracking-wider text-center">
             تاريخ الانتهاء
           </div>
-          <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
+          <div className="text-xs font-medium text-[#75777C] uppercase tracking-wider text-center">
             العميل
           </div>
-          <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
+          <div className="text-xs font-medium text-[#75777C] uppercase tracking-wider text-center">
             مُعيّن إلى
           </div>
           <div></div>
