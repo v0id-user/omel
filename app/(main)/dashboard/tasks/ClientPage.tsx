@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { TaskDialog } from './dialog';
 import { Task } from '@/database/types/task';
 import AddCircle from '@/public/icons/iso/add-circle.svg';
+import { log } from '@/utils/logs';
 
 // Extended type for display purposes (includes client name for UI)
 type TaskWithClient = Task & {
@@ -109,12 +110,22 @@ export default function TasksPage() {
 
   const handleTaskToggle = (taskId: string) => {
     // Placeholder for task toggle logic
-    console.log('Toggle task:', taskId);
+    console.log(
+      log({
+        component: 'TasksPage',
+        message: 'Toggle task:' + taskId,
+      })
+    );
   };
 
   const handleTaskClick = (task: TaskWithClient) => {
     // Placeholder for task click logic
-    console.log('Clicked task:', task);
+    console.log(
+      log({
+        component: 'TasksPage',
+        message: 'Clicked task:' + JSON.stringify(task),
+      })
+    );
   };
 
   return (
