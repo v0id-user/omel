@@ -9,11 +9,8 @@ A customer relationship management system built with Next.js and hosted on Verce
 - **Bunny** – CDN, Image Processing
 - **Neon** – Database (serverless PostgreSQL)
 - **Better Auth** – Authentication solution
-- **WatermelonDB / PouchDB** – Client-side database options
 - **Upstash** – Caching & Workflows
 - **PostHog** – Analytics & event tracking
-- **Get Stream** – Chat, Video, and Audio features
-- **DaisyUI** – UI Components & styling
 - **OpenAI / RecomBee** – Recommendation engine
 - **Resend** – Email handling
 - **Twilio** – SMS functionality
@@ -55,9 +52,8 @@ NEXT_PUBLIC_DEBUG=true_or_false
 ## Development Guidelines
 
 1. **Tech Stack Compliance**: Use only the approved technologies in the tech stack list.
-2. **Package Management**: Always check `bun.lock` for existing packages before adding new dependencies.
-3. **Security & Performance**: Optimize code for security and performance.
-4. **Monitoring**: Use Sentry for performance monitoring and error tracking.
+2. **Security & Performance**: Optimize code for security and performance.
+3. **Monitoring**: Use Sentry for performance monitoring and error tracking.
 
 ## Deployment
 
@@ -66,3 +62,8 @@ The project is deployed on the Vercel platform.
 ```bash
 bun run build
 ```
+
+# Project Status
+
+**Actively Developed & Rapidly Evolving**  
+Omel CRM is in continuous, high-priority development. Expect frequent updates, new features, and improvements as we work toward delivering a best-in-class CRM experience.
