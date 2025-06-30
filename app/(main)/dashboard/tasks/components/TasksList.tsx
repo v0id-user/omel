@@ -1,13 +1,7 @@
 'use client';
 
 import { Check, MoreVert } from 'iconoir-react';
-import { Task } from '@/database/types/task';
-
-// Extended type for display purposes
-type TaskWithClient = Task & {
-  assignedToName?: string;
-  clientName?: string;
-};
+import { TaskWithClient } from '../types/tasks';
 
 interface TasksListProps {
   tasks: TaskWithClient[];
