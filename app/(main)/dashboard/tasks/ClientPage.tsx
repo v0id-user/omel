@@ -5,15 +5,9 @@ import { TasksList } from './components/TasksList';
 import { MultiplePagesPlus } from 'iconoir-react';
 import { useState } from 'react';
 import { TaskDialog } from './dialog';
-import { Task } from '@/database/types/task';
+import { TaskWithClient } from './types/tasks';
 import AddCircle from '@/public/icons/iso/add-circle.svg';
 import { log } from '@/utils/logs';
-
-// Extended type for display purposes (includes client name for UI)
-type TaskWithClient = Task & {
-  assignedToName?: string;
-  clientName?: string;
-};
 
 // Placeholder data for tasks with varied due dates to showcase sections
 const mockTasks: TaskWithClient[] = [
