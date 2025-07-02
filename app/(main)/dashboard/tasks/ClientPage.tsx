@@ -113,7 +113,7 @@ export default function TasksPage() {
     console.log(
       log({
         component: 'TasksPage',
-        message: 'Toggle task:' + taskId,
+        message: 'Toggle task:' + 'ID [' + taskId + ']',
       })
     );
   };
