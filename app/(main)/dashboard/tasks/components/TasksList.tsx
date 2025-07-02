@@ -93,7 +93,7 @@ function TaskRow({
         </button>
         <div className="flex flex-col justify-center min-w-0">
           <p
-            className={`text-sm font-medium leading-5 truncate ${
+            className={`text-sm font-normal leading-5 truncate ${
               isCompleted ? 'line-through text-gray-400' : 'text-gray-900'
             }`}
           >
