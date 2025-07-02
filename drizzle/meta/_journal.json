@@ -134,6 +134,13 @@
       "when": 1750489043768,
       "tag": "0018_fat_william_stryker",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1751427805466,
+      "tag": "0019_curly_boomerang",
+      "breakpoints": true
     }
   ]
 }

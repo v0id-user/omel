@@ -94,7 +94,6 @@ export const tasks = pgTable(
   'tasks',
   {
     id: text('id').primaryKey().default(createId()),
-    name: text('name').notNull(),
     description: text('description'),
     category: text('category'),
     dueDate: timestamp('due_date'),

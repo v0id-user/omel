@@ -211,7 +211,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     }
 
     const task: CreateTaskInput = {
-      name: description.slice(0, 100) || 'مهمة جديدة',
       description,
       dueDate: dueDate || null,
       assignedTo: assignedUsers.map(user => user.id).join(','), // Multiple assignees as comma-separated string

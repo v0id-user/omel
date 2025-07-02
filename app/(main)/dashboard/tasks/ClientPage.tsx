@@ -19,8 +19,8 @@ type TaskWithClient = Task & {
 const mockTasks: TaskWithClient[] = [
   {
     id: '1',
-    name: 'متابعة مع عميل الشركة الكبرى',
-    description: 'مراجعة العقد وتحديد المتطلبات الجديدة للمشروع القادم',
+    description:
+      'متابعة مع عميل الشركة الكبرى - مراجعة العقد وتحديد المتطلبات الجديدة للمشروع القادم',
     status: 'pending',
     priority: 'high',
     dueDate: new Date(), // Today
@@ -36,8 +36,7 @@ const mockTasks: TaskWithClient[] = [
   },
   {
     id: '2',
-    name: 'إعداد تقرير المبيعات الشهري',
-    description: 'تجميع بيانات المبيعات وإعداد التقرير التفصيلي',
+    description: 'إعداد تقرير المبيعات الشهري - تجميع بيانات المبيعات وإعداد التقرير التفصيلي',
     status: 'completed',
     priority: 'medium',
     dueDate: new Date('2024-01-12'),
@@ -53,8 +52,7 @@ const mockTasks: TaskWithClient[] = [
   },
   {
     id: '3',
-    name: 'اجتماع مع فريق التطوير',
-    description: 'مناقشة التحديثات الجديدة ومراجعة الجدول الزمني',
+    description: 'اجتماع مع فريق التطوير - مناقشة التحديثات الجديدة ومراجعة الجدول الزمني',
     status: 'in_progress',
     priority: 'high',
     dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
@@ -70,8 +68,7 @@ const mockTasks: TaskWithClient[] = [
   },
   {
     id: '4',
-    name: 'تحديث قاعدة بيانات العملاء',
-    description: 'تنظيف وتحديث معلومات العملاء في النظام',
+    description: 'تحديث قاعدة بيانات العملاء - تنظيف وتحديث معلومات العملاء في النظام',
     status: 'pending',
     priority: 'low',
     dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Overdue (2 days ago)
@@ -87,8 +84,7 @@ const mockTasks: TaskWithClient[] = [
   },
   {
     id: '5',
-    name: 'اختبار المهام',
-    description: 'مهمة اختبار لليوم',
+    description: 'اختبار المهام - مهمة اختبار لليوم',
     status: 'pending',
     priority: 'medium',
     dueDate: new Date(), // Today

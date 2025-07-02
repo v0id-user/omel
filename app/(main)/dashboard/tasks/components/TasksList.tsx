@@ -71,6 +71,35 @@ function TaskRow({
     return 'text-gray-700';
   };
 
+  // Extract title and description from the full description
+  const getTaskContent = () => {
+    if (!task.description) return { title: 'مهمة بدون وصف', subtitle: null };
+
+    // If description contains a dash, split it into title and subtitle
+    const dashIndex = task.description.indexOf(' - ');
+    if (dashIndex > 0 && dashIndex < 60) {
+      // Only if dash is within reasonable title length
+      return {
+        title: task.description.substring(0, dashIndex),
+        subtitle: task.description.substring(dashIndex + 3),
+      };
+    }
+
+    // Otherwise, use first 50 chars as title and rest as subtitle
+    if (task.description.length > 50) {
+      const spaceIndex = task.description.indexOf(' ', 45);
+      const splitIndex = spaceIndex > 0 ? spaceIndex : 50;
+      return {
+        title: task.description.substring(0, splitIndex),
+        subtitle: task.description.substring(splitIndex + 1),
+      };
+    }
+
+    return { title: task.description, subtitle: null };
+  };
+
+  const { title, subtitle } = getTaskContent();
+
   return (
     <div
       className={`w-full grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 py-2 px-3 border-b border-gray-100 hover:bg-gray-50/50 cursor-pointer transition-colors duration-150 group ${
@@ -78,7 +107,7 @@ function TaskRow({
       }`}
       onClick={() => onClick?.(task)}
     >
-      {/* Task Name with Checkbox */}
+      {/* Task Content with Checkbox */}
       <div className="flex items-center gap-2 min-w-0">
         <button
           onClick={e => {
@@ -97,10 +126,10 @@ function TaskRow({
               isCompleted ? 'line-through text-gray-400' : 'text-gray-900'
             }`}
           >
-            {task.name}
+            {title}
           </p>
-          {task.description && !isCompleted && (
-            <p className="text-xs text-gray-500 mt-0.5 truncate leading-4">{task.description}</p>
+          {subtitle && !isCompleted && (
+            <p className="text-xs text-gray-500 mt-0.5 truncate leading-4">{subtitle}</p>
           )}
         </div>
       </div>
@@ -155,7 +184,7 @@ function TaskRow({
 function SectionDivider({ title, count }: { title: string; count: number }) {
   return (
     <div className="flex items-center gap-2 py-1.5 px-3 bg-gray-50 border-b border-gray-200">
-      <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+      <h3 className="text-sm font-normal text-[#5C5E63]">{title}</h3>
       <span
         className="flex items-center justify-center font-medium"
         style={{
