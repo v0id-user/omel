@@ -125,8 +125,7 @@ function TaskRow({
       {/* Assignee */}
       <div className="flex items-center justify-center">
         {task.assignedToName ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
-            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+          <span className="text-xs font-medium text-gray-700 hover:border-b hover:border-dotted hover:border-gray-700 transition-all duration-200">
             {task.assignedToName.split(' ')[0]}
           </span>
         ) : (
