@@ -94,7 +94,7 @@ function TaskRow({
         <div className="flex flex-col justify-center min-w-0">
           <p
             className={`text-sm font-normal leading-5 truncate ${
-              isCompleted ? 'line-through text-gray-400' : 'text-gray-900'
+              isCompleted ? 'line-through text-gray-400' : 'text-[#232529]'
             }`}
           >
             {task.description || 'مهمة بدون وصف'}
@@ -151,7 +151,7 @@ function TaskRow({
 
 function SectionDivider({ title, count }: { title: string; count: number }) {
   return (
-    <div className="flex items-center gap-2 py-1.5 px-3 bg-gray-50 border-b border-gray-200">
+    <div className="flex items-center gap-2 py-1.5 px-3 bg-[#FBFBFB] border-b border-gray-200">
       <h3 className="text-sm font-normal text-[#5C5E63]">{title}</h3>
       <span
         className="flex items-center justify-center font-medium"
