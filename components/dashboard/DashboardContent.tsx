@@ -35,7 +35,7 @@ export function DashboardContent({
 }: DashboardContentProps) {
   const isEmpty =
     React.Children.count(children) === 0 || children === null || children === undefined;
-  console.debug(isEmpty, children);
+
   return (
     <div className="w-full min-h-[80vh] relative" dir="rtl">
       {(!isEmpty || sortOptions) && (
