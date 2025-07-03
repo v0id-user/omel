@@ -8,98 +8,14 @@ import { TaskDialog } from './dialog';
 import { TaskWithClient } from './types/tasks';
 import AddCircle from '@/public/icons/iso/add-circle.svg';
 import { log } from '@/utils/logs';
-
-// Placeholder data for tasks with varied due dates to showcase sections
-const mockTasks: TaskWithClient[] = [
-  {
-    id: '1',
-    description:
-      'متابعة مع عميل الشركة الكبرى - مراجعة العقد وتحديد المتطلبات الجديدة للمشروع القادم',
-    status: 'pending',
-    priority: 'high',
-    dueDate: new Date(), // Today
-    assignedTo: 'user_1',
-    assignedToName: 'أحمد محمد',
-    clientName: 'شركة التقنية المتقدمة',
-    category: null,
-    createdBy: 'user_admin',
-    updatedBy: 'user_admin',
-    organizationId: 'org_1',
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10'),
-  },
-  {
-    id: '2',
-    description: 'إعداد تقرير المبيعات الشهري - تجميع بيانات المبيعات وإعداد التقرير التفصيلي',
-    status: 'completed',
-    priority: 'medium',
-    dueDate: new Date('2024-01-12'),
-    assignedTo: 'user_2',
-    assignedToName: 'فاطمة أحمد',
-    clientName: 'مؤسسة الابتكار',
-    category: null,
-    createdBy: 'user_admin',
-    updatedBy: 'user_admin',
-    organizationId: 'org_1',
-    createdAt: new Date('2024-01-08'),
-    updatedAt: new Date('2024-01-12'),
-  },
-  {
-    id: '3',
-    description: 'اجتماع مع فريق التطوير - مناقشة التحديثات الجديدة ومراجعة الجدول الزمني',
-    status: 'in_progress',
-    priority: 'high',
-    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
-    assignedTo: 'user_3',
-    assignedToName: 'عمر سالم',
-    clientName: 'شركة المستقبل الرقمي',
-    category: null,
-    createdBy: 'user_admin',
-    updatedBy: 'user_admin',
-    organizationId: 'org_1',
-    createdAt: new Date('2024-01-11'),
-    updatedAt: new Date('2024-01-11'),
-  },
-  {
-    id: '4',
-    description: 'تحديث قاعدة بيانات العملاء - تنظيف وتحديث معلومات العملاء في النظام',
-    status: 'pending',
-    priority: 'low',
-    dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Overdue (2 days ago)
-    assignedTo: 'user_4',
-    assignedToName: 'سارة محمود',
-    clientName: 'شركة الحلول الذكية',
-    category: null,
-    createdBy: 'user_admin',
-    updatedBy: 'user_admin',
-    organizationId: 'org_1',
-    createdAt: new Date('2024-01-13'),
-    updatedAt: new Date('2024-01-13'),
-  },
-  {
-    id: '5',
-    description: 'اختبار المهام - مهمة اختبار لليوم',
-    status: 'pending',
-    priority: 'medium',
-    dueDate: new Date(), // Today
-    assignedTo: 'user_5',
-    assignedToName: 'V0ID',
-    clientName: 'عميل تجريبي',
-    category: null,
-    createdBy: 'user_admin',
-    updatedBy: 'user_admin',
-    organizationId: 'org_1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+import { trpc } from '@/trpc/client';
+import { Spinner } from '@/components/omel/Spinner';
 
 export default function TasksPage() {
-  const tasks = mockTasks; // Replace with actual data later
+  const { data: tasks = [], isPending, error } = trpc.crm.dashboard.task.getTasks.useQuery();
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const handleTaskToggle = (taskId: string) => {
-    // Placeholder for task toggle logic
     console.log(
       log({
         component: 'TasksPage',
@@ -109,7 +25,6 @@ export default function TasksPage() {
   };
 
   const handleTaskClick = (task: TaskWithClient) => {
-    // Placeholder for task click logic
     console.log(
       log({
         component: 'TasksPage',
@@ -117,6 +32,10 @@ export default function TasksPage() {
       })
     );
   };
+
+  if (error) {
+    console.error('Error fetching tasks:', error);
+  }
 
   return (
     <DashboardContent
@@ -131,7 +50,6 @@ export default function TasksPage() {
       ]}
       currentSort="dueDate"
       onSortChange={value => {
-        // Placeholder for sort logic
         console.log('Sort by:', value);
       }}
       emptyState={{
@@ -140,7 +58,9 @@ export default function TasksPage() {
       }}
       dialogs={<TaskDialog isOpen={isDialogOpen} onClose={() => setDialogOpen(false)} />}
     >
-      {tasks.length > 0 ? (
+      {isPending ? (
+        <Spinner />
+      ) : tasks.length > 0 ? (
         <TasksList tasks={tasks} onTaskToggle={handleTaskToggle} onTaskClick={handleTaskClick} />
       ) : null}
     </DashboardContent>

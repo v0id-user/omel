@@ -1,12 +1,15 @@
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 import { z } from 'zod';
-import { createNewTasks } from '@/services/crm/dashboard';
+import { createNewTasks, getTasksForOrganization } from '@/services/crm/dashboard';
 import { CreateTaskInput } from '@/database/types/task';
-import { TRPCError } from '@trpc/server';
 
 const taskInputSchema = z.array(z.custom<CreateTaskInput>());
 
 export const taskRouter = createTRPCRouter({
+  getTasks: protectedProcedure.query(async ({ ctx }) => {
+    return await getTasksForOrganization(ctx.session.session.activeOrganizationId!);
+  }),
+
   new: protectedProcedure.input(taskInputSchema).mutation(async ({ ctx, input }) => {
     return await createNewTasks(
       ctx.session.session.activeOrganizationId!,
