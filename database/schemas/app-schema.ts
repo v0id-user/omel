@@ -99,6 +99,7 @@ export const tasks = pgTable(
     dueDate: timestamp('due_date'),
     status: text('status').$type<TaskStatus>().notNull().default('pending'),
     priority: text('priority').$type<TaskPriority>().notNull().default('low'),
+    relatedTo: text('related_to').references(() => contacts.id),
     assignedTo: text('assigned_to')
       .notNull()
       .references(() => users.id),
@@ -119,6 +120,7 @@ export const tasks = pgTable(
     index('task_status_idx').on(table.status),
     index('task_due_date_idx').on(table.dueDate),
     index('task_created_by_idx').on(table.createdBy),
+    index('task_related_to_idx').on(table.relatedTo),
   ]
 );
 

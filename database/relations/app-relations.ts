@@ -22,3 +22,23 @@ export const organizationRelations = relations(organizations, ({ many }) => ({
   categories: many(categories),
   usageCounters: many(usageCounters),
 }));
+
+// Add relations for tasks and contacts
+export const taskRelations = relations(tasks, ({ one }) => ({
+  assignedUser: one(users, {
+    fields: [tasks.assignedTo],
+    references: [users.id],
+  }),
+  relatedContact: one(contacts, {
+    fields: [tasks.relatedTo],
+    references: [contacts.id],
+  }),
+  organization: one(organizations, {
+    fields: [tasks.organizationId],
+    references: [organizations.id],
+  }),
+}));
+
+export const contactRelations = relations(contacts, ({ many }) => ({
+  tasks: many(tasks),
+}));

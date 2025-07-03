@@ -11,7 +11,6 @@ import {
   MultiplePagesPlus,
   Community,
   Search,
-  Xmark,
 } from 'iconoir-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
@@ -38,7 +37,7 @@ interface OrganizationMember {
 export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const utils = trpc.useUtils();
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
-  const [assignedUsers, setAssignedUsers] = useState<OrganizationMember[]>([]);
+  const [assignedUser, setAssignedUser] = useState<OrganizationMember | null>(null);
   const [assigneeSearchTerm, setAssigneeSearchTerm] = useState<string>('');
   const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
   const [clientSearchTerm, setClientSearchTerm] = useState<string>('');
@@ -127,12 +126,12 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     }
 
     // Move assigned users to top
-    const assignedIds = assignedUsers.map(user => user.id);
+    const assignedIds = assignedUser?.id ? [assignedUser.id] : [];
     const assigned = members.filter(member => assignedIds.includes(member.id));
     const unassigned = members.filter(member => !assignedIds.includes(member.id));
 
     return [...assigned, ...unassigned];
-  }, [organization?.members, assigneeSearchTerm, assignedUsers]);
+  }, [organization?.members, assigneeSearchTerm, assignedUser]);
 
   // Update contact list based on search state
   useEffect(() => {
@@ -167,6 +166,25 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     setAssigneeList(filteredAssignees);
   }, [getFilteredAssignees, setAssigneeList]);
 
+  // Set default assignee to current user when organization data loads
+  useEffect(() => {
+    if (organization?.members && !assignedUser) {
+      const user = userInfo.getUserInfo();
+      if (user) {
+        const currentUserMember = organization.members.find(
+          member => member.userId === user.userId
+        );
+        if (currentUserMember) {
+          setAssignedUser({
+            id: currentUserMember.userId,
+            name: currentUserMember.user.name,
+            email: currentUserMember.user.email,
+          });
+        }
+      }
+    }
+  }, [organization?.members, assignedUser, userInfo]);
+
   // Handle errors
   useEffect(() => {
     if (searchError && searchError.data?.code !== 'NOT_FOUND') {
@@ -187,7 +205,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       utils.invalidate();
       // Reset form
       setDueDate(new Date());
-      setAssignedUsers([]);
+      setAssignedUser(null);
       setSelectedClient(null);
       setDescription('');
       setAssigneeSearchTerm('');
@@ -210,13 +228,19 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       return;
     }
 
+    if (!assignedUser) {
+      toast.error('يجب تحديد عضو للمهمة');
+      return;
+    }
+
     const task: CreateTaskInput = {
       description,
       dueDate: dueDate || null,
-      assignedTo: assignedUsers.map(user => user.id).join(','), // Multiple assignees as comma-separated string
+      assignedTo: assignedUser.id,
       status: 'pending',
       category: null,
       priority: 'low',
+      relatedTo: selectedClient?.id || null,
     };
 
     appendTask(task);
@@ -225,18 +249,8 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
     }
   };
 
-  const handleAssigneeToggle = (member: OrganizationMember) => {
-    const isAssigned = assignedUsers.some(user => user.id === member.id);
-
-    if (isAssigned) {
-      setAssignedUsers(prev => prev.filter(user => user.id !== member.id));
-    } else {
-      setAssignedUsers(prev => [...prev, member]);
-    }
-  };
-
-  const handleRemoveAssignee = (memberId: string) => {
-    setAssignedUsers(prev => prev.filter(user => user.id !== memberId));
+  const handleAssigneeSelect = (member: OrganizationMember) => {
+    setAssignedUser(member === assignedUser ? null : member);
   };
 
   return (
@@ -298,12 +312,14 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               >
                 <label className="flex items-center gap-2 font-medium">
                   <AtSignCircle className="h-4 w-4" />
-                  تعيين إلى
-                  {assignedUsers.length > 0 && (
-                    <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">
-                      {assignedUsers.length}
-                    </span>
-                  )}
+                  {assignedUser
+                    ? (() => {
+                        const user = userInfo.getUserInfo();
+                        return user && assignedUser.id === user.userId
+                          ? 'معينة لك'
+                          : assignedUser.name;
+                      })()
+                    : 'تعيين إلى'}
                 </label>
               </PopoverTrigger>
               <PopoverContent
@@ -315,31 +331,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                 sticky="always"
               >
                 <div className="space-y-3">
-                  {/* Selected Assignees Tags */}
-                  {assignedUsers.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {assignedUsers.map(user => (
-                        <span
-                          key={user.id}
-                          className="inline-flex items-center h-5 rounded-md px-1.5 gap-1 bg-gray-100 border border-gray-200 text-gray-600 text-xs"
-                        >
-                          <span className="inline-flex items-center justify-center w-3 h-3 rounded-full bg-gray-400 text-white text-[8px] font-medium">
-                            #
-                          </span>
-                          <span className="text-xs font-medium truncate max-w-20">{user.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveAssignee(user.id)}
-                            className="inline-flex items-center justify-center w-3 h-3 hover:bg-gray-200 rounded-sm transition-colors"
-                            aria-label="Remove assignee"
-                          >
-                            <Xmark className="w-2 h-2" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Search Input */}
                   <div className="relative">
                     <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -374,13 +365,13 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                     ) : (
                       <div className="space-y-1">
                         {assigneeList.map(member => {
-                          const isAssigned = assignedUsers.some(user => user.id === member.id);
+                          const isSelected = assignedUser?.id === member.id;
                           return (
                             <button
                               key={member.id}
-                              onClick={() => handleAssigneeToggle(member)}
+                              onClick={() => handleAssigneeSelect(member)}
                               className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none group ${
-                                isAssigned
+                                isSelected
                                   ? 'bg-gray-100 hover:bg-gray-200'
                                   : 'hover:bg-gray-100 focus:bg-gray-100'
                               }`}
@@ -399,7 +390,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                                 {/* Selection indicator with hover preview */}
                                 <div
                                   className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                    isAssigned
+                                    isSelected
                                       ? 'bg-black group-hover:bg-gray-700'
                                       : 'bg-gray-400 opacity-0 group-hover:opacity-100'
                                   }`}
