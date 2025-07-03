@@ -1,5 +1,6 @@
 interface ButtonProps {
   isLoading?: boolean;
+  disabled?: boolean;
   children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   className?: string;
@@ -20,6 +21,7 @@ const defaultStyles = 'text-left font-medium text-sm';
 
 export const OButton = ({
   isLoading,
+  disabled,
   children,
   variant = 'primary',
   className,
@@ -45,7 +47,7 @@ export const OButton = ({
   return (
     <button
       className={`${baseStyles} ${variantClasses[variant]} ${defaultStyles} ${defaultPadding} ${sizeClasses[size]} ${className || ''} ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onClick={onClick}
       type={type}
     >

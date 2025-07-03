@@ -523,6 +523,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
               variant="ghost"
               type="button"
               onClick={() => onClose()}
+              disabled={createTask.isPending}
               className="flex items-center gap-2 px-2 font-medium text-sm"
             >
               الغاء
@@ -535,7 +536,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
             <OButton
               variant="secondary"
               type="submit"
-              isLoading={createTask.isPending}
+              disabled={createTask.isPending}
               className="flex items-center gap-2 px-4 font-medium text-sm"
             >
               حفظ
