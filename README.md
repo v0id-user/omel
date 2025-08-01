@@ -1,4 +1,4 @@
-# Omel CRM
+# [abandoned project] Omel CRM
 
 A customer relationship management system built with Next.js and hosted on Vercel.
 
