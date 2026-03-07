@@ -250,7 +250,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   };
 
   const handleAssigneeSelect = (member: OrganizationMember) => {
-    setAssignedUser(member === assignedUser ? null : member);
+    setAssignedUser(member.id === assignedUser?.id ? null : member);
   };
 
   return (
@@ -368,6 +368,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                           const isSelected = assignedUser?.id === member.id;
                           return (
                             <button
+                              type="button"
                               key={member.id}
                               onClick={() => handleAssigneeSelect(member)}
                               className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none group ${
@@ -468,6 +469,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                           const isSelected = selectedClient?.id === contact.id;
                           return (
                             <button
+                              type="button"
                               key={contact.id}
                               onClick={() => {
                                 setSelectedClient(isSelected ? null : contact);
