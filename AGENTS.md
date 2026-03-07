@@ -4,7 +4,7 @@
 
 - Omel is a Bun-managed Next.js App Router project deployed to Vercel.
 - Core app stack in this repo: Next.js, React 19, TypeScript, tRPC, Better Auth, Neon, Drizzle, Trigger.dev, Sentry, PostHog, Tailwind CSS.
-- Use Bun for package management and scripts unless the user explicitly asks for another tool.
+- Use `bun` and `bunx` as the default toolchain unless the user explicitly asks for another tool.
 - There is no `src/` directory. Most application code lives at the repository root.
 
 ## First steps for any task
@@ -18,6 +18,8 @@
 
 - Use `bun install` for dependency installation.
 - Use `bun run <script>` for package scripts.
+- Use `bunx <cli>` for one-off CLIs.
+- Prefer `bun`/`bunx` over `npm`, `npx`, `pnpm`, and `yarn`.
 - Before adding a dependency, check `bun.lock` and existing code for an already-approved package.
 - Prefer the existing stack over introducing alternatives:
   - auth: `better-auth`
@@ -73,7 +75,7 @@
 ## Commands
 
 - Install deps: `bun install`
-- Start dev server: `bun dev`
+- Start dev server: `bun dev` or `bun run dev`
 - Start Trigger.dev locally: `bun run dev:trigger`
 - Lint: `bun run lint`
 - Format: `bun run format`
@@ -81,6 +83,7 @@
 - Run Jest suite: `bun run test`
 - Run one Jest file: `bun run test -- __tests__/path/to/file.test.ts`
 - Generate and apply Drizzle migrations: `bun run migration`
+- Run ad-hoc package CLIs: `bunx <package>`
 
 ## Testing expectations
 
