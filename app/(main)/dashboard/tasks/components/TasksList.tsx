@@ -143,7 +143,7 @@ function TaskRow({
             e.stopPropagation();
             onDelete?.(task.id);
           }}
-          className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 transition-opacity duration-150"
         >
           <MoreVert className="w-4 h-4" />
         </button>

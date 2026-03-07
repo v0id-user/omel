@@ -1,5 +1,6 @@
 import parsePhoneNumberFromString from 'libphonenumber-js/max';
 import { clientValidatePhoneInput } from '../client/validators';
+import { toEnglishNumerals } from '..';
 const arabRegions = [
   'SA',
   'AE',
@@ -22,11 +23,16 @@ const arabRegions = [
 ];
 
 function validatePhoneArab(input: string) {
+  let normalizedInput = toEnglishNumerals(input.trim());
+  if (normalizedInput[0] !== '+') {
+    normalizedInput = '+' + normalizedInput;
+  }
+
   // TODO: This is not good, refactor it
-  const phone = clientValidatePhoneInput(input);
+  const phone = clientValidatePhoneInput(normalizedInput);
   if (phone !== undefined) return false;
 
-  const parsedPhone = parsePhoneNumberFromString(input);
+  const parsedPhone = parsePhoneNumberFromString(normalizedInput);
   if (!parsedPhone?.country) return false;
 
   // For now we only support arab countries
