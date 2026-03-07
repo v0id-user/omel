@@ -210,13 +210,10 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       setDescription('');
       setAssigneeSearchTerm('');
       setClientSearchTerm('');
+      setTasks([]);
     },
     onError: err => toast.error(err.message || 'حدث خطأ'),
   });
-
-  const appendTask = (task: CreateTaskInput) => {
-    setTasks(prev => [...prev, task]);
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,14 +240,15 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       relatedTo: selectedClient?.id || null,
     };
 
-    appendTask(task);
+    const nextTasks = [...tasks, task];
+    setTasks(nextTasks);
     if (!moreTasks) {
-      createTask.mutate(tasks);
+      createTask.mutate(nextTasks);
     }
   };
 
   const handleAssigneeSelect = (member: OrganizationMember) => {
-    setAssignedUser(member === assignedUser ? null : member);
+    setAssignedUser(member.id === assignedUser?.id ? null : member);
   };
 
   return (
@@ -368,6 +366,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                           const isSelected = assignedUser?.id === member.id;
                           return (
                             <button
+                              type="button"
                               key={member.id}
                               onClick={() => handleAssigneeSelect(member)}
                               className={`w-full text-right p-2 rounded-md transition-colors focus:outline-none group ${
@@ -468,6 +467,7 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
                           const isSelected = selectedClient?.id === contact.id;
                           return (
                             <button
+                              type="button"
                               key={contact.id}
                               onClick={() => {
                                 setSelectedClient(isSelected ? null : contact);
