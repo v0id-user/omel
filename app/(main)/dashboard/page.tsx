@@ -6,7 +6,15 @@ import { toArabicNumerals } from '@/utils';
 import { Calendar, Community, MultiplePagesEmpty, WarningTriangle } from 'iconoir-react';
 import { ReactNode } from 'react';
 
-function StatCard({ title, value, icon }: { title: string; value: number; icon: ReactNode }) {
+function StatCard({
+  title,
+  value,
+  icon,
+}: {
+  title: string;
+  value: number;
+  icon: ReactNode;
+}) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between">
@@ -68,11 +76,7 @@ export default function DashboardPage() {
           value={totalTasks}
           icon={<MultiplePagesEmpty className="h-5 w-5" />}
         />
-        <StatCard
-          title="المهام المفتوحة"
-          value={openTasks}
-          icon={<Calendar className="h-5 w-5" />}
-        />
+        <StatCard title="المهام المفتوحة" value={openTasks} icon={<Calendar className="h-5 w-5" />} />
         <StatCard
           title="المهام المتأخرة"
           value={overdueTasks}
@@ -123,9 +127,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   <div className="text-left">
-                    <p className="text-xs text-gray-500">
-                      {formatArabicDate(task.dueDate || null)}
-                    </p>
+                    <p className="text-xs text-gray-500">{formatArabicDate(task.dueDate || null)}</p>
                     <p className="text-xs font-medium text-gray-700">
                       {task.status === 'completed' ? 'مكتملة' : 'مفتوحة'}
                     </p>
@@ -141,9 +143,8 @@ export default function DashboardPage() {
         <h2 className="text-sm font-semibold text-gray-700">مؤشر الإنجاز</h2>
         <p className="mt-2 text-sm text-gray-600">
           أنجزت{' '}
-          <span className="font-semibold text-gray-900">{toArabicNumerals(completedTasks)}</span> من
-          أصل <span className="font-semibold text-gray-900">{toArabicNumerals(totalTasks)}</span>{' '}
-          مهمة.
+          <span className="font-semibold text-gray-900">{toArabicNumerals(completedTasks)}</span> من أصل{' '}
+          <span className="font-semibold text-gray-900">{toArabicNumerals(totalTasks)}</span> مهمة.
         </p>
       </section>
     </div>

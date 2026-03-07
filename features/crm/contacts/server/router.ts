@@ -13,11 +13,7 @@ import * as service from './service';
 
 export const contactRouter = createTRPCRouter({
   new: protectedProcedure.input(createContactInputSchema).mutation(async ({ ctx, input }) => {
-    return service.createNewContact(
-      ctx.session.session.activeOrganizationId!,
-      ctx.session.user.id,
-      input
-    );
+    return service.createNewContact(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
   }),
 
   update: protectedProcedure.input(updateContactInputSchema).mutation(async ({ ctx, input }) => {
@@ -25,11 +21,7 @@ export const contactRouter = createTRPCRouter({
   }),
 
   getByPage: protectedProcedure.input(contactPageInputSchema).query(async ({ ctx, input }) => {
-    return service.getContactsByPage(
-      ctx.session.session.activeOrganizationId!,
-      input.page,
-      input.limit
-    );
+    return service.getContactsByPage(ctx.session.session.activeOrganizationId!, input.page, input.limit);
   }),
 
   getBulk: protectedProcedure.input(bulkContactsInputSchema).query(async ({ ctx, input }) => {

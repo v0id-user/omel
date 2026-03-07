@@ -9,7 +9,11 @@
 //   LayoutDashboardIcon
 // } from 'lucide-react';
 
-import { ViewStructureUp, Community, MultiplePagesEmpty } from 'iconoir-react';
+import {
+  ViewStructureUp,
+  Community,
+  MultiplePagesEmpty,
+} from 'iconoir-react';
 
 import {
   SidebarMenuButton,

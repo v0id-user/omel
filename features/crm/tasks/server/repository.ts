@@ -40,11 +40,7 @@ export async function createTasks(
   );
 }
 
-export async function updateTask(
-  taskId: string,
-  updatedBy: string,
-  input: Partial<CreateTaskInput>
-) {
+export async function updateTask(taskId: string, updatedBy: string, input: Partial<CreateTaskInput>) {
   return db
     .update(tasks)
     .set({ ...input, updatedBy, updatedAt: new Date() })
@@ -56,9 +52,7 @@ export async function deleteTask(organizationId: string, taskId: string) {
   return db
     .update(tasks)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
-    .where(
-      and(eq(tasks.organizationId, organizationId), eq(tasks.id, taskId), isNull(tasks.deletedAt))
-    )
+    .where(and(eq(tasks.organizationId, organizationId), eq(tasks.id, taskId), isNull(tasks.deletedAt)))
     .returning({ id: tasks.id });
 }
 
@@ -70,12 +64,6 @@ export async function deleteTasksByIds(organizationId: string, taskIds: string[]
   return db
     .update(tasks)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
-    .where(
-      and(
-        eq(tasks.organizationId, organizationId),
-        inArray(tasks.id, taskIds),
-        isNull(tasks.deletedAt)
-      )
-    )
+    .where(and(eq(tasks.organizationId, organizationId), inArray(tasks.id, taskIds), isNull(tasks.deletedAt)))
     .returning({ id: tasks.id });
 }

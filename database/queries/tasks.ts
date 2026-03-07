@@ -54,9 +54,7 @@ export async function deleteTask(organizationId: string, task_id: string) {
   return await db
     .update(tasks)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
-    .where(
-      and(eq(tasks.organizationId, organizationId), eq(tasks.id, task_id), isNull(tasks.deletedAt))
-    )
+    .where(and(eq(tasks.organizationId, organizationId), eq(tasks.id, task_id), isNull(tasks.deletedAt)))
     .returning({ id: tasks.id });
 }
 
@@ -67,11 +65,7 @@ export async function deleteTasksByIds(organizationId: string, taskIds: string[]
     .update(tasks)
     .set({ deletedAt: new Date(), updatedAt: new Date() })
     .where(
-      and(
-        eq(tasks.organizationId, organizationId),
-        inArray(tasks.id, taskIds),
-        isNull(tasks.deletedAt)
-      )
+      and(eq(tasks.organizationId, organizationId), inArray(tasks.id, taskIds), isNull(tasks.deletedAt))
     )
     .returning({ id: tasks.id });
 }

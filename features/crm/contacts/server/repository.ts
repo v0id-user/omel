@@ -53,10 +53,7 @@ export async function updateContact(
   updatedBy: string,
   input: Omit<UpdateContactInput, 'id'>
 ) {
-  return db
-    .update(contacts)
-    .set({ ...input, updatedBy })
-    .where(eq(contacts.id, contactId));
+  return db.update(contacts).set({ ...input, updatedBy }).where(eq(contacts.id, contactId));
 }
 
 export async function getContactsByIds(organizationId: string, contactIds: string[]) {
