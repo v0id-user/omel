@@ -11,7 +11,7 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "test": "bun test",
+    "test": "bun test __tests__/unit && bun test __tests__/integration && bun test __tests__/api && bun test __tests__/e2e",
     "test:unit": "bun test __tests__/unit",
     "test:integration": "bun test __tests__/integration",
     "test:api": "bun test __tests__/api",
