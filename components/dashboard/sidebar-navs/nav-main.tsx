@@ -13,11 +13,6 @@ import {
   ViewStructureUp,
   Community,
   MultiplePagesEmpty,
-  Notes,
-  Message,
-  Calendar,
-  Group,
-  Settings,
 } from 'iconoir-react';
 
 import {
@@ -36,15 +31,6 @@ const menuItems = {
     { href: '/dashboard', icon: ViewStructureUp, label: 'لوحة التحكم' },
     { href: '/dashboard/clients', icon: Community, label: 'العملاء' },
     { href: '/dashboard/tasks', icon: MultiplePagesEmpty, label: 'المهام' },
-  ],
-  التواصل: [
-    { href: '/dashboard/notes', icon: Notes, label: 'الملاحظات' },
-    { href: '/dashboard/messages', icon: Message, label: 'الرسائل' },
-    { href: '/dashboard/calendar', icon: Calendar, label: 'التقويم' },
-  ],
-  'مساحة العمل': [
-    { href: '/dashboard/team', icon: Group, label: 'الفريق' },
-    { href: '/dashboard/settings', icon: Settings, label: 'الإعدادات' },
   ],
 };
 
