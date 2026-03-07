@@ -4,6 +4,8 @@ import { DashboardBreadcrumb } from '@/components/dashboard';
 import { HydrateClient } from '@/trpc/server';
 import ClientDashBoard from './ClientDashBoard';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'أوميل - لوحة التحكم',
   description: 'لوحة التحكم الرئيسية الخاصة بتطبيق أوميل  --  لإدارة علاقات الزبائن',
