@@ -7,6 +7,8 @@ import {
   getContactsByIds as getContactsByIdsQuery,
   getBulkContacts as getBulkContactsQuery,
   searchContacts as searchContactsQuery,
+  deleteContact as deleteContactQuery,
+  deleteContactsByIds as deleteContactsByIdsQuery,
 } from '@/database/queries/contacts';
 
 export async function createNewContact(
@@ -48,4 +50,12 @@ export async function searchContacts(
   limit: number = 20
 ) {
   return await searchContactsQuery(organizationId, searchTerm, page, limit);
+}
+
+export async function deleteContact(organizationId: string, contactId: string) {
+  return await deleteContactQuery(organizationId, contactId);
+}
+
+export async function deleteContactsByIds(organizationId: string, contactIds: string[]) {
+  return await deleteContactsByIdsQuery(organizationId, contactIds);
 }

@@ -42,7 +42,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   const [selectedClient, setSelectedClient] = useState<Contact | null>(null);
   const [clientSearchTerm, setClientSearchTerm] = useState<string>('');
   const [moreTasks, toggleMoreTasks] = useToggle(false);
-  const [tasks, setTasks] = useState<CreateTaskInput[]>([]);
   const [description, setDescription] = useState<string>('');
   const userInfo = useUserInfoStore();
   const {
@@ -199,19 +198,6 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   }, [searchError, bulkError, orgError]);
 
   const createTask = trpc.crm.dashboard.task.new.useMutation({
-    onSuccess: () => {
-      toast.success('تم إنشاء المهمة بنجاح');
-      onClose();
-      utils.invalidate();
-      // Reset form
-      setDueDate(new Date());
-      setAssignedUser(null);
-      setSelectedClient(null);
-      setDescription('');
-      setAssigneeSearchTerm('');
-      setClientSearchTerm('');
-      setTasks([]);
-    },
     onError: err => toast.error(err.message || 'حدث خطأ'),
   });
 
@@ -240,11 +226,27 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
       relatedTo: selectedClient?.id || null,
     };
 
-    const nextTasks = [...tasks, task];
-    setTasks(nextTasks);
-    if (!moreTasks) {
-      createTask.mutate(nextTasks);
-    }
+    createTask.mutate([task], {
+      onSuccess: () => {
+        toast.success('تم إنشاء المهمة بنجاح');
+        utils.crm.dashboard.task.getTasks.invalidate();
+        if (moreTasks) {
+          setDescription('');
+          setDueDate(new Date());
+          setSelectedClient(null);
+          setAssigneeSearchTerm('');
+          setClientSearchTerm('');
+          return;
+        }
+        onClose();
+        setDueDate(new Date());
+        setAssignedUser(null);
+        setSelectedClient(null);
+        setDescription('');
+        setAssigneeSearchTerm('');
+        setClientSearchTerm('');
+      },
+    });
   };
 
   const handleAssigneeSelect = (member: OrganizationMember) => {

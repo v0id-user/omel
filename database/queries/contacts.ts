@@ -1,7 +1,7 @@
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { contacts } from '@/database/schemas/app-schema';
 import { db } from '@/database/db';
-import { and, count, eq, isNull, desc } from 'drizzle-orm';
+import { and, count, eq, isNull, desc, inArray } from 'drizzle-orm';
 import { Contact } from '@/database/types/contacts';
 import { z } from 'zod';
 import { Effect } from 'effect';
@@ -77,8 +77,34 @@ export async function updateContact(
     .where(eq(contacts.id, contact_id));
 }
 
-export async function deleteContact(contact_id: string) {
-  return await db.$softDelete(contacts, contact_id);
+export async function deleteContact(organizationId: string, contact_id: string) {
+  return await db
+    .update(contacts)
+    .set({ deletedAt: new Date(), updatedAt: new Date() })
+    .where(
+      and(
+        eq(contacts.organizationId, organizationId),
+        eq(contacts.id, contact_id),
+        isNull(contacts.deletedAt)
+      )
+    )
+    .returning({ id: contacts.id });
+}
+
+export async function deleteContactsByIds(organizationId: string, contactIds: string[]) {
+  if (contactIds.length === 0) return [];
+
+  return await db
+    .update(contacts)
+    .set({ deletedAt: new Date(), updatedAt: new Date() })
+    .where(
+      and(
+        eq(contacts.organizationId, organizationId),
+        inArray(contacts.id, contactIds),
+        isNull(contacts.deletedAt)
+      )
+    )
+    .returning({ id: contacts.id });
 }
 
 export async function getContactsByIds(
@@ -86,8 +112,6 @@ export async function getContactsByIds(
   contactIds: string[]
 ): Promise<Contact[]> {
   if (contactIds.length === 0) return [];
-
-  const { inArray } = await import('drizzle-orm');
 
   return await db
     .select()

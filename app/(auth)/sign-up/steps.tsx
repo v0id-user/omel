@@ -190,7 +190,10 @@ function useProcessForm() {
     };
 
     // Skip when needed just uncomment this, bad? yeah it need a UI debug, but working for now
-    if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+    if (
+      process.env.NEXT_PUBLIC_ENV === 'dev' &&
+      process.env.NEXT_PUBLIC_SIGNUP_DEV_BYPASS === 'true'
+    ) {
       setFormStep(formStep + 1);
       return true;
     }

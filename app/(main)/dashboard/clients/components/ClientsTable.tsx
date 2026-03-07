@@ -89,6 +89,11 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
     set(data);
   }, [data, set]);
 
+  useEffect(() => {
+    const validIds = new Set(list.map(contact => contact.id));
+    setSelectedRows(prev => prev.filter(id => validIds.has(id)));
+  }, [list]);
+
   // Reusable RTL-aware resize handler
   const handleMouseDown = useResizableColumns(isMobile, isTablet, columnWidths, setColumnWidths);
 
@@ -231,7 +236,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
             <TableRow className="py-2">
               <TableHead className="w-[40px] text-center">
                 <Checkbox
-                  checked={selectedRows.length === list.length}
+                  checked={list.length > 0 && selectedRows.length === list.length}
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
@@ -304,6 +309,9 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
                   />
                 </TableHead>
               )}
+              <TableHead className="w-[56px] text-center text-right font-medium text-gray-600 py-2">
+                إجراءات
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="space-y-1">
@@ -355,6 +363,16 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
                       {contact.country}
                     </TableCell>
                   )}
+                  <TableCell className="text-center py-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-red-600 hover:text-red-700 cursor-pointer"
+                      onClick={() => onDelete?.([contact.id])}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

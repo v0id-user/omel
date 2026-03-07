@@ -18,13 +18,15 @@ import {
   rateLimits,
 } from '@/database/schemas/auth-schema';
 
-const client = new Polar({
-  accessToken: process.env.POLAR_SANDBOX_KEY,
-  // Use 'sandbox' if you're using the Polar Sandbox environment
-  // Remember that access tokens, products, etc. are completely separated between environments.
-  // Access tokens obtained in Production are for instance not usable in the Sandbox environment.
-  server: 'sandbox',
-});
+const client = process.env.POLAR_SANDBOX_KEY
+  ? new Polar({
+      accessToken: process.env.POLAR_SANDBOX_KEY,
+      // Use 'sandbox' if you're using the Polar Sandbox environment
+      // Remember that access tokens, products, etc. are completely separated between environments.
+      // Access tokens obtained in Production are for instance not usable in the Sandbox environment.
+      server: 'sandbox',
+    })
+  : null;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -94,17 +96,21 @@ export const auth = betterAuth({
     twoFactor(),
     organization(),
     emailHarmony(),
-    polar({
-      client,
-      // Enable automatic Polar Customer creation on signup
-      createCustomerOnSignUp: true,
-      // Enable customer portal
-      enableCustomerPortal: true, // Deployed under /portal for authenticated users
+    ...(client
+      ? [
+          polar({
+            client,
+            // Enable automatic Polar Customer creation on signup
+            createCustomerOnSignUp: true,
+            // Enable customer portal
+            enableCustomerPortal: true, // Deployed under /portal for authenticated users
 
-      // webhooks: {
+            // webhooks: {
 
-      // },
-    }),
+            // },
+          }),
+        ]
+      : []),
     // This must be the last plugin
     nextCookies(),
   ],

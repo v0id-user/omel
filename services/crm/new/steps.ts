@@ -6,7 +6,7 @@ import { validateEmail } from '@/utils/emails';
 import { validatePhoneArab } from '@/utils/phone';
 
 const isValidCompanyName = (name: string) => {
-  const regex = /^[A-Za-z0-9&.,'’\-\s]{2,100}$/;
+  const regex = /^[\p{Script=Arabic}\p{Script=Latin}0-9&.,'’\-\s]{2,100}$/u;
   return regex.test(name.trim());
 };
 

@@ -66,10 +66,14 @@ async function createNewCRM(input: NewCRMUserInfo) {
       );
 
       // Step 9: Send welcome email with trigger.dev
-      await sendEmail.trigger({
-        email: user.email,
-        template: EmailTemplate.WELCOME,
-      });
+      sendEmail
+        .trigger({
+          email: user.email,
+          template: EmailTemplate.WELCOME,
+        })
+        .catch(error => {
+          console.error('Failed to queue welcome email:', error);
+        });
 
       return formattedResult;
     } catch (error) {

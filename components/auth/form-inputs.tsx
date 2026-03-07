@@ -258,7 +258,7 @@ export const PhoneField = () => {
 
   const validateAndUpdatePhone = useCallback(
     (number: string, dialCode: string) => {
-      const fullPhoneNumber = `${dialCode}${number}`;
+      const fullPhoneNumber = `+${dialCode}${number}`;
       const phoneNumber = clientValidatePhoneInput(fullPhoneNumber);
 
       if (phoneNumber === undefined) {
@@ -321,7 +321,7 @@ export const PhoneField = () => {
                   );
                   setRawNumber(cleanNumber);
 
-                  const fullPhoneNumber = `${selectedDialCode}${cleanNumber}`;
+                  const fullPhoneNumber = `+${selectedDialCode}${cleanNumber}`;
                   field.handleChange(fullPhoneNumber);
 
                   validateAndUpdatePhone(cleanNumber, selectedDialCode);

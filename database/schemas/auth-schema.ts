@@ -5,7 +5,9 @@ import { timestamps } from '@/database/schemas/timestamps';
 export const users = pgTable(
   'users',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
     emailVerified: boolean('email_verified').notNull(),
@@ -22,7 +24,9 @@ export const users = pgTable(
 export const sessions = pgTable(
   'sessions',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     expiresAt: timestamp('expires_at').notNull(),
     token: text('token').notNull().unique(),
     ipAddress: text('ip_address'),
@@ -46,7 +50,9 @@ export const sessions = pgTable(
 export const accounts = pgTable(
   'accounts',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     accountId: text('account_id').notNull(),
     providerId: text('provider_id').notNull(),
     userId: text('user_id')
@@ -103,7 +109,9 @@ export const invitations = pgTable('invitations', {
 export const verifications = pgTable(
   'verifications',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
     expiresAt: timestamp('expires_at').notNull(),
@@ -115,7 +123,9 @@ export const verifications = pgTable(
 export const twoFactors = pgTable(
   'two_factors',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     secret: text('secret').notNull(),
     backupCodes: text('backup_codes').notNull(),
     userId: text('user_id')
@@ -132,7 +142,9 @@ export const twoFactors = pgTable(
 export const rateLimits = pgTable(
   'rate_limits',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     key: text('key'),
     count: integer('count'),
     lastRequest: bigint('last_request', { mode: 'number' }),
