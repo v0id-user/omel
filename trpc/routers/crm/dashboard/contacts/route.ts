@@ -27,9 +27,7 @@ import {
 } from '@/features/crm/contacts/server/service';
 
 // Middleware for validating contact inputs
-const validateContactInput = async (
-  input: CreateContactInput | Omit<UpdateContactInput, 'id'>
-) => {
+const validateContactInput = async (input: CreateContactInput | Omit<UpdateContactInput, 'id'>) => {
   if (!input.email || !input.phone) {
     throw new TRPCError({
       code: 'BAD_REQUEST',

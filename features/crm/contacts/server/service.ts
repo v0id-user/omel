@@ -11,10 +11,7 @@ import {
 } from '../contracts';
 import * as repository from './repository';
 
-async function validateContactInput(input: {
-  email?: string | null;
-  phone?: string | null;
-}) {
+async function validateContactInput(input: { email?: string | null; phone?: string | null }) {
   if (!input.email || !input.phone) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -46,7 +43,11 @@ export async function createNewContact(
   return repository.createContact(organizationId, createdBy, input);
 }
 
-export async function updateContact(contactId: string, updatedBy: string, input: UpdateContactInput) {
+export async function updateContact(
+  contactId: string,
+  updatedBy: string,
+  input: UpdateContactInput
+) {
   const { id, ...contactInput } = input;
 
   if (contactInput.email || contactInput.phone) {

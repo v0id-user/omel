@@ -76,11 +76,22 @@ const MobileMenu = ({
 }) => {
   const router = useRouter();
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="md:hidden fixed top-[calc(1rem+3.5rem)] right-4 left-4 bg-white border border-border rounded-2xl shadow-lg animate-in fade-in slide-in-from-top-4 duration-300 z-[999]">
-      <div className="p-6 flex flex-col space-y-6">
+    <div className="md:hidden mt-2 mx-2 bg-white border border-border rounded-2xl shadow-lg animate-in fade-in slide-in-from-top-4 duration-300 z-[999]">
+      <div className="p-6 flex flex-col space-y-4">
         <NavLink href="#features" onClick={handleAnchorClick} className="py-2 text-lg text-center">
           المميزات
         </NavLink>
@@ -114,7 +125,7 @@ const DesktopMenu = ({
 
   return (
     <>
-      <div className="hidden md:flex space-x-6 space-x-reverse">
+      <div className="hidden md:flex items-center gap-6">
         <NavLink href="#features" onClick={handleAnchorClick} className="text-sm">
           المميزات
         </NavLink>
@@ -126,9 +137,6 @@ const DesktopMenu = ({
         </NavLink>
         <NavLink href="#contact" onClick={handleAnchorClick} className="text-sm">
           تواصل معنا
-        </NavLink>
-        <NavLink href="#empty" onClick={handleAnchorClick} className="text-sm">
-          {' ' /*Empty */}
         </NavLink>
       </div>
       <div className="hidden md:block">
@@ -146,18 +154,29 @@ const Navbar = () => {
   const scrolled = useScrollEffect(isLegalPage);
   const handleAnchorClick = useAnchorNavigation(setIsOpen, router);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setIsOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
+
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-[999] transition-all duration-300 ${
+      className={`fixed z-[999] transition-all duration-300 ${
         isLegalPage
-          ? 'bg-white shadow-md'
+          ? 'top-0 inset-x-0 bg-white shadow-md'
           : scrolled
-            ? 'top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 bg-white/90 backdrop-blur-md shadow-lg rounded-xl'
-            : 'top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 bg-transparent'
+            ? 'top-4 inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-[1200px] bg-white/90 backdrop-blur-md shadow-lg rounded-xl'
+            : 'top-4 inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-[1200px] bg-transparent'
       }`}
     >
       <div className="flex justify-between items-center gap-4 md:gap-8 px-4 py-2 md:px-8 md:py-3 max-w-[1200px] mx-auto">
-        <Banner className="w-fit h-fit" />
+        <Banner className="w-fit h-fit shrink-0" />
+
+        <DesktopMenu handleAnchorClick={handleAnchorClick} />
 
         <div className="md:hidden">
           <Button
@@ -170,8 +189,6 @@ const Navbar = () => {
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
-
-        <DesktopMenu handleAnchorClick={handleAnchorClick} />
       </div>
 
       <MobileMenu isOpen={isOpen} handleAnchorClick={handleAnchorClick} />

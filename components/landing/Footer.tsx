@@ -60,7 +60,7 @@ const Footer = () => {
             <p className="text-muted-foreground text-sm mb-5">
               نظام إدارة علاقات العملاء الأمثل للشركات العربية. سهل الاستخدام. فعّال. موثوق.
             </p>
-            <div className="flex space-x-3 space-x-reverse">
+            <div className="flex gap-3">
               <a
                 href="https://www.x.com/omel_crm"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -91,9 +91,6 @@ const Footer = () => {
                     />
                   </g>
                 </svg>
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                {' ' /*Empty */}
               </a>
             </div>
           </div>

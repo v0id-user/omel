@@ -95,7 +95,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen bg-white overflow-x-hidden">
       {/* <div
         className={cn(
           'absolute inset-0',
