@@ -39,7 +39,13 @@ mock.module('@/utils/phone/validate', () => ({
 mock.module('@/features/crm/contacts/server/repository', () => ({
   createContact: mock((_orgId: string, _createdBy: string, input: any) => {
     const id = `contact-${++contactIdCounter}`;
-    contactStore[id] = { id, ...input, deletedAt: null, createdAt: new Date(), updatedAt: new Date() };
+    contactStore[id] = {
+      id,
+      ...input,
+      deletedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
     return Promise.resolve(contactStore[id]);
   }),
   updateContact: mock((contactId: string, _updatedBy: string, input: any) => {
@@ -98,9 +104,7 @@ mock.module('@/features/crm/contacts/server/repository', () => ({
 
 mock.module('@/features/crm/tasks/server/repository', () => ({
   getTasks: mock((_orgId: string) => {
-    return Promise.resolve(
-      Object.values(taskStore).filter((t: any) => !t.deletedAt)
-    );
+    return Promise.resolve(Object.values(taskStore).filter((t: any) => !t.deletedAt));
   }),
   createTasks: mock((_orgId: string, _createdBy: string, input: any[]) => {
     const created = input.map(t => {
