@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import SignInClientPage from './SignInForm';
+import { SignInForm } from '@/features/auth/ui';
 
 export const metadata: Metadata = {
   title: 'أوميل - تسجيل الدخول',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignIn() {
-  return <SignInClientPage />;
+  return <SignInForm />;
 }

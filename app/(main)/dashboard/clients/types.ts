@@ -1,4 +1,4 @@
-import { ContactType } from '@/database/types/contacts';
+import { ContactRecordType as ContactType } from '@/features/crm/contacts/types';
 
 export type ClientType = ContactType;
 

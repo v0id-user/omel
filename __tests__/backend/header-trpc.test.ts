@@ -112,3 +112,99 @@
 //     });
 //   });
 // });
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { NextRequest } from 'next/server';
+
+jest.mock('@/lib/betterauth/auth', () => ({
+  auth: {
+    api: {
+      getSession: jest.fn(),
+    },
+  },
+}));
+
+jest.mock('@/lib/ratelimt', () => ({
+  ratelimit: {
+    limit: jest.fn(async () => ({
+      success: true,
+    })),
+  },
+}));
+
+jest.mock('superjson', () => ({
+  __esModule: true,
+  default: {
+    serialize: jest.fn(value => value),
+    deserialize: jest.fn(value => value),
+  },
+}));
+
+jest.mock('@/trpc/routers/crm/index', () => ({
+  crmRouter: {},
+}));
+
+import type { TRPCContext } from '@/trpc/init';
+
+describe('TRPC header tests', () => {
+  let ctx: TRPCContext;
+  let resHeaders: Headers;
+
+  beforeEach(() => {
+    resHeaders = new Headers();
+
+    ctx = {
+      session: null,
+      req: {
+        headers: new Headers({
+          'content-type': 'application/json',
+          'user-agent': 'jest-test',
+        }),
+        cookies: new Map([
+          ['existingCookie', 'existingValue'],
+          ['sessionId', '123456'],
+        ]),
+      } as unknown as NextRequest,
+      resHeaders,
+    };
+  });
+
+  it('sets response headers', async () => {
+    const { appRouter } = await import('@/trpc/routers/_app');
+    const caller = appRouter.createCaller(ctx);
+    const result = await caller.headerTests.setHeader({
+      name: 'X-Custom-Header',
+      value: 'custom-value',
+    });
+
+    expect(result.success).toBe(true);
+    expect(resHeaders.get('X-Custom-Header')).toBe('custom-value');
+  });
+
+  it('sets cookies on response headers', async () => {
+    const { appRouter } = await import('@/trpc/routers/_app');
+    const caller = appRouter.createCaller(ctx);
+    const result = await caller.headerTests.setCookie({
+      name: 'testCookie',
+      value: 'cookieValue',
+      maxAge: 3600,
+    });
+
+    expect(result.success).toBe(true);
+    expect(resHeaders.get('Set-Cookie')).toContain('testCookie=cookieValue');
+  });
+
+  it('reads request headers and cookies', async () => {
+    const { appRouter } = await import('@/trpc/routers/_app');
+    const caller = appRouter.createCaller(ctx);
+    const headersResult = await caller.headerTests.getRequestHeaders({
+      headerName: 'user-agent',
+    });
+    const cookiesResult = await caller.headerTests.getRequestCookies();
+
+    expect(headersResult['user-agent']).toBe('jest-test');
+    expect(cookiesResult).toEqual({
+      existingCookie: 'existingValue',
+      sessionId: '123456',
+    });
+  });
+});
