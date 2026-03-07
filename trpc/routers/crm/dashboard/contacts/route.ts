@@ -8,6 +8,8 @@ import {
   getContactsByIds,
   getBulkContacts,
   searchContacts,
+  deleteContact,
+  deleteContactsByIds,
 } from '@/services/crm/dashboard';
 import { CreateContactInput, UpdateContactInput } from '@/database/types/contacts';
 import { validateEmail } from '@/utils/emails';
@@ -44,6 +46,10 @@ const contactPageInputSchema = z.object({
 
 const contactIdsInputSchema = z.object({
   ids: z.array(z.string()).min(1).max(50),
+});
+
+const contactDeleteInputSchema = z.object({
+  id: z.string().min(1),
 });
 
 const bulkContactsInputSchema = z.object({
@@ -126,6 +132,14 @@ export const contactRouter = createTRPCRouter({
 
   getByIds: protectedProcedure.input(contactIdsInputSchema).query(async ({ ctx, input }) => {
     return await getContactsByIds(ctx.session.session.activeOrganizationId!, input.ids);
+  }),
+
+  delete: protectedProcedure.input(contactDeleteInputSchema).mutation(async ({ ctx, input }) => {
+    return await deleteContact(ctx.session.session.activeOrganizationId!, input.id);
+  }),
+
+  deleteMany: protectedProcedure.input(contactIdsInputSchema).mutation(async ({ ctx, input }) => {
+    return await deleteContactsByIds(ctx.session.session.activeOrganizationId!, input.ids);
   }),
 
   pages: protectedProcedure.input(contactPagesInputSchema).query(async ({ ctx, input }) => {

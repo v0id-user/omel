@@ -89,6 +89,11 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
     set(data);
   }, [data, set]);
 
+  useEffect(() => {
+    const validIds = new Set(list.map(contact => contact.id));
+    setSelectedRows(prev => prev.filter(id => validIds.has(id)));
+  }, [list]);
+
   // Reusable RTL-aware resize handler
   const handleMouseDown = useResizableColumns(isMobile, isTablet, columnWidths, setColumnWidths);
 
@@ -231,7 +236,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
             <TableRow className="py-2">
               <TableHead className="w-[40px] text-center">
                 <Checkbox
-                  checked={selectedRows.length === list.length}
+                  checked={list.length > 0 && selectedRows.length === list.length}
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>

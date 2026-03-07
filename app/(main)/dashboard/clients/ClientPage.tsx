@@ -19,6 +19,7 @@ export default function ClientsPage() {
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageLimit = 10;
+  const utils = trpc.useUtils();
 
   // Page-based query
   const {
@@ -39,6 +40,16 @@ export default function ClientsPage() {
 
   // Extract clients data
   const clients = paginatedClients?.data;
+
+  const deleteContactsRpc = trpc.crm.dashboard.contact.deleteMany.useMutation({
+    onSuccess: () => {
+      toast.success('تم حذف العملاء بنجاح');
+      utils.crm.dashboard.contact.invalidate();
+    },
+    onError: error => {
+      toast.error(error.message || 'حدث خطأ أثناء حذف العملاء');
+    },
+  });
 
   // Handle error toast in useEffect
   useEffect(() => {
@@ -65,9 +76,10 @@ export default function ClientsPage() {
   };
 
   const handleDelete = (ids: string[]) => {
-    // TODO: Just make a trpc endpoint that accept array, if it's one or multiable does the same thing
-    // Implement bulk delete logic
-    console.log('Deleting:', ids);
+    if (ids.length === 0) return;
+    deleteContactsRpc.mutate({
+      ids,
+    });
   };
 
   return (
