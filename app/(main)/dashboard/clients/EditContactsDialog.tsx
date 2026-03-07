@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { trpc } from '@/trpc/client';
 import { EditContactForm } from './forms/EditContactForm';
-import { Contact } from '@/database/types/contacts';
+import { ContactRecord as Contact } from '@/features/crm/contacts/types';
 import { useList } from 'react-use';
 
 interface EditContactsDialogProps {

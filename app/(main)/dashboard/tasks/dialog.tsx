@@ -15,11 +15,11 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar, formatGregorianDateArabic } from '@/components/ui/calendar';
 import { Switch } from '@/components/omel/Switch';
-import { CreateTaskInput } from '@/database/types/task';
+import { CreateTaskInput } from '@/features/crm/tasks/contracts';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/omel/Spinner';
-import { Contact } from '@/database/types/contacts';
+import { ContactRecord as Contact } from '@/features/crm/contacts/types';
 import { useList, useKey, useToggle } from 'react-use';
 import { authClient } from '@/lib/betterauth/auth-client';
 

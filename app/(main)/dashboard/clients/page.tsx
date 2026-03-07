@@ -1,5 +1,5 @@
-import ClientsPage from './ClientPage';
+import { ContactsPage } from '@/features/crm/contacts/ui';
 
 export default function ClientsPageServer() {
-  return <ClientsPage />;
+  return <ContactsPage />;
 }

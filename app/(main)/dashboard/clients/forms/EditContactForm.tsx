@@ -6,7 +6,7 @@ import { clientValidateEmailInput, clientValidatePhoneInput } from '@/utils/clie
 import { Input } from '@/components/ui/input';
 import { X, Building, User } from 'lucide-react';
 import { OButton } from '@/components/omel/Button';
-import { Contact } from '@/database/types/contacts';
+import { ContactRecord as Contact } from '@/features/crm/contacts/types';
 
 interface EditContactFormProps {
   contact: Contact;

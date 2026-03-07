@@ -18,7 +18,7 @@ import { toast } from 'react-hot-toast';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useResizableColumns } from '@/hooks/use-resizable-columns';
 import { toArabicNumerals } from '@/utils';
-import { Contact } from '@/database/types/contacts';
+import { ContactRecord as Contact } from '@/features/crm/contacts/types';
 import { useList } from 'react-use';
 
 interface CopyableProps {
