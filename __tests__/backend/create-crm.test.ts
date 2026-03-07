@@ -30,3 +30,42 @@
 //     throw error;
 //   }
 // });
+import { describe, expect, it } from '@jest/globals';
+import { newCRMUserInfoSchema } from '@/features/auth/contracts';
+
+describe('create CRM contracts', () => {
+  it('accepts a valid CRM signup payload', () => {
+    const result = newCRMUserInfoSchema.safeParse({
+      email: 'test@gmail.com',
+      password: 'password123',
+      personalInfo: {
+        firstName: 'Test',
+        lastName: 'User',
+        phone: '+966511111111',
+      },
+      companyInfo: {
+        name: 'Test Company',
+        website: 'https://test.com',
+        address: '123 Test St',
+        size: '1-9',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects invalid email payloads', () => {
+    const result = newCRMUserInfoSchema.safeParse({
+      email: 'not-an-email',
+      password: 'password123',
+      personalInfo: {
+        firstName: 'Test',
+        lastName: 'User',
+        phone: '+966511111111',
+      },
+      companyInfo: {},
+    });
+
+    expect(result.success).toBe(false);
+  });
+});

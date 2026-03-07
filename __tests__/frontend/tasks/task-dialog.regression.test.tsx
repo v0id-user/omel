@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { TaskDialog } from '@/app/(main)/dashboard/tasks/dialog';
 
 const invalidateMock = jest.fn();
 const mutateMock = jest.fn();
@@ -123,6 +123,7 @@ describe('TaskDialog regressions', () => {
   });
 
   const renderDialog = () => {
+    const { TaskDialog } = require('@/app/(main)/dashboard/tasks/dialog');
     render(<TaskDialog isOpen={true} onClose={jest.fn()} />);
   };
 
@@ -145,7 +146,7 @@ describe('TaskDialog regressions', () => {
       expect(mutateMock).toHaveBeenCalledTimes(1);
     });
 
-    const firstCallArg = mutateMock.mock.calls[0][0];
+    const firstCallArg = mutateMock.mock.calls[0][0] as Array<Record<string, unknown>>;
     expect(firstCallArg).toHaveLength(1);
     expect(firstCallArg[0]).toMatchObject({
       description: 'New task description',
