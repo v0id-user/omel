@@ -12,7 +12,9 @@ import { sql } from 'drizzle-orm';
 export const subscriptions = pgTable(
   'subscriptions',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     email: text('email').notNull(),
     userId: text('user_id')
       .notNull()
@@ -33,7 +35,9 @@ export const subscriptions = pgTable(
 export const contacts = pgTable(
   'contacts',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     name: text('name').notNull(),
     email: text('email'),
     phone: text('phone'),
@@ -71,7 +75,9 @@ export const contacts = pgTable(
 export const categories = pgTable(
   'categories',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     name: text('name').notNull(),
     createdBy: text('created_by')
       .notNull()
@@ -93,7 +99,9 @@ export const categories = pgTable(
 export const tasks = pgTable(
   'tasks',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     description: text('description'),
     category: text('category'),
     dueDate: timestamp('due_date'),
@@ -127,7 +135,9 @@ export const tasks = pgTable(
 export const usageCounters = pgTable(
   'usage_counters',
   {
-    id: text('id').primaryKey().default(createId()),
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
     userId: text('user_id')
       .notNull()
       .references(() => users.id),
