@@ -1,0 +1,12 @@
+---
+description: Self-assign when creating PRs
+alwaysApply: true
+---
+
+# PR Self-Assignment
+
+When creating a pull request via `gh pr create`, always add `--assignee @me` so the PR is self-assigned to the current user.
+
+```bash
+gh pr create --assignee @me --title "..." --body "..."
+```
