@@ -19,13 +19,8 @@ const organizationData = {
 };
 
 jest.mock('@/components/dashboard', () => ({
-  DashboardDialog: ({
-    isOpen,
-    children,
-  }: {
-    isOpen: boolean;
-    children: React.ReactNode;
-  }) => (isOpen ? <div>{children}</div> : null),
+  DashboardDialog: ({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) =>
+    isOpen ? <div>{children}</div> : null,
 }));
 
 jest.mock('@/components/ui/popover', () => ({

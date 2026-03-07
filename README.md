@@ -55,6 +55,37 @@ NEXT_PUBLIC_DEBUG=true_or_false
 2. **Security & Performance**: Optimize code for security and performance.
 3. **Monitoring**: Use Sentry for performance monitoring and error tracking.
 
+## Testing
+
+Omel uses Bun for backend-facing tests and Jest + Testing Library for frontend regression coverage.
+
+- `__tests__/unit/` - pure utilities, contracts, validators
+- `__tests__/integration/` - services and router callers
+- `__tests__/api/` - route handlers and tRPC HTTP contracts
+- `__tests__/frontend/` - React component behavior and regressions
+- `__tests__/e2e/` - workflow-level coverage
+
+Recommended commands:
+
+- `bun run lint`
+- `bun run typecheck`
+- `bun run test`
+- `bun run test:backend`
+- `bun run test:frontend`
+- `bun run verify`
+
+Project-specific testing standards live in `docs/testing.md`.
+
+## CI / CD
+
+GitHub Actions is expected to enforce linting, type checking, backend tests, frontend tests, and a production build before deployment.
+
+Deployment targets Vercel. To enable automated deployments from GitHub Actions, configure these repository secrets:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
 ## Deployment
 
 The project is deployed on the Vercel platform.

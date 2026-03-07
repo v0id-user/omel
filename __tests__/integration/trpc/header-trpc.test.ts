@@ -67,8 +67,14 @@ describe('tRPC header tests', () => {
   it('reads request cookies', async () => {
     const caller = appRouter.createCaller(ctx);
     const cookiesResult = await caller.headerTests.getRequestCookies();
+    const normalizedCookies = Object.fromEntries(
+      Object.entries(cookiesResult).map(([name, cookie]) => [
+        name,
+        typeof cookie === 'string' ? cookie : cookie.value,
+      ])
+    );
 
-    expect(cookiesResult).toEqual({
+    expect(normalizedCookies).toEqual({
       existingCookie: 'existingValue',
       sessionId: '123456',
     });

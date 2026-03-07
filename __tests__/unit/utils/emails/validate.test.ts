@@ -45,14 +45,16 @@ describe('validateEmail', () => {
           deliverability: 'DELIVERABLE',
         }),
       } as Response)
-    );
+    ) as unknown as typeof fetch;
 
     expect(await validateEmail('person@example.com')).toBe(false);
   });
 
   it('falls back to local validation when the API request fails', async () => {
     process.env.ABSTRACT_API_KEY = 'test-key';
-    globalThis.fetch = mock(() => Promise.reject(new Error('network down')));
+    globalThis.fetch = mock(() =>
+      Promise.reject(new Error('network down'))
+    ) as unknown as typeof fetch;
 
     expect(await validateEmail('person@example.com')).toBe(true);
   });

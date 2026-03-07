@@ -34,12 +34,6 @@ export default function DashboardSidebarShell() {
     <DashboardSidebar
       variant="inset"
       organizationName={info.organizationInfo.companyInfo.name}
-      user={{
-        name: `${info.personalInfo.firstName} ${info.personalInfo.lastName}`,
-        email: info.email,
-        userId: info.userId,
-        avatar: '',
-      }}
       footer={
         <DashboardUserFooter
           user={{
