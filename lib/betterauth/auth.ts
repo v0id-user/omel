@@ -4,7 +4,7 @@ import { nextCookies } from 'better-auth/next-js';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '@/database/db';
 import { emailHarmony } from 'better-auth-harmony';
-import { polar } from '@polar-sh/better-auth';
+import { polar, portal } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
 import {
   users,
@@ -103,7 +103,7 @@ export const auth = betterAuth({
             // Enable automatic Polar Customer creation on signup
             createCustomerOnSignUp: true,
             // Enable customer portal
-            enableCustomerPortal: true, // Deployed under /portal for authenticated users
+            use: [portal()], // Deployed under /portal for authenticated users
 
             // webhooks: {
 
