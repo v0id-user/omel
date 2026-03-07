@@ -10,18 +10,43 @@ import AddCircle from '@/public/icons/iso/add-circle.svg';
 import { log } from '@/utils/logs';
 import { trpc } from '@/trpc/client';
 import { Spinner } from '@/components/omel/Spinner';
+import { toast } from 'react-hot-toast';
 
 export default function TasksPage() {
   const { data: tasks = [], isPending, error } = trpc.crm.dashboard.task.getTasks.useQuery();
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const utils = trpc.useUtils();
+  const updateTaskRpc = trpc.crm.dashboard.task.update.useMutation({
+    onSuccess: () => {
+      utils.crm.dashboard.task.getTasks.invalidate();
+    },
+    onError: error => {
+      toast.error(error.message || 'حدث خطأ أثناء تحديث المهمة');
+    },
+  });
 
-  const handleTaskToggle = (taskId: string) => {
+  const deleteTaskRpc = trpc.crm.dashboard.task.delete.useMutation({
+    onSuccess: () => {
+      toast.success('تم حذف المهمة');
+      utils.crm.dashboard.task.getTasks.invalidate();
+    },
+    onError: error => {
+      toast.error(error.message || 'حدث خطأ أثناء حذف المهمة');
+    },
+  });
+
+  const handleTaskToggle = (task: TaskWithClient) => {
+    const nextStatus = task.status === 'completed' ? 'pending' : 'completed';
     console.log(
       log({
         component: 'TasksPage',
-        message: 'Toggle task:' + 'ID [' + taskId + ']',
+        message: 'Toggle task:' + 'ID [' + task.id + ']',
       })
     );
+    updateTaskRpc.mutate({
+      id: task.id,
+      status: nextStatus,
+    });
   };
 
   const handleTaskClick = (task: TaskWithClient) => {
@@ -31,6 +56,12 @@ export default function TasksPage() {
         message: 'Clicked task:' + JSON.stringify(task),
       })
     );
+  };
+
+  const handleTaskDelete = (taskId: string) => {
+    deleteTaskRpc.mutate({
+      id: taskId,
+    });
   };
 
   if (error) {
@@ -61,7 +92,12 @@ export default function TasksPage() {
       {isPending ? (
         <Spinner />
       ) : tasks.length > 0 ? (
-        <TasksList tasks={tasks} onTaskToggle={handleTaskToggle} onTaskClick={handleTaskClick} />
+        <TasksList
+          tasks={tasks}
+          onTaskToggle={handleTaskToggle}
+          onTaskClick={handleTaskClick}
+          onTaskDelete={handleTaskDelete}
+        />
       ) : null}
     </DashboardContent>
   );

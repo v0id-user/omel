@@ -5,8 +5,9 @@ import { TaskWithClient } from '../types/tasks';
 
 interface TasksListProps {
   tasks: TaskWithClient[];
-  onTaskToggle?: (taskId: string) => void;
+  onTaskToggle?: (task: TaskWithClient) => void;
   onTaskClick?: (task: TaskWithClient) => void;
+  onTaskDelete?: (taskId: string) => void;
 }
 
 const formatDueDateArabic = (date: Date | null) => {
@@ -56,10 +57,12 @@ function TaskRow({
   task,
   onToggle,
   onClick,
+  onDelete,
 }: {
   task: TaskWithClient;
-  onToggle?: (taskId: string) => void;
+  onToggle?: (task: TaskWithClient) => void;
   onClick?: (task: TaskWithClient) => void;
+  onDelete?: (taskId: string) => void;
 }) {
   const isCompleted = task.status === 'completed';
 
@@ -83,7 +86,7 @@ function TaskRow({
         <button
           onClick={e => {
             e.stopPropagation();
-            onToggle?.(task.id);
+            onToggle?.(task);
           }}
           className={`relative w-4 h-4 rounded-full border-2 transition-all duration-200 flex items-center justify-center flex-shrink-0 ${
             isCompleted ? 'bg-green-500 border-green-500' : 'border-gray-300 hover:border-gray-400'
@@ -138,6 +141,7 @@ function TaskRow({
         <button
           onClick={e => {
             e.stopPropagation();
+            onDelete?.(task.id);
           }}
           className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
         >
@@ -174,7 +178,7 @@ function SectionDivider({ title, count }: { title: string; count: number }) {
   );
 }
 
-export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) {
+export function TasksList({ tasks, onTaskToggle, onTaskClick, onTaskDelete }: TasksListProps) {
   // Group tasks by sections
   const todayTasks = tasks.filter(
     task => task.dueDate && isToday(task.dueDate) && task.status !== 'completed'
@@ -216,7 +220,13 @@ export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) 
           <>
             <SectionDivider title="اليوم" count={todayTasks.length} />
             {todayTasks.map(task => (
-              <TaskRow key={task.id} task={task} onToggle={onTaskToggle} onClick={onTaskClick} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                onToggle={onTaskToggle}
+                onClick={onTaskClick}
+                onDelete={onTaskDelete}
+              />
             ))}
           </>
         )}
@@ -226,7 +236,13 @@ export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) 
           <>
             <SectionDivider title="متأخرة" count={overdueTasks.length} />
             {overdueTasks.map(task => (
-              <TaskRow key={task.id} task={task} onToggle={onTaskToggle} onClick={onTaskClick} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                onToggle={onTaskToggle}
+                onClick={onTaskClick}
+                onDelete={onTaskDelete}
+              />
             ))}
           </>
         )}
@@ -236,7 +252,13 @@ export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) 
           <>
             <SectionDivider title="قادمة" count={upcomingTasks.length} />
             {upcomingTasks.map(task => (
-              <TaskRow key={task.id} task={task} onToggle={onTaskToggle} onClick={onTaskClick} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                onToggle={onTaskToggle}
+                onClick={onTaskClick}
+                onDelete={onTaskDelete}
+              />
             ))}
           </>
         )}
@@ -246,7 +268,13 @@ export function TasksList({ tasks, onTaskToggle, onTaskClick }: TasksListProps) 
           <>
             <SectionDivider title="مكتملة" count={completedTasks.length} />
             {completedTasks.map(task => (
-              <TaskRow key={task.id} task={task} onToggle={onTaskToggle} onClick={onTaskClick} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                onToggle={onTaskToggle}
+                onClick={onTaskClick}
+                onDelete={onTaskDelete}
+              />
             ))}
           </>
         )}
