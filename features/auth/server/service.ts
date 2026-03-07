@@ -182,7 +182,10 @@ async function deleteUser(token: string, password: string) {
   } catch {}
 }
 
-function createOrganizationMetadata(input: NewCRMUserInfoInput, userId: string): OrganizationMetadata {
+function createOrganizationMetadata(
+  input: NewCRMUserInfoInput,
+  userId: string
+): OrganizationMetadata {
   return {
     createdBy: userId,
     createdAt: new Date().toISOString(),

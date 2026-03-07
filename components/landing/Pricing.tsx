@@ -261,7 +261,7 @@ const PricingCard = ({
 }) => {
   return (
     <div
-      className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-800 ease-out ${
+      className={`relative rounded-xl border ${plan.highlighted ? 'bg-white relative z-10 md:scale-105 md:translate-y-[-10px]' : 'border-border bg-white'} p-6 transition-all duration-800 ease-out ${
         visibleItems.includes(index)
           ? 'translate-y-0 opacity-100 scale-100'
           : 'translate-y-12 opacity-0 scale-95'
@@ -356,9 +356,7 @@ const PricingCard = ({
             </li>
           ))}
         </ul>
-        <OButton
-          className={`w-full ${plan.highlighted ? '' : 'bg-secondary text-secondary-foreground'} rounded-full`}
-        >
+        <OButton variant={plan.highlighted ? 'primary' : 'secondary'} className="w-full rounded-xl">
           {plan.cta}
         </OButton>
       </div>
@@ -462,7 +460,7 @@ const Pricing = () => {
         </div>
 
         {/** Pricing Cards */}
-        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 ring-1 ring-gray-300/40 px-14 py-10">
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 ring-1 ring-gray-300/40 px-4 py-6 sm:px-8 sm:py-8 md:px-14 md:py-10">
           {/* Top left corner cross */}
           <div className="absolute -top-3 -left-3 flex items-center justify-center">
             {/* <div className="absolute w-8 h-[1px] bg-gradient-to-r from-gray-300/40 to-transparent"></div>
