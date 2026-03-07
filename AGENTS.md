@@ -38,8 +38,9 @@ RESEND_API_KEY=<resend-key>
 
 ### Gotchas
 
-- **Production build** (`bun run build`) will fail without `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` because the `/dashboard/tasks` page prerenders and hits the rate limiter. The dev server works fine without these.
-- **Sign-up form**: When `NEXT_PUBLIC_ENV=dev`, the multi-step sign-up form auto-skips validation on each step (see `app/(auth)/sign-up/steps.tsx` line ~193). This makes testing the form flow faster in dev.
+- **Production build** (`bun run build`) fails even with all env vars set because `/dashboard/tasks` prerenders and calls a tRPC procedure requiring an authenticated session. This is a codebase issue (the page does `await trpc.crm.dashboard.contact.getBulk.prefetch()` at build time). The dev server is unaffected.
+- **Sign-up form in dev mode**: When `NEXT_PUBLIC_ENV=dev`, clicking "Continue" auto-skips validation AND returns early before the step's backend logic runs (see `app/(auth)/sign-up/steps.tsx` line ~193). The `FinalStep` handler that creates the user+org via tRPC never fires in dev mode. To test actual account creation, call the Better Auth API directly: `curl -X POST http://localhost:3000/api/auth/sign-up/email -H "Content-Type: application/json" -d '{"email":"...","password":"...","name":"..."}'`.
+- **Stale `.next` directory**: If you ran `bun run build` and it failed, delete `.next/` before running `bun dev` to avoid `prerender-manifest.json` ENOENT errors.
 - **Husky pre-commit hook** runs `bun format`, `bun lint --fix`, `git add .`, then `bun lint`. The commit-msg hook runs commitlint (conventional commits).
 - **Next.js canary**: The project uses `next@15.4.0-canary.87` with `experimental.nodeMiddleware`. This is intentional.
 - **Bun test runner**: Despite `jest` being in devDependencies, `bun test` uses Bun's built-in test runner which picks up `__tests__/**/*.test.ts` and `__tests__/**/*.spec.ts` files.
