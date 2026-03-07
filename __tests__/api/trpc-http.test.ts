@@ -1,5 +1,6 @@
 import { describe, it, expect, mock } from 'bun:test';
 import { setupTRPCMocks } from '@/__tests__/helpers/setup';
+import { NextRequest } from 'next/server';
 
 setupTRPCMocks();
 
@@ -10,7 +11,7 @@ async function callTRPC(path: string, opts: { method?: string; body?: unknown } 
   const url = `http://localhost:3000/api/v1/${path}`;
   const resHeaders = new Headers();
 
-  const request = new Request(url, {
+  const request = new NextRequest(url, {
     method: opts.method || 'GET',
     headers: { 'Content-Type': 'application/json' },
     ...(opts.body ? { body: JSON.stringify(opts.body) } : {}),

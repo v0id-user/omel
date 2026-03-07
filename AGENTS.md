@@ -39,7 +39,7 @@
 - `database/`: DB client, schema, relations, query helpers, and DB-facing types.
 - `trpc/`: tRPC initialization, router composition, and client/server helpers.
 - `lib/`: auth helpers, shared hooks, utilities, Redis/rate-limit helpers.
-- `__tests__/`: Jest-based backend, frontend, and general tests.
+- `__tests__/`: Bun-backed unit/integration/api/workflow tests plus Jest frontend tests and shared helpers.
 - `drizzle.config.ts`: Drizzle config. Schema source is `database/schema.ts`; generated output goes to `drizzle/`.
 
 ## Repo-specific coding conventions
@@ -80,8 +80,11 @@
 - Lint: `bun run lint`
 - Format: `bun run format`
 - Build: `bun run build`
-- Run Jest suite: `bun run test`
-- Run one Jest file: `bun run test -- __tests__/path/to/file.test.ts`
+- Typecheck: `bun run typecheck`
+- Run all tests: `bun run test`
+- Run backend tests: `bun run test:backend`
+- Run one Bun test file: `bun test __tests__/path/to/file.test.ts`
+- Run frontend tests: `bun run test:frontend`
 - Generate and apply Drizzle migrations: `bun run migration`
 - Run ad-hoc package CLIs: `bunx <package>`
 
@@ -89,12 +92,20 @@
 
 - Test every non-trivial code change.
 - Prefer the smallest high-signal test scope that covers your change.
+- Follow the conventions in `docs/testing.md` when adding or updating tests.
+- Cover happy paths, edge cases, invalid input, and error conditions for the behavior you changed.
+- Use descriptive `describe` and `it` names, and prefer nested `describe` blocks for scenario grouping.
+- Keep tests independent, reset mocks in `beforeEach`, and avoid shared mutable state.
+- Prefer small typed builders, local helpers, and shared fixtures in `__tests__/helpers/` over oversized inline setup.
 - For UI changes:
   - run the dev server with `bun dev`
   - manually verify the changed route in the browser
   - use the existing `(tests)` routes if they are the fastest way to exercise the behavior
-- For API/tRPC changes, prefer targeted Jest tests in `__tests__/backend/` and only add coverage where it meaningfully protects the change.
+- For pure logic, contracts, and validators, prefer targeted Bun tests in `__tests__/unit/`.
+- For services and router callers, prefer targeted Bun tests in `__tests__/integration/`.
+- For API routes and tRPC HTTP behavior, prefer targeted Bun tests in `__tests__/api/`.
 - For component regressions, prefer targeted Jest/Testing Library runs in `__tests__/frontend/`.
+- Treat `__tests__/e2e/` as workflow-level coverage unless a real browser runner is introduced.
 - Do not run the entire repo test surface unless the user asks or the change truly spans many areas.
 
 ## Cursor Cloud specific instructions
