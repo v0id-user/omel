@@ -4,6 +4,7 @@ import { DashboardSidebar } from '@/components/dashboard';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import DashboardUserFooter from './DashboardUserFooter';
 
 export default function DashboardSidebarShell() {
   const [mounted, setMounted] = useState(false);
@@ -39,6 +40,15 @@ export default function DashboardSidebarShell() {
         userId: info.userId,
         avatar: '',
       }}
+      footer={
+        <DashboardUserFooter
+          user={{
+            name: `${info.personalInfo.firstName} ${info.personalInfo.lastName}`,
+            email: info.email,
+            avatar: '',
+          }}
+        />
+      }
     />
   );
 }

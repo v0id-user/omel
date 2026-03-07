@@ -2,7 +2,7 @@
 
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
-import { RenderFormStep, useProcessForm } from '@/app/(auth)/sign-up/steps';
+import { RenderFormStep, useProcessForm } from '@/features/auth/hooks/useSignUpFlow';
 import { useAuthStore } from '@/store/auth/userInfo';
 import { FormStep } from '@/enums/auth';
 import { ArrowRight } from 'lucide-react';

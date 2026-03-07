@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { AuthFooter, EmailField, PasswordField } from '@/components/auth';
+import { AuthFooter } from '@/components/auth';
 import { clientValidatePasswordInput } from '@/utils/client/validators';
 import { toast } from 'react-hot-toast';
 import { OButton } from '@/components/omel/Button';
@@ -11,6 +11,7 @@ import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { authClient } from '@/lib/betterauth/auth-client';
 import { log } from '@/utils/logs';
+import { EmailField, PasswordField } from './AuthFields';
 
 export default function SignInForm() {
   const { userInfo, formState, formStep, setFormState, setFormStep } = useAuthStore();
