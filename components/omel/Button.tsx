@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button';
+
 interface ButtonProps {
   isLoading?: boolean;
   disabled?: boolean;
@@ -45,13 +47,13 @@ export const OButton = ({
       : 'py-2 px-4';
 
   return (
-    <button
+    <Button
       className={`${baseStyles} ${variantClasses[variant]} ${defaultStyles} ${defaultPadding} ${sizeClasses[size]} ${className || ''} ${isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
       disabled={isLoading || disabled}
       onClick={onClick}
       type={type}
     >
       {children}
-    </button>
+    </Button>
   );
 };

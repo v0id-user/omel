@@ -1,4 +1,5 @@
 import { ReactNode, Ref } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface FormInputProps {
   type: string;
@@ -24,7 +25,7 @@ function AuthFormInput({
 }: FormInputProps) {
   return (
     <div className="relative h-[42px]">
-      <input
+      <Input
         type={type}
         value={value}
         onBlur={onBlur}
@@ -32,7 +33,7 @@ function AuthFormInput({
         onKeyDown={onKeyDown}
         ref={inputRef}
         placeholder={placeholder}
-        className="w-full h-full p-3 pl-10 bg-transparent border rounded-md text-black placeholder-gray-400 
+        className="w-full h-full p-3 pl-10 text-black placeholder-gray-400 
           focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30
           aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/30
           transition-all duration-200 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
