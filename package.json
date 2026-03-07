@@ -11,7 +11,17 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "test": "jest"
+    "test": "bun test __tests__/unit && bun test __tests__/integration && bun test __tests__/api && bun test __tests__/e2e",
+    "test:unit": "bun test __tests__/unit",
+    "test:integration": "bun test __tests__/integration",
+    "test:api": "bun test __tests__/api",
+    "test:e2e": "bun test __tests__/e2e",
+    "test:coverage": "bun test --coverage",
+    "test:ci:unit": "bun test __tests__/unit --coverage",
+    "test:ci:integration": "bun test __tests__/integration",
+    "test:ci:api": "bun test __tests__/api",
+    "test:ci:e2e": "bun test __tests__/e2e",
+    "test:frontend": "jest --config jest.config.frontend.ts"
   },
   "dependencies": {
     "@calidy/dayjs-calendarsystems": "^1.11.3",
