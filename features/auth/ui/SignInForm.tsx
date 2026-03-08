@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/auth/userInfo';
 import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { authClient } from '@/lib/betterauth/auth-client';
+import { mapSignInErrorToArabic } from '@/lib/betterauth/auth-errors';
 import { log } from '@/utils/logs';
 import { EmailField, PasswordField } from './AuthFields';
 
@@ -77,7 +78,7 @@ export default function SignInForm() {
       );
 
       if (signInError) {
-        toast.error('خطأ في تسجيل الدخول');
+        toast.error(mapSignInErrorToArabic(signInError));
         setIsLoading(false);
         setFormState({
           buttonText: 'تسجيل الدخول',
