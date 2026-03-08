@@ -30,14 +30,17 @@ export async function createTasks(
   createdBy: string,
   input: CreateTaskInput[]
 ) {
-  return db.insert(tasks).values(
-    input.map(taskInput => ({
-      ...taskInput,
-      organizationId,
-      createdBy,
-      updatedBy: createdBy,
-    }))
-  );
+  return db
+    .insert(tasks)
+    .values(
+      input.map(taskInput => ({
+        ...taskInput,
+        organizationId,
+        createdBy,
+        updatedBy: createdBy,
+      }))
+    )
+    .returning({ id: tasks.id });
 }
 
 export async function updateTask(

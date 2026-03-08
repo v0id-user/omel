@@ -1,9 +1,11 @@
 import { z } from 'zod';
-import { CONTACT_TYPES } from '@/database/types/contacts';
+import { CONTACT_SOURCES, CONTACT_STATUSES, CONTACT_TYPES } from '@/database/types/contacts';
 
 const optionalStringSchema = z.string().optional().nullable();
 
 export const contactTypeSchema = z.enum(CONTACT_TYPES);
+export const contactStatusSchema = z.enum(CONTACT_STATUSES);
+export const contactSourceSchema = z.enum(CONTACT_SOURCES);
 
 export const createContactInputSchema = z.object({
   name: z.string().min(1),
@@ -20,6 +22,13 @@ export const createContactInputSchema = z.object({
   taxId: optionalStringSchema,
   businessType: optionalStringSchema,
   employees: optionalStringSchema,
+  status: contactStatusSchema.optional(),
+  source: contactSourceSchema.optional(),
+  ownerId: optionalStringSchema,
+  tags: z.array(z.string()).optional().nullable(),
+  notes: optionalStringSchema,
+  lastContactedAt: z.date().optional().nullable(),
+  nextFollowUpAt: z.date().optional().nullable(),
 });
 
 export const updateContactInputSchema = z.object({
@@ -38,6 +47,13 @@ export const updateContactInputSchema = z.object({
   taxId: optionalStringSchema,
   businessType: optionalStringSchema,
   employees: optionalStringSchema,
+  status: contactStatusSchema.optional(),
+  source: contactSourceSchema.optional(),
+  ownerId: optionalStringSchema,
+  tags: z.array(z.string()).optional().nullable(),
+  notes: optionalStringSchema,
+  lastContactedAt: z.date().optional().nullable(),
+  nextFollowUpAt: z.date().optional().nullable(),
 });
 
 export const contactPagesInputSchema = z.object({

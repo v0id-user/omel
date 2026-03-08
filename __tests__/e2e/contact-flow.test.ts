@@ -6,6 +6,12 @@ let contactIdCounter = 0;
 const taskStore: Record<string, any> = {};
 let taskIdCounter = 0;
 
+const dealStore: Record<string, any> = {};
+let dealIdCounter = 0;
+
+const interactionStore: Record<string, any> = {};
+let interactionIdCounter = 0;
+
 mock.module('@/lib/betterauth/auth', () => ({
   auth: {
     api: {
@@ -36,6 +42,10 @@ mock.module('@/utils/phone/validate', () => ({
   validatePhoneArab: () => true,
 }));
 
+mock.module('@/features/crm/activity/server/service', () => ({
+  logCRMActivity: mock(() => Promise.resolve(undefined)),
+}));
+
 mock.module('@/features/crm/contacts/server/repository', () => ({
   createContact: mock((_orgId: string, _createdBy: string, input: any) => {
     const id = `contact-${++contactIdCounter}`;
@@ -46,13 +56,13 @@ mock.module('@/features/crm/contacts/server/repository', () => ({
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    return Promise.resolve(contactStore[id]);
+    return Promise.resolve([{ id }]);
   }),
   updateContact: mock((contactId: string, _updatedBy: string, input: any) => {
     if (contactStore[contactId]) {
       Object.assign(contactStore[contactId], input, { updatedAt: new Date() });
     }
-    return Promise.resolve(contactStore[contactId]);
+    return Promise.resolve([{ id: contactId }]);
   }),
   getContactsByPage: mock((orgId: string, page: number, limit: number) => {
     const all = Object.values(contactStore).filter((c: any) => !c.deletedAt);
@@ -129,6 +139,125 @@ mock.module('@/features/crm/tasks/server/repository', () => ({
       if (taskStore[id]) taskStore[id].deletedAt = new Date();
     }
     return Promise.resolve(ids.map(id => ({ id })));
+  }),
+}));
+
+mock.module('@/features/crm/deals/server/repository', () => ({
+  getDealsForOrganization: mock((_orgId: string, filters: any) => {
+    let all = Object.values(dealStore).filter((deal: any) => !deal.deletedAt);
+
+    if (filters?.contactId) {
+      all = all.filter((deal: any) => deal.contactId === filters.contactId);
+    }
+
+    if (filters?.status) {
+      all = all.filter((deal: any) => deal.status === filters.status);
+    }
+
+    if (filters?.stage) {
+      all = all.filter((deal: any) => deal.stage === filters.stage);
+    }
+
+    return Promise.resolve(all);
+  }),
+  getDealById: mock((_orgId: string, dealId: string) => Promise.resolve(dealStore[dealId] ?? null)),
+  getDealsByContactId: mock((_orgId: string, contactId: string) =>
+    Promise.resolve(
+      Object.values(dealStore).filter(
+        (deal: any) => !deal.deletedAt && deal.contactId === contactId
+      )
+    )
+  ),
+  createDeal: mock((_orgId: string, _createdBy: string, input: any) => {
+    const id = `deal-${++dealIdCounter}`;
+    dealStore[id] = {
+      id,
+      stage: 'lead',
+      status: 'open',
+      amount: '0',
+      currency: 'SAR',
+      probability: 0,
+      ...input,
+      deletedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    return Promise.resolve([{ id }]);
+  }),
+  updateDeal: mock((dealId: string, _updatedBy: string, input: any) => {
+    if (dealStore[dealId]) {
+      Object.assign(dealStore[dealId], input, { updatedAt: new Date() });
+    }
+    return Promise.resolve([{ id: dealId }]);
+  }),
+  deleteDeal: mock((_orgId: string, dealId: string) => {
+    if (dealStore[dealId]) {
+      dealStore[dealId].deletedAt = new Date();
+    }
+    return Promise.resolve([{ id: dealId }]);
+  }),
+  getDealSummary: mock(() => {
+    const activeDeals = Object.values(dealStore).filter((deal: any) => !deal.deletedAt);
+    return Promise.resolve({
+      total: activeDeals.length,
+      open: activeDeals.filter((deal: any) => deal.status === 'open').length,
+      won: activeDeals.filter((deal: any) => deal.status === 'won').length,
+      lost: activeDeals.filter((deal: any) => deal.status === 'lost').length,
+      pipelineValue: activeDeals
+        .filter((deal: any) => deal.status === 'open')
+        .reduce((sum: number, deal: any) => sum + Number(deal.amount ?? 0), 0),
+      wonValue: activeDeals
+        .filter((deal: any) => deal.status === 'won')
+        .reduce((sum: number, deal: any) => sum + Number(deal.amount ?? 0), 0),
+      byStage: [],
+    });
+  }),
+}));
+
+mock.module('@/features/crm/interactions/server/repository', () => ({
+  listInteractionsForOrganization: mock((_orgId: string, filters: any) => {
+    let all = Object.values(interactionStore).filter((interaction: any) => !interaction.deletedAt);
+
+    if (filters?.contactId) {
+      all = all.filter((interaction: any) => interaction.contactId === filters.contactId);
+    }
+
+    if (filters?.dealId) {
+      all = all.filter((interaction: any) => interaction.dealId === filters.dealId);
+    }
+
+    if (filters?.type) {
+      all = all.filter((interaction: any) => interaction.type === filters.type);
+    }
+
+    return Promise.resolve(all);
+  }),
+  getInteractionById: mock((_orgId: string, interactionId: string) =>
+    Promise.resolve(interactionStore[interactionId] ?? null)
+  ),
+  createInteraction: mock((_orgId: string, _createdBy: string, input: any) => {
+    const id = `interaction-${++interactionIdCounter}`;
+    interactionStore[id] = {
+      id,
+      ...input,
+      occurredAt: input.occurredAt ?? new Date(),
+      deletedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    return Promise.resolve([{ id }]);
+  }),
+  updateInteraction: mock((interactionId: string, _updatedBy: string, input: any) => {
+    if (interactionStore[interactionId]) {
+      Object.assign(interactionStore[interactionId], input, { updatedAt: new Date() });
+    }
+    return Promise.resolve([{ id: interactionId }]);
+  }),
+  deleteInteraction: mock((_orgId: string, interactionId: string) => {
+    if (interactionStore[interactionId]) {
+      interactionStore[interactionId].deletedAt = new Date();
+    }
+    return Promise.resolve([{ id: interactionId }]);
   }),
 }));
 
@@ -296,6 +425,67 @@ describe('E2E: Task CRUD flow', () => {
 
     const remaining = await caller.crm.dashboard.task.getTasks();
     expect(remaining.length).toBe(0);
+  });
+});
+
+describe('E2E: Deal and interaction workflow', () => {
+  let caller: ReturnType<typeof appRouter.createCaller>;
+
+  beforeEach(() => {
+    for (const k of Object.keys(contactStore)) delete contactStore[k];
+    for (const k of Object.keys(dealStore)) delete dealStore[k];
+    for (const k of Object.keys(interactionStore)) delete interactionStore[k];
+    contactIdCounter = 0;
+    dealIdCounter = 0;
+    interactionIdCounter = 0;
+    caller = appRouter.createCaller(createAuthenticatedContext());
+  });
+
+  it('creates a contact, links a deal, logs an interaction, and updates summary data', async () => {
+    await caller.crm.dashboard.contact.new({
+      name: 'شركة الأفق',
+      email: 'sales@horizon.sa',
+      phone: '+966511111111',
+    });
+
+    const [contact] = await caller.crm.dashboard.contact.getBulk({ limit: 50 });
+
+    await caller.crm.dashboard.deal.new({
+      title: 'اشتراك سنوي',
+      amount: '12000',
+      ownerId: 'e2e-user-id',
+      contactId: contact.id,
+      stage: 'proposal',
+    });
+
+    const deals = await caller.crm.dashboard.deal.list();
+    expect(deals.length).toBe(1);
+    expect(deals[0].contactId).toBe(contact.id);
+
+    await caller.crm.dashboard.interaction.new({
+      type: 'meeting',
+      subject: 'عرض أولي',
+      content: 'تم تقديم عرض أولي للعميل',
+      contactId: contact.id,
+      dealId: deals[0].id,
+    });
+
+    const interactions = await caller.crm.dashboard.interaction.list({
+      contactId: contact.id,
+    });
+    expect(interactions.length).toBe(1);
+    expect(interactions[0].dealId).toBe(deals[0].id);
+
+    await caller.crm.dashboard.deal.update({
+      id: deals[0].id,
+      status: 'won',
+      stage: 'won',
+    });
+
+    const summary = await caller.crm.dashboard.deal.summary();
+    expect(summary.total).toBe(1);
+    expect(summary.won).toBe(1);
+    expect(summary.wonValue).toBe(12000);
   });
 });
 

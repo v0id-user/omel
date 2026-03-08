@@ -40,12 +40,15 @@ export async function createContact(
   createdBy: string,
   input: CreateContactInput
 ) {
-  return db.insert(contacts).values({
-    ...input,
-    organizationId,
-    createdBy,
-    updatedBy: createdBy,
-  });
+  return db
+    .insert(contacts)
+    .values({
+      ...input,
+      organizationId,
+      createdBy,
+      updatedBy: createdBy,
+    })
+    .returning({ id: contacts.id });
 }
 
 export async function updateContact(
@@ -55,8 +58,9 @@ export async function updateContact(
 ) {
   return db
     .update(contacts)
-    .set({ ...input, updatedBy })
-    .where(eq(contacts.id, contactId));
+    .set({ ...input, updatedBy, updatedAt: new Date() })
+    .where(and(eq(contacts.id, contactId), isNull(contacts.deletedAt)))
+    .returning({ id: contacts.id });
 }
 
 export async function getContactsByIds(organizationId: string, contactIds: string[]) {
@@ -114,7 +118,10 @@ export async function searchContacts(
       ilike(contacts.address, searchPattern),
       ilike(contacts.region, searchPattern),
       ilike(contacts.domain, searchPattern),
-      ilike(contacts.businessType, searchPattern)
+      ilike(contacts.businessType, searchPattern),
+      ilike(contacts.status, searchPattern),
+      ilike(contacts.source, searchPattern),
+      ilike(contacts.notes, searchPattern)
     )
   );
 

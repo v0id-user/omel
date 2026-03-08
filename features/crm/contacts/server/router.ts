@@ -50,11 +50,19 @@ export const contactRouter = createTRPCRouter({
   }),
 
   delete: protectedProcedure.input(contactDeleteInputSchema).mutation(async ({ ctx, input }) => {
-    return service.deleteContact(ctx.session.session.activeOrganizationId!, input.id);
+    return service.deleteContact(
+      ctx.session.session.activeOrganizationId!,
+      input.id,
+      ctx.session.user.id
+    );
   }),
 
   deleteMany: protectedProcedure.input(contactIdsInputSchema).mutation(async ({ ctx, input }) => {
-    return service.deleteContactsByIds(ctx.session.session.activeOrganizationId!, input.ids);
+    return service.deleteContactsByIds(
+      ctx.session.session.activeOrganizationId!,
+      input.ids,
+      ctx.session.user.id
+    );
   }),
 
   pages: protectedProcedure.input(contactPagesInputSchema).query(async ({ ctx, input }) => {

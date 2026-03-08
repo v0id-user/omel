@@ -25,12 +25,20 @@ export const taskRouter = createTRPCRouter({
   }),
 
   delete: protectedProcedure.input(taskDeleteInputSchema).mutation(async ({ ctx, input }) => {
-    return service.deleteTask(ctx.session.session.activeOrganizationId!, input.id);
+    return service.deleteTask(
+      ctx.session.session.activeOrganizationId!,
+      input.id,
+      ctx.session.user.id
+    );
   }),
 
   deleteMany: protectedProcedure
     .input(tasksDeleteManyInputSchema)
     .mutation(async ({ ctx, input }) => {
-      return service.deleteTasksByIds(ctx.session.session.activeOrganizationId!, input.ids);
+      return service.deleteTasksByIds(
+        ctx.session.session.activeOrganizationId!,
+        input.ids,
+        ctx.session.user.id
+      );
     }),
 });

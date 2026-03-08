@@ -4,7 +4,7 @@ import { contacts } from '@/database/schemas/app-schema';
 export type Contact = Omit<typeof contacts.$inferSelect, 'deletedAt'>;
 export type NewContact = Omit<typeof contacts.$inferInsert, 'organizationId' | 'deletedAt'>;
 
-export const CONTACT_STATUSES = ['active', 'inactive'] as const;
+export const CONTACT_STATUSES = ['lead', 'prospect', 'customer', 'inactive'] as const;
 
 export type ContactStatus = (typeof CONTACT_STATUSES)[number];
 
@@ -16,8 +16,11 @@ export const CONTACT_SOURCES = [
   'website',
   'referral',
   'social_media',
+  'campaign',
+  'event',
   'email',
   'phone',
+  'manual',
   'other',
 ] as const;
 
