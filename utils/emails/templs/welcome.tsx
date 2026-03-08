@@ -105,7 +105,7 @@ const WelcomeEmail = ({ recipientEmail }: { recipientEmail: string }) => {
                 </Link>
               </Text>
               <Text className="text-[12px] text-gray-400 m-0" dir="rtl">
-                © {new Date().getFullYear()} جميع الحقوق محفوظة لبرنامج إدارة العلاقات "أوميل"
+                © {new Date().getFullYear()} جميع الحقوق محفوظة لبرنامج إدارة العلاقات «أوميل»
               </Text>
             </Section>
           </Container>
