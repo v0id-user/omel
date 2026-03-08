@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, mock } from 'bun:test';
 import { NextRequest } from 'next/server';
 
-const getSessionMock = mock<(options: { headers: Headers }) => Promise<unknown | null>>(
-  () => Promise.resolve(null)
+const getSessionMock = mock<(options: { headers: Headers }) => Promise<unknown | null>>(() =>
+  Promise.resolve(null)
 );
 
 mock.module('@/lib/betterauth/auth', () => ({
