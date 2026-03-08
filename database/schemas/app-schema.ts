@@ -1,13 +1,15 @@
-import { jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { integer, jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { pgTable, index } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { users, organizations } from '@/database/schemas/auth-schema';
 import { TaskPriority, TaskStatus } from '@/database/types/task';
 import { SubscriptionTier, SubscriptionStatus } from '@/database/types/subscriptions';
-import { ContactType } from '@/database/types/contacts';
+import { ContactSource, ContactStatus, ContactType } from '@/database/types/contacts';
 import { ResourceType } from '@/database/types/usage';
 import { timestamps } from '@/database/schemas/timestamps';
 import { sql } from 'drizzle-orm';
+import { DealStage, DealStatus } from '@/database/types/deal';
+import { InteractionType } from '@/database/types/interaction';
 
 export const subscriptions = pgTable(
   'subscriptions',
@@ -52,6 +54,13 @@ export const contacts = pgTable(
     taxId: text('tax_id'),
     businessType: text('business_type'),
     employees: text('employees'),
+    status: text('status').notNull().default('lead').$type<ContactStatus>(),
+    source: text('source').default('other').$type<ContactSource>(),
+    ownerId: text('owner_id').references(() => users.id),
+    tags: text('tags').array(),
+    notes: text('notes'),
+    lastContactedAt: timestamp('last_contacted_at'),
+    nextFollowUpAt: timestamp('next_follow_up_at'),
     createdBy: text('created_by')
       .notNull()
       .references(() => users.id),
@@ -69,6 +78,9 @@ export const contacts = pgTable(
     index('contact_name_idx').on(table.name),
     index('contact_phone_idx').on(table.phone),
     index('contact_type_idx').on(table.contactType),
+    index('contact_status_idx').on(table.status),
+    index('contact_source_idx').on(table.source),
+    index('contact_owner_id_idx').on(table.ownerId),
   ]
 );
 
@@ -129,6 +141,82 @@ export const tasks = pgTable(
     index('task_due_date_idx').on(table.dueDate),
     index('task_created_by_idx').on(table.createdBy),
     index('task_related_to_idx').on(table.relatedTo),
+  ]
+);
+
+export const deals = pgTable(
+  'deals',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    title: text('title').notNull(),
+    description: text('description'),
+    amount: text('amount').notNull().default('0'),
+    currency: text('currency').notNull().default('SAR'),
+    stage: text('stage').notNull().default('lead').$type<DealStage>(),
+    status: text('status').notNull().default('open').$type<DealStatus>(),
+    probability: integer('probability').notNull().default(0),
+    expectedCloseDate: timestamp('expected_close_date'),
+    closedAt: timestamp('closed_at'),
+    contactId: text('contact_id').references(() => contacts.id),
+    ownerId: text('owner_id')
+      .notNull()
+      .references(() => users.id),
+    tags: text('tags').array(),
+    createdBy: text('created_by')
+      .notNull()
+      .references(() => users.id),
+    updatedBy: text('updated_by')
+      .notNull()
+      .references(() => users.id),
+    organizationId: text('organization_id')
+      .notNull()
+      .references(() => organizations.id),
+    ...timestamps,
+  },
+  table => [
+    index('deal_org_id_idx').on(table.organizationId),
+    index('deal_owner_id_idx').on(table.ownerId),
+    index('deal_contact_id_idx').on(table.contactId),
+    index('deal_stage_idx').on(table.stage),
+    index('deal_status_idx').on(table.status),
+    index('deal_expected_close_date_idx').on(table.expectedCloseDate),
+  ]
+);
+
+export const interactions = pgTable(
+  'interactions',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    type: text('type').notNull().$type<InteractionType>(),
+    subject: text('subject'),
+    content: text('content'),
+    occurredAt: timestamp('occurred_at').notNull().defaultNow(),
+    contactId: text('contact_id').references(() => contacts.id),
+    dealId: text('deal_id').references(() => deals.id),
+    taskId: text('task_id').references(() => tasks.id),
+    metadata: jsonb('metadata'),
+    createdBy: text('created_by')
+      .notNull()
+      .references(() => users.id),
+    updatedBy: text('updated_by')
+      .notNull()
+      .references(() => users.id),
+    organizationId: text('organization_id')
+      .notNull()
+      .references(() => organizations.id),
+    ...timestamps,
+  },
+  table => [
+    index('interaction_org_id_idx').on(table.organizationId),
+    index('interaction_type_idx').on(table.type),
+    index('interaction_contact_id_idx').on(table.contactId),
+    index('interaction_deal_id_idx').on(table.dealId),
+    index('interaction_task_id_idx').on(table.taskId),
+    index('interaction_occurred_at_idx').on(table.occurredAt),
   ]
 );
 

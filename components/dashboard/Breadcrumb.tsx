@@ -18,6 +18,15 @@ import React from 'react';
 export function DashboardBreadcrumb() {
   const pathname = usePathname();
   const paths = pathname.split('/').filter(Boolean);
+  const labelMap: Record<string, string> = {
+    dashboard: 'لوحة التحكم',
+    tasks: 'المهام',
+    clients: 'العملاء',
+    deals: 'الصفقات',
+    activities: 'الأنشطة',
+    team: 'الفريق',
+    settings: 'الإعدادات',
+  };
 
   // If we're just at the dashboard root, show simplified breadcrumb
   if (paths.length === 1 && paths[0] === 'dashboard') {
@@ -67,13 +76,11 @@ export function DashboardBreadcrumb() {
                 <BreadcrumbItem>
                   {isLast ? (
                     <BreadcrumbPage>
-                      {path === 'tasks' ? 'المهام' : path === 'clients' ? 'العملاء' : path}
+                      {labelMap[path] || (paths[index] === 'clients' ? 'ملف العميل' : path)}
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={href}>
-                        {path === 'tasks' ? 'المهام' : path === 'clients' ? 'العملاء' : path}
-                      </Link>
+                      <Link href={href}>{labelMap[path] || path}</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>

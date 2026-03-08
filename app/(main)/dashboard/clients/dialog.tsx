@@ -235,7 +235,9 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     }
 
     if (currentStep === 'contactInfo') {
-      if (clientData.phone) {
+      if (!clientData.phone) {
+        newErrors.phone = 'رقم الهاتف مطلوب';
+      } else {
         const phoneError = clientValidatePhoneInput(clientData.phone);
         if (phoneError) newErrors.phone = phoneError;
       }
@@ -318,6 +320,70 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
   };
 
   // Submit the form
+  const handleQuickSubmit = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!clientData.name.trim()) {
+      newErrors.name = 'الاسم مطلوب';
+    }
+
+    if (!clientData.email.trim()) {
+      newErrors.email = 'البريد الإلكتروني مطلوب';
+    } else {
+      const emailError = clientValidateEmailInput(clientData.email);
+      if (emailError) {
+        newErrors.email = emailError;
+      }
+    }
+
+    if (!clientData.phone.trim()) {
+      newErrors.phone = 'رقم الهاتف مطلوب';
+    } else {
+      const phoneError = clientValidatePhoneInput(clientData.phone);
+      if (phoneError) {
+        newErrors.phone = phoneError;
+      }
+    }
+
+    if (clientData.clientType === 'company') {
+      if (clientData.companyFields?.domain) {
+        const domainResult = z.string().url().safeParse(clientData.companyFields.domain);
+        if (!domainResult.success) {
+          newErrors['companyFields.domain'] = 'عنوان الموقع غير صالح';
+        }
+      }
+
+      if (!clientData.companyFields?.businessType) {
+        newErrors['companyFields.businessType'] = 'نوع النشاط التجاري مطلوب للشركات';
+      }
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      const firstError = Object.values(newErrors)[0];
+      toast.error(firstError);
+      return;
+    }
+
+    createContact({
+      name: clientData.name,
+      email: clientData.email,
+      phone: clientData.phone,
+      contactType: clientData.clientType,
+      address: clientData.address,
+      city: clientData.city,
+      region: clientData.region,
+      country: clientData.country,
+      postalCode: clientData.postalCode,
+      domain: clientData.companyFields?.domain || '',
+      additionalPhones: additionalPhones,
+      taxId: clientData.companyFields?.taxId || '',
+      businessType: clientData.companyFields?.businessType || '',
+      employees: clientData.companyFields?.employees || '',
+    });
+  };
+
   const handleSubmit = async () => {
     if (!validateStep()) {
       const errorMessages = Object.values(errors).filter(error => error);
@@ -458,42 +524,50 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       title="إضافة عميل"
       icon={<UserPlus className="w-4 h-4" />}
     >
-      <div className="flex flex-col gap-6 pt-5 px-5">
-        {/* Progress bar */}
-        <ProgressIndicator currentStep={currentStep} clientType={clientData.clientType} />
+      <div className="flex flex-col gap-5 px-5 py-5">
+        <ClientTypeStep
+          clientData={clientData}
+          onClientDataChange={handleChange}
+          errors={errors}
+          onClientTypeChange={handleClientTypeChange}
+        />
 
-        {/* Form content */}
-        <div className="min-h-[300px]">{renderStepContent()}</div>
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-lg border border-gray-100 bg-white/95 px-3 py-3 backdrop-blur">
+          <OButton variant="ghost" onClick={onClose}>
+            إلغاء
+          </OButton>
+          <OButton onClick={handleQuickSubmit} isLoading={isPending}>
+            حفظ العميل
+          </OButton>
+        </div>
 
-        {/* Buttons */}
-        <div className="flex gap-3 justify-between mt-4 mb-2">
-          {currentStep !== 'type' ? (
-            <OButton variant="ghost" onClick={prevStep} className="flex items-center gap-1 px-2">
-              <ArrowRight className="w-3 h-3" /> السابق
-            </OButton>
-          ) : (
-            <div></div> // Empty div to maintain flex spacing
-          )}
+        <BasicInfoStep clientData={clientData} onClientDataChange={handleChange} errors={errors} />
 
-          {currentStep !== 'complete' ? (
-            <OButton
-              variant="primary"
-              onClick={nextStep}
-              className="flex items-center gap-1 px-2"
-              isLoading={isPending}
-            >
-              التالي <ArrowLeft className="w-3 h-3" />
-            </OButton>
-          ) : (
-            <OButton
-              variant="primary"
-              className="px-2"
-              onClick={handleSubmit}
-              isLoading={isPending}
-            >
-              إضافة العميل
-            </OButton>
-          )}
+        <ContactInfoStep
+          clientData={clientData}
+          onClientDataChange={handleChange}
+          errors={errors}
+        />
+
+        {clientData.clientType === 'company' && (
+          <CompanyDetailsStep
+            clientData={clientData}
+            onClientDataChange={handleChange}
+            errors={errors}
+            onAddPhone={handleAddPhone}
+            onRemovePhone={handleRemovePhone}
+            onPhoneChange={handlePhoneChange}
+            additionalPhones={additionalPhones}
+          />
+        )}
+
+        <div className="sticky bottom-0 flex items-center justify-between border-t border-gray-100 bg-white pt-4">
+          <OButton variant="ghost" onClick={onClose}>
+            إلغاء
+          </OButton>
+          <OButton onClick={handleQuickSubmit} isLoading={isPending}>
+            إضافة العميل
+          </OButton>
         </div>
       </div>
     </DashboardDialog>

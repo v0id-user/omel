@@ -5,6 +5,8 @@ import { Spinner } from '@/components/omel/Spinner';
 import { toArabicNumerals } from '@/utils';
 import { Calendar, Community, MultiplePagesEmpty, WarningTriangle } from 'iconoir-react';
 import { ReactNode } from 'react';
+import { BriefcaseBusiness, CircleDollarSign, Activity } from 'lucide-react';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 function StatCard({ title, value, icon }: { title: string; value: number; icon: ReactNode }) {
   return (
@@ -33,8 +35,17 @@ export default function DashboardPage() {
     limit: 5,
   });
   const tasksRpc = trpc.crm.dashboard.task.getTasks.useQuery();
+  const dealsSummaryRpc = trpc.crm.dashboard.deal.summary.useQuery();
+  const activitiesRpc = trpc.crm.dashboard.interaction.list.useQuery({
+    limit: 5,
+  });
 
-  if (contactsRpc.isPending || tasksRpc.isPending) {
+  if (
+    contactsRpc.isPending ||
+    tasksRpc.isPending ||
+    dealsSummaryRpc.isPending ||
+    activitiesRpc.isPending
+  ) {
     return <Spinner />;
   }
 
@@ -44,6 +55,8 @@ export default function DashboardPage() {
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(task => task.status === 'completed').length;
   const openTasks = tasks.filter(task => task.status !== 'completed').length;
+  const dealsSummary = dealsSummaryRpc.data;
+  const activities = activitiesRpc.data ?? [];
   const now = new Date();
   const overdueTasks = tasks.filter(task => {
     if (!task.dueDate || task.status === 'completed') return false;
@@ -57,7 +70,7 @@ export default function DashboardPage() {
         <p className="text-sm text-gray-500">ملخص سريع لحالة العملاء والمهام داخل فريقك</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
         <StatCard
           title="إجمالي العملاء"
           value={totalContacts}
@@ -78,9 +91,19 @@ export default function DashboardPage() {
           value={overdueTasks}
           icon={<WarningTriangle className="h-5 w-5" />}
         />
+        <StatCard
+          title="الصفقات المفتوحة"
+          value={dealsSummary?.open ?? 0}
+          icon={<BriefcaseBusiness className="h-5 w-5" />}
+        />
+        <StatCard
+          title="الصفقات المغلقة فوز"
+          value={dealsSummary?.won ?? 0}
+          icon={<CircleDollarSign className="h-5 w-5" />}
+        />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <section className="rounded-xl border border-gray-200 bg-white">
           <div className="border-b border-gray-100 px-4 py-3">
             <h2 className="text-sm font-semibold text-gray-700">آخر العملاء</h2>
@@ -135,17 +158,65 @@ export default function DashboardPage() {
             )}
           </div>
         </section>
+
+        <section className="rounded-xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-100 px-4 py-3">
+            <h2 className="text-sm font-semibold text-gray-700">آخر الأنشطة</h2>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {activities.length === 0 ? (
+              <p className="px-4 py-4 text-sm text-gray-500">لا يوجد أنشطة حتى الآن</p>
+            ) : (
+              activities.map(activity => (
+                <div key={activity.id} className="flex items-center justify-between px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {activity.subject || activity.type}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {activity.contactName || 'بدون عميل'} · {activity.dealTitle || 'بدون صفقة'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {formatArabicDate(activity.occurredAt || null)}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-700">مؤشر الإنجاز</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          أنجزت{' '}
-          <span className="font-semibold text-gray-900">{toArabicNumerals(completedTasks)}</span> من
-          أصل <span className="font-semibold text-gray-900">{toArabicNumerals(totalTasks)}</span>{' '}
-          مهمة.
-        </p>
-      </section>
+      <div className="grid gap-4 xl:grid-cols-2">
+        <section className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+          <h2 className="text-sm font-semibold text-gray-700">مؤشر الإنجاز</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            أنجزت{' '}
+            <span className="font-semibold text-gray-900">{toArabicNumerals(completedTasks)}</span>{' '}
+            من أصل{' '}
+            <span className="font-semibold text-gray-900">{toArabicNumerals(totalTasks)}</span>{' '}
+            مهمة.
+          </p>
+        </section>
+
+        <section className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-gray-700" />
+            <h2 className="text-sm font-semibold text-gray-700">مؤشر النمو التجاري</h2>
+          </div>
+          <p className="mt-2 text-sm text-gray-600">
+            قيمة خط الصفقات الحالي{' '}
+            <span className="font-semibold text-gray-900">
+              <SaudiRiyalAmount amount={dealsSummary?.pipelineValue ?? 0} symbolSize={0.85} />
+            </span>
+            ، وتم إغلاق{' '}
+            <span className="font-semibold text-gray-900">
+              {toArabicNumerals(dealsSummary?.won ?? 0)}
+            </span>{' '}
+            صفقة بنجاح.
+          </p>
+        </section>
+      </div>
     </div>
   );
 }

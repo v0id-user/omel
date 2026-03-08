@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Trash2, Mail, Phone, MapPin, Globe, Pen, Copy, Pencil } from 'lucide-react';
+import { Trash2, Mail, Phone, MapPin, Globe, Pen, Copy, Pencil, Eye } from 'lucide-react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 import { motion } from 'motion/react';
 import { toast } from 'react-hot-toast';
@@ -67,9 +67,10 @@ interface ClientsTableProps {
   data: Contact[];
   onEdit?: (ids: string[]) => void;
   onDelete?: (ids: string[]) => void;
+  onView?: (contact: Contact) => void;
 }
 
-export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDelete }) => {
+export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDelete, onView }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [columnWidths, setColumnWidths] = useState({
     name: 20, // percentage
@@ -309,7 +310,7 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
                   />
                 </TableHead>
               )}
-              <TableHead className="w-[56px] text-center text-right font-medium text-gray-600 py-2">
+              <TableHead className="w-[96px] text-center text-right font-medium text-gray-600 py-2">
                 إجراءات
               </TableHead>
             </TableRow>
@@ -364,14 +365,24 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ data, onEdit, onDele
                     </TableCell>
                   )}
                   <TableCell className="text-center py-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-red-600 hover:text-red-700 cursor-pointer"
-                      onClick={() => onDelete?.([contact.id])}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-gray-600 hover:text-gray-800 cursor-pointer"
+                        onClick={() => onView?.(contact)}
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-red-600 hover:text-red-700 cursor-pointer"
+                        onClick={() => onDelete?.([contact.id])}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

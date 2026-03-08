@@ -1,3 +1,5 @@
+'use client';
+
 import {
   SidebarFooter,
   SidebarMenu,
@@ -28,10 +30,24 @@ const menuItems = {
     {
       icon: UserCircleIcon,
       label: 'الحساب',
-      onClick: () => console.log('Navigate to account settings'),
+      onClick: () => {
+        window.location.href = '/dashboard/settings';
+      },
     },
-    { icon: CreditCardIcon, label: 'الفواتير', onClick: () => console.log('Navigate to billing') },
-    { icon: BellIcon, label: 'الإشعارات', onClick: () => console.log('Navigate to notifications') },
+    {
+      icon: CreditCardIcon,
+      label: 'الفواتير',
+      onClick: () => {
+        window.location.href = '/api/auth/customer/portal';
+      },
+    },
+    {
+      icon: BellIcon,
+      label: 'الإشعارات',
+      onClick: () => {
+        window.location.href = '/dashboard/activities';
+      },
+    },
   ],
   الخروج: [
     {

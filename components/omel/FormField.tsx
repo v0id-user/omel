@@ -104,9 +104,12 @@ export function FormField({
 
   const handlePhoneNumberChange = (phoneNumber: string) => {
     // Convert Arabic numerals to English for storage
-    const englishNumber = toEnglishNumerals(phoneNumber);
+    const englishNumber = toEnglishNumerals(phoneNumber).replace(/\D/g, '');
+    const normalizedNumber = englishNumber.startsWith(selectedCountry.phoneCode)
+      ? englishNumber.substring(selectedCountry.phoneCode.length)
+      : englishNumber;
     // Combine with country code
-    const fullNumber = `+${selectedCountry.phoneCode}${englishNumber}`;
+    const fullNumber = `+${selectedCountry.phoneCode}${normalizedNumber}`;
     onChange(fullNumber);
   };
 

@@ -9,7 +9,8 @@
 //   LayoutDashboardIcon
 // } from 'lucide-react';
 
-import { ViewStructureUp, Community, MultiplePagesEmpty } from 'iconoir-react';
+import { ViewStructureUp, Community, MultiplePagesEmpty, Activity } from 'iconoir-react';
+import { BriefcaseBusiness, Users, Settings } from 'lucide-react';
 
 import {
   SidebarMenuButton,
@@ -27,6 +28,12 @@ const menuItems = {
     { href: '/dashboard', icon: ViewStructureUp, label: 'لوحة التحكم' },
     { href: '/dashboard/clients', icon: Community, label: 'العملاء' },
     { href: '/dashboard/tasks', icon: MultiplePagesEmpty, label: 'المهام' },
+    { href: '/dashboard/deals', icon: BriefcaseBusiness, label: 'الصفقات' },
+    { href: '/dashboard/activities', icon: Activity, label: 'الأنشطة' },
+  ],
+  الإعدادات: [
+    { href: '/dashboard/team', icon: Users, label: 'الفريق' },
+    { href: '/dashboard/settings', icon: Settings, label: 'الإعدادات' },
   ],
 };
 

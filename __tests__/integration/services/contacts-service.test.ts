@@ -1,7 +1,7 @@
 import { describe, it, expect, mock, beforeEach } from 'bun:test';
 
-const mockCreateContact = mock(() => Promise.resolve({ id: 'new-contact-id' }));
-const mockUpdateContact = mock(() => Promise.resolve({ id: 'contact-123' }));
+const mockCreateContact = mock(() => Promise.resolve([{ id: 'new-contact-id' }]));
+const mockUpdateContact = mock(() => Promise.resolve([{ id: 'contact-123' }]));
 const mockGetContactsByPage = mock(() =>
   Promise.resolve({
     data: [],
@@ -23,6 +23,7 @@ const mockSearchContacts = mock(() =>
 );
 const mockDeleteContact = mock(() => Promise.resolve([{ id: 'contact-123' }]));
 const mockDeleteContactsByIds = mock(() => Promise.resolve([{ id: 'c1' }, { id: 'c2' }]));
+const mockLogCRMActivity = mock(() => Promise.resolve(undefined));
 
 mock.module('@/features/crm/contacts/server/repository', () => ({
   createContact: mockCreateContact,
@@ -45,6 +46,10 @@ mock.module('@/utils/phone/validate', () => ({
   validatePhoneArab: mock(() => true),
 }));
 
+mock.module('@/features/crm/activity/server/service', () => ({
+  logCRMActivity: mockLogCRMActivity,
+}));
+
 import * as service from '@/features/crm/contacts/server/service';
 
 describe('contacts service', () => {
@@ -58,6 +63,7 @@ describe('contacts service', () => {
     mockSearchContacts.mockClear();
     mockDeleteContact.mockClear();
     mockDeleteContactsByIds.mockClear();
+    mockLogCRMActivity.mockClear();
   });
 
   describe('createNewContact', () => {
