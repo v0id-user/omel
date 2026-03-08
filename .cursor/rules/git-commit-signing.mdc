@@ -1,0 +1,21 @@
+---
+description: Always sign git commits; never skip GPG signing
+alwaysApply: true
+---
+
+# Git Commit Signing
+
+When creating commits or pushing to the repo:
+
+1. **Never use `--no-gpg-sign`** – All commits must be signed.
+2. **Use standard `git commit`** – Let the configured GPG key sign automatically:
+
+```bash
+git commit -m "type: message"
+```
+
+3. **If signing fails**, do not bypass it. Instead:
+   - Run outside sandbox (`required_permissions: ["all"]`) so GPG can access `~/.gnupg`
+   - Or inform the user that GPG signing failed and they may need to run the commit manually
+
+4. **Never suggest or run** `git commit --no-gpg-sign` – it produces unverified commits.
