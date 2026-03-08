@@ -1,100 +1,143 @@
-# [abandoned project] Omel CRM
+# Omel CRM
 
-A customer relationship management system built with Next.js and hosted on Vercel.
+Omel is a Bun-managed Next.js App Router CRM application with an Arabic-first interface, Better Auth-based authentication, tRPC APIs, and a Neon/Postgres backend.
 
-## Tech Stack
+The current repository contains the marketing site, authentication flows, an authenticated dashboard, contacts management, tasks management, legal pages, and internal dev-only test routes.
 
-- **Next.js** – Framework
-- **Tigris Data** – Storage
-- **Bunny** – CDN, Image Processing
-- **Neon** – Database (serverless PostgreSQL)
-- **Better Auth** – Authentication solution
-- **Upstash** – Caching & Workflows
-- **PostHog** – Analytics & event tracking
-- **OpenAI / RecomBee** – Recommendation engine
-- **Resend** – Email handling
-- **Twilio** – SMS functionality
-- **Sentry** – Performance monitoring & error tracking
-- **TRPC** – Data fetching and EndToEnd Type Safety
+## Current stack
 
-## Getting Started
+- Bun
+- Next.js App Router
+- React 19
+- TypeScript
+- tRPC
+- Better Auth
+- Neon serverless Postgres
+- Drizzle ORM
+- Upstash Redis
+- PostHog
+- Sentry
+- Trigger.dev
+- Resend
+- Jest + Testing Library + Bun test
 
-1. Clone the repository
-2. Install dependencies:
+## Current product surface
+
+- Marketing landing page
+- Sign-in, sign-up, and clock-in routes
+- Authenticated dashboard overview
+- Contacts management flows
+- Tasks management flows
+- Privacy/legal route
+- Dev-only test routes under `app/(tests)` when `NEXT_PUBLIC_ENV=dev`
+
+## Getting started
+
+1. Install dependencies:
 
 ```bash
 bun install
 ```
 
-3. Create a `.env` file with the required variables (see Environment Variables section)
-4. Run the development server:
+2. Create a local `.env` file.
+
+Use the safe setup guide in [`docs/development-environment.md`](docs/development-environment.md) instead of copying another developer's secrets.
+
+3. Start the Next.js app:
 
 ```bash
 bun dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
+4. If you are testing Trigger.dev tasks such as welcome emails, start the worker in a second terminal:
 
-## Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-BETTER_AUTH_SECRET=your_secret_key
-BETTER_AUTH_URL=your_auth_url
-DATABASE_URL=your_neon_database_url
-
-NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
-NEXT_PUBLIC_POSTHOG_HOST=your_posthog_host
-NEXT_PUBLIC_DEBUG=true_or_false
+```bash
+bun run dev:trigger
 ```
 
-## Development Guidelines
+5. Open [http://localhost:3000](http://localhost:3000).
 
-1. **Tech Stack Compliance**: Use only the approved technologies in the tech stack list.
-2. **Security & Performance**: Optimize code for security and performance.
-3. **Monitoring**: Use Sentry for performance monitoring and error tracking.
+## Development environment
 
-## Testing
+The full secret-safe environment guide lives in [`docs/development-environment.md`](docs/development-environment.md).
 
-Omel uses Bun for backend-facing tests and Jest + Testing Library for frontend regression coverage.
+At a minimum, local development usually needs:
 
-- `__tests__/unit/` - pure utilities, contracts, validators
-- `__tests__/integration/` - services and router callers
-- `__tests__/api/` - route handlers and tRPC HTTP contracts
-- `__tests__/frontend/` - React component behavior and regressions
-- `__tests__/e2e/` - workflow-level coverage
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+- `NEXT_PUBLIC_ENV=dev`
+- `NEXT_PUBLIC_DEBUG=true`
 
-Recommended commands:
+Optional integrations currently used by the repo include:
 
+- `NEXT_PUBLIC_POSTHOG_KEY`
+- `NEXT_PUBLIC_POSTHOG_HOST`
+- `NEXT_PUBLIC_SIGNUP_DEV_BYPASS`
+- `RESEND_API_KEY`
+- `ABSTRACT_API_KEY`
+- `POLAR_SANDBOX_KEY`
+
+Never commit real secrets, passwords, or connection strings.
+
+## Useful commands
+
+- `bun dev`
+- `bun run dev:trigger`
 - `bun run lint`
 - `bun run typecheck`
+- `bun run build`
 - `bun run test`
 - `bun run test:backend`
 - `bun run test:frontend`
 - `bun run verify`
 
-Project-specific testing standards live in `docs/testing.md`.
+## Testing
+
+Omel uses Bun for backend-facing tests and Jest + Testing Library for frontend regression coverage.
+
+- `__tests__/unit/` for pure utilities, contracts, validators, and small helpers
+- `__tests__/integration/` for services, repositories, and router caller behavior
+- `__tests__/api/` for route handlers and tRPC HTTP contracts
+- `__tests__/frontend/` for React component behavior and regressions
+- `__tests__/e2e/` for workflow-level coverage
+
+The detailed testing conventions for this repo live in [`docs/testing.md`](docs/testing.md).
 
 ## CI / CD
 
-GitHub Actions is expected to enforce linting, type checking, backend tests, frontend tests, and a production build before deployment.
+GitHub Actions workflows live in:
 
-Deployment targets Vercel. To enable automated deployments from GitHub Actions, configure these repository secrets:
+- `.github/workflows/ci.yml`
+- `.github/workflows/cd.yml`
+
+The current CI pipeline runs:
+
+- lint
+- typecheck
+- unit tests
+- integration tests
+- API tests
+- frontend tests
+- workflow tests
+- production build
+
+The current CD workflow deploys to Vercel when the required repository secrets are present:
 
 - `VERCEL_TOKEN`
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 
+Preview deployments are triggered from successful pull request workflow runs, and production deployments are triggered from successful pushes to the repository default branch.
+
 ## Deployment
 
-The project is deployed on the Vercel platform.
+The application is built for Vercel.
+
+To produce a production build locally:
 
 ```bash
 bun run build
 ```
-
-# Project Status
-
-**Actively Developed & Rapidly Evolving**  
-Omel CRM is in continuous, high-priority development. Expect frequent updates, new features, and improvements as we work toward delivering a best-in-class CRM experience.
