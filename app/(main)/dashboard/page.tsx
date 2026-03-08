@@ -6,6 +6,7 @@ import { toArabicNumerals } from '@/utils';
 import { Calendar, Community, MultiplePagesEmpty, WarningTriangle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { BriefcaseBusiness, CircleDollarSign, Activity } from 'lucide-react';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 function StatCard({ title, value, icon }: { title: string; value: number; icon: ReactNode }) {
   return (
@@ -206,9 +207,9 @@ export default function DashboardPage() {
           <p className="mt-2 text-sm text-gray-600">
             قيمة خط الصفقات الحالي{' '}
             <span className="font-semibold text-gray-900">
-              {toArabicNumerals(dealsSummary?.pipelineValue ?? 0)}
-            </span>{' '}
-            ر.س، وتم إغلاق{' '}
+              <SaudiRiyalAmount amount={dealsSummary?.pipelineValue ?? 0} symbolSize={0.85} />
+            </span>
+            ، وتم إغلاق{' '}
             <span className="font-semibold text-gray-900">
               {toArabicNumerals(dealsSummary?.won ?? 0)}
             </span>{' '}

@@ -3,6 +3,7 @@
 import { authClient } from '@/lib/betterauth/auth-client';
 import { Spinner } from '@/components/omel/Spinner';
 import { OButton } from '@/components/omel/Button';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 import { trpc } from '@/trpc/client';
 import { toArabicNumerals } from '@/utils';
 import { CreditCard, Building2, Activity, BriefcaseBusiness } from 'lucide-react';
@@ -112,7 +113,7 @@ export default function SettingsPage() {
               <li>هناك {toArabicNumerals(tasksQuery.data?.length ?? 0)} مهمة مرتبطة بسير العمل.</li>
               <li>
                 قيمة خط الصفقات الحالي:{' '}
-                {toArabicNumerals(dealsSummaryQuery.data?.pipelineValue ?? 0)} ر.س
+                <SaudiRiyalAmount amount={dealsSummaryQuery.data?.pipelineValue ?? 0} />
               </li>
             </ul>
           </div>

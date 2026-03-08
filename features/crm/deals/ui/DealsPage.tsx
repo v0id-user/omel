@@ -13,6 +13,7 @@ import { authClient } from '@/lib/betterauth/auth-client';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { DealWithRelations } from '../types';
 import { DEAL_STAGES, DealStage, DealStatus } from '@/database/types/deal';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 import { toArabicNumerals } from '@/utils';
 import toast from 'react-hot-toast';
 
@@ -42,6 +43,10 @@ const stageColors: Record<string, string> = {
 };
 
 function formatCurrency(amount: string, currency: string) {
+  if (currency === 'SAR') {
+    return <SaudiRiyalAmount amount={amount} symbolSize={0.95} />;
+  }
+
   return new Intl.NumberFormat('ar-SA', {
     style: 'currency',
     currency,
@@ -564,7 +569,7 @@ export function DealsPage() {
                           </p>
                         </div>
                         <span className="text-xs font-medium text-gray-600">
-                          {formatCurrency(String(stageValue), 'SAR')}
+                          <SaudiRiyalAmount amount={stageValue} symbolSize={0.8} />
                         </span>
                       </div>
 
