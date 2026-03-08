@@ -63,6 +63,7 @@ describe('deals service', () => {
     const input = {
       title: 'صفقة جديدة',
       amount: '15000',
+      currency: 'SAR',
       ownerId: 'user-1',
     } as const;
 

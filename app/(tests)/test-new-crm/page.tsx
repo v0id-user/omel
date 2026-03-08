@@ -33,7 +33,7 @@ export default function TestNewCRM() {
     const randomCompany = companies[Math.floor(Math.random() * companies.length)];
     const randomCity = cities[Math.floor(Math.random() * cities.length)];
 
-    setNewCRM({
+    const randomCRMData: NewCRMUserInfo = {
       email: `user${Math.floor(Math.random() * 1000)}@gmail.com`,
       password: `Pass${Math.random().toString(36).slice(-8)}!`,
       personalInfo: {
@@ -47,7 +47,10 @@ export default function TestNewCRM() {
         address: `${Math.floor(Math.random() * 999) + 1} ${randomCity} St, ${randomCity}, Saudi Arabia`,
         size: '1-9',
       },
-    });
+    };
+
+    setNewCRM(randomCRMData);
+    return randomCRMData;
   };
 
   const router = useRouter();
@@ -62,8 +65,8 @@ export default function TestNewCRM() {
       <button
         className="bg-black cursor-pointer text-white p-2 rounded-md"
         onClick={async () => {
-          generateRandomData();
-          const result = await createCRM.mutateAsync(newCRM);
+          const randomCRMData = generateRandomData();
+          const result = await createCRM.mutateAsync(randomCRMData);
           console.log(result);
 
           // Set active organization

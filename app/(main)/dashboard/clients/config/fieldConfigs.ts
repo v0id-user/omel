@@ -31,11 +31,12 @@ export const contactInfoFields: FormFieldConfig[] = [
     name: 'phone',
     type: 'phone',
     label: 'رقم الهاتف',
+    isRequired: true,
     validator: value => {
-      if (value) {
-        return clientValidatePhoneInput(value);
+      if (!value) {
+        return 'رقم الهاتف مطلوب';
       }
-      return undefined;
+      return clientValidatePhoneInput(value);
     },
   },
   { name: 'address', label: 'العنوان' },

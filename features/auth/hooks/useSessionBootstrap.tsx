@@ -1,7 +1,7 @@
 'use client';
 
 import { authClient } from '@/lib/betterauth/auth-client';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserInfoStore } from '@/store/persist/userInfo';
 import { log } from '@/utils/logs';
@@ -35,6 +35,8 @@ export function clearAuthErrorCount() {
 
 export function useSessionBootstrap() {
   const router = useRouter();
+  const isBootstrappingRef = useRef(false);
+  const hasBootstrappedRef = useRef(false);
   const {
     data: myOrganization,
     error: myOrganizationError,
@@ -64,6 +66,10 @@ export function useSessionBootstrap() {
           message: 'Organization or session is pending',
         })
       );
+      return;
+    }
+
+    if (hasBootstrappedRef.current) {
       return;
     }
 
@@ -108,60 +114,69 @@ export function useSessionBootstrap() {
           data: { organizationId: myOrganization[0].id, organizationName: myOrganization[0].name },
         })
       );
-      const activeOrg = myOrganization[0];
+      const activeOrg =
+        myOrganization.find(org => org.id === mySession.session.activeOrganizationId) ??
+        myOrganization[0];
+
+      const finalizeBootstrap = () => {
+        if (!mySession?.user) {
+          console.log(
+            log({
+              component: 'clock-in',
+              message: 'Session user is null after bootstrap',
+            })
+          );
+          if (handleAuthError()) {
+            signOutAndRedirect();
+          }
+          return;
+        }
+
+        hasBootstrappedRef.current = true;
+        clearAuthErrorCount();
+        setUserInfo({
+          userId: mySession.user.id,
+          email: mySession.user.email,
+          personalInfo: {
+            firstName: mySession.user.name?.split(' ')[0] || '',
+            lastName: mySession.user.name?.split(' ').slice(1).join(' ') || '',
+            phone: mySession.user.phoneNumber || '',
+          },
+          companyInfo: {
+            name: activeOrg.name,
+          },
+          organizationInfo: {
+            companyInfo: {
+              name: activeOrg.name,
+            },
+            slug: activeOrg.slug,
+            id: activeOrg.id,
+          },
+        });
+        router.push('/dashboard');
+      };
+
+      if (mySession.session.activeOrganizationId === activeOrg.id) {
+        finalizeBootstrap();
+        return;
+      }
+
+      if (isBootstrappingRef.current) {
+        return;
+      }
+
+      isBootstrappingRef.current = true;
+
       authClient.organization
         .setActive({
           organizationId: activeOrg.id,
         })
         .then(() => {
-          if (!mySession?.user) {
-            console.log(
-              log({
-                component: 'clock-in',
-                message: 'Session user is null after setting active organization',
-              })
-            );
-            if (handleAuthError()) {
-              signOutAndRedirect();
-            }
-            return;
-          }
-
-          console.log(
-            log({
-              component: 'clock-in',
-              message: 'Saving user info to local store',
-              data: { userId: mySession.user.id, email: mySession.user.email },
-            })
-          );
-          setUserInfo({
-            userId: mySession.user.id,
-            email: mySession.user.email,
-            personalInfo: {
-              firstName: mySession.user.name?.split(' ')[0] || '',
-              lastName: mySession.user.name?.split(' ').slice(1).join(' ') || '',
-              phone: mySession.user.phoneNumber || '',
-            },
-            companyInfo: {
-              name: activeOrg.name,
-            },
-            organizationInfo: {
-              companyInfo: {
-                name: activeOrg.name,
-              },
-              slug: activeOrg.slug,
-              id: activeOrg.id,
-            },
-          });
-          console.log(
-            log({
-              component: 'clock-in',
-              message: 'Redirecting to dashboard',
-            })
-          );
-          router.push('/dashboard');
+          isBootstrappingRef.current = false;
+          finalizeBootstrap();
         })
         .catch(() => {
+          isBootstrappingRef.current = false;
           console.log(
             log({
               component: 'clock-in',

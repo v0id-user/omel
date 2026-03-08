@@ -169,17 +169,17 @@ export function TaskDialog({ isOpen, onClose }: TaskDialogProps) {
   useEffect(() => {
     if (organization?.members && !assignedUser) {
       const user = userInfo.getUserInfo();
-      if (user) {
-        const currentUserMember = organization.members.find(
-          member => member.userId === user.userId
-        );
-        if (currentUserMember) {
-          setAssignedUser({
-            id: currentUserMember.userId,
-            name: currentUserMember.user.name,
-            email: currentUserMember.user.email,
-          });
-        }
+      const currentUserMember = user
+        ? organization.members.find(member => member.userId === user.userId)
+        : undefined;
+      const fallbackMember = currentUserMember ?? organization.members[0];
+
+      if (fallbackMember) {
+        setAssignedUser({
+          id: fallbackMember.userId,
+          name: fallbackMember.user.name,
+          email: fallbackMember.user.email,
+        });
       }
     }
   }, [organization?.members, assignedUser, userInfo]);
