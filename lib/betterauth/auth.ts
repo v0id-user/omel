@@ -102,8 +102,8 @@ export const auth = betterAuth({
             client,
             // Enable automatic Polar Customer creation on signup
             createCustomerOnSignUp: true,
-            // Enable customer portal
-            use: [portal()], // Deployed under /portal for authenticated users
+            // Enable customer portal (deployed under /customer/portal)
+            use: [portal()],
 
             // webhooks: {
 
