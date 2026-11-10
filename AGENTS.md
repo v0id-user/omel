@@ -2,8 +2,8 @@
 
 ## Repository overview
 
-- Omel is a Bun-managed Next.js App Router project deployed to Vercel.
-- Core app stack in this repo: Next.js, React 19, TypeScript, tRPC, Better Auth, Neon, Drizzle, Trigger.dev, Sentry, PostHog, Tailwind CSS.
+- Omel is a Bun-managed Next.js App Router CRM. It runs locally against a project-local Postgres (`bun run db:local`).
+- Core app stack in this repo: Next.js, React 19, TypeScript, tRPC, Better Auth, Postgres (postgres-js), Drizzle, Trigger.dev, Sentry, PostHog, Tailwind CSS.
 - Use `bun` and `bunx` as the default toolchain unless the user explicitly asks for another tool.
 - There is no `src/` directory. Most application code lives at the repository root.
 
@@ -23,7 +23,7 @@
 - Before adding a dependency, check `bun.lock` and existing code for an already-approved package.
 - Prefer the existing stack over introducing alternatives:
   - auth: `better-auth`
-  - database: Neon + Drizzle
+  - database: Postgres + Drizzle (postgres-js driver)
   - API layer: tRPC
   - analytics/monitoring: PostHog + Sentry
   - AI SDK: `ai`
@@ -32,7 +32,7 @@
 ## Codebase map
 
 - `app/`: Next.js App Router routes and layouts.
-  - Route groups currently include `(landing)`, `(auth)`, `(main)`, `(legal)`, `(tests)`.
+  - Route groups currently include `(landing)`, `(auth)`, `(main)`, `(legal)`.
   - API handlers live under `app/api/`.
 - `components/`: shared UI and feature components.
   - Reuse `components/ui/*` and `components/omel/*` before creating new primitives.
@@ -59,7 +59,6 @@
 - Better Auth entrypoints/helpers live in `lib/betterauth/` and `app/api/auth/[...all]/route.ts`.
 - MDX is enabled in `next.config.ts`; legal/docs-style routes may use `.mdx`.
 - SVG imports are configured in `next.config.ts`; prefer the existing SVG import behavior instead of adding new loaders.
-- Dev-only test pages exist under `app/(tests)/` and are gated by `NEXT_PUBLIC_ENV === "dev"`.
 
 ## Environment variables commonly needed
 
@@ -69,7 +68,7 @@
 - `NEXT_PUBLIC_POSTHOG_KEY`
 - `NEXT_PUBLIC_POSTHOG_HOST`
 - `NEXT_PUBLIC_DEBUG`
-- `NEXT_PUBLIC_ENV=dev` for the gated test routes under `app/(tests)/`
+- `NEXT_PUBLIC_ENV=dev`
 - Some billing/auth flows may also depend on optional Polar env vars such as `POLAR_SANDBOX_KEY`
 
 ## Commands
@@ -85,7 +84,10 @@
 - Run backend tests: `bun run test:backend`
 - Run one Bun test file: `bun test __tests__/path/to/file.test.ts`
 - Run frontend tests: `bun run test:frontend`
-- Generate and apply Drizzle migrations: `bun run migration`
+- Start local Postgres: `bun run db:local`
+- Generate a migration: `bun run db:generate`
+- Apply migrations: `bun run db:migrate`
+- Seed a demo account: `bun run db:seed`
 - Run ad-hoc package CLIs: `bunx <package>`
 
 ## Testing expectations
@@ -100,7 +102,6 @@
 - For UI changes:
   - run the dev server with `bun dev`
   - manually verify the changed route in the browser
-  - use the existing `(tests)` routes if they are the fastest way to exercise the behavior
 - For pure logic, contracts, and validators, prefer targeted Bun tests in `__tests__/unit/`.
 - For services and router callers, prefer targeted Bun tests in `__tests__/integration/`.
 - For API routes and tRPC HTTP behavior, prefer targeted Bun tests in `__tests__/api/`.
@@ -108,12 +109,12 @@
 - Treat `__tests__/e2e/` as workflow-level coverage unless a real browser runner is introduced.
 - Do not run the entire repo test surface unless the user asks or the change truly spans many areas.
 
-## Cursor Cloud specific instructions
+## Security rules for CRM code
 
-- Before starting long-running dev servers, check whether one is already running.
-- Leave any dev server you started running when you finish so the user can continue from the same state.
-- If you make a perceptible UI change, capture a screenshot and a short demo video after testing.
-- If a required check fails because the environment is missing setup, document the exact blocker and the command/output that proved it.
+- Routers read the tenant from `ctx.organizationId`, which `protectedProcedure` sets only after checking the caller is still a member.
+- Every repository query, including updates and deletes, filters by `organizationId`.
+- Any id a client links to (contact, deal, task, owner, assignee) goes through `assertReferencesInOrganization` before it is written.
+- Never log passwords, phone numbers, emails or session data.
 
 ## Good defaults for future agents
 
