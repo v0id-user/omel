@@ -11,6 +11,7 @@ import {
 } from '../contracts';
 import { logCRMActivity } from '@/features/crm/activity/server/service';
 import * as repository from './repository';
+import { assertReferencesInOrganization } from '@/features/crm/shared/server/ownership';
 
 async function validateContactInput(input: { email?: string | null; phone?: string | null }) {
   if (!input.email || !input.phone) {
@@ -41,6 +42,7 @@ export async function createNewContact(
   input: CreateContactInput
 ) {
   await validateContactInput(input);
+  await assertReferencesInOrganization(organizationId, { memberIds: [input.ownerId] });
   const [result] = await repository.createContact(organizationId, createdBy, input);
 
   if (result?.id) {
@@ -60,11 +62,11 @@ export async function createNewContact(
 }
 
 export async function updateContact(
-  contactId: string,
+  organizationId: string,
   updatedBy: string,
   input: UpdateContactInput
 ) {
-  const { id, ...contactInput } = input;
+  const { id: contactId, ...contactInput } = input;
 
   if (contactInput.email || contactInput.phone) {
     await validateContactInput({
@@ -73,7 +75,13 @@ export async function updateContact(
     });
   }
 
-  const [result] = await repository.updateContact(contactId, updatedBy, contactInput);
+  await assertReferencesInOrganization(organizationId, { memberIds: [contactInput.ownerId] });
+  const [result] = await repository.updateContact(
+    organizationId,
+    contactId,
+    updatedBy,
+    contactInput
+  );
 
   if (result?.id) {
     await logCRMActivity({
@@ -81,7 +89,7 @@ export async function updateContact(
       targetId: result.id,
       targetType: 'contact',
       action: 'updated',
-      metadata: contactInput,
+      metadata: { fields: Object.keys(contactInput) },
     });
   }
 
@@ -122,11 +130,7 @@ export async function searchContacts(
   );
 }
 
-export async function deleteContact(
-  organizationId: string,
-  contactId: string,
-  deletedBy: string = organizationId
-) {
+export async function deleteContact(organizationId: string, contactId: string, deletedBy: string) {
   const [result] = await repository.deleteContact(organizationId, contactId);
 
   if (result?.id) {
@@ -144,7 +148,7 @@ export async function deleteContact(
 export async function deleteContactsByIds(
   organizationId: string,
   contactIds: string[],
-  deletedBy: string = organizationId
+  deletedBy: string
 ) {
   const results = await repository.deleteContactsByIds(organizationId, contactIds);
 

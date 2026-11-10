@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/select';
 import { allowedRegions } from '@/lib/countryCodes';
 import { toArabicNumerals, toEnglishNumerals } from '@/utils';
-import { log } from '@/utils/logs';
 
 // Custom FormInput for phone field to match Select height
 const PhoneFormInput = (props: React.ComponentProps<typeof AuthFormInput>) => {
@@ -262,7 +261,6 @@ export const PhoneField = () => {
       const phoneNumber = clientValidatePhoneInput(fullPhoneNumber);
 
       if (phoneNumber === undefined) {
-        console.log('(validateAndUpdatePhone) Phone number is valid', fullPhoneNumber);
         setUserInfo({
           ...userInfo,
           personalInfo: {
@@ -270,10 +268,8 @@ export const PhoneField = () => {
             phone: fullPhoneNumber,
           },
         });
-        console.log('Updated personalInfo', userInfo.personalInfo);
         return true;
       } else {
-        console.log('(validateAndUpdatePhone) Phone number is invalid', fullPhoneNumber);
         return false;
       }
     },
@@ -287,12 +283,6 @@ export const PhoneField = () => {
         onChange: ({ value }) => {
           const phoneNumber = clientValidatePhoneInput(value);
           if (phoneNumber !== undefined) {
-            console.log(
-              log({
-                component: 'PhoneField',
-                message: `Phone number was not vaild ${value}`,
-              })
-            );
             return 'رقم الهاتف غير صحيح';
           }
         },
@@ -313,12 +303,6 @@ export const PhoneField = () => {
                   // Values here depend on whatever in the value
                   const numberEn = toEnglishNumerals(number);
                   const cleanNumber = numberEn.replace(/[^\d]/g, '');
-                  console.log(
-                    log({
-                      component: 'PhoneField',
-                      message: `cleaned phone number ${cleanNumber}`,
-                    })
-                  );
                   setRawNumber(cleanNumber);
 
                   const fullPhoneNumber = `+${selectedDialCode}${cleanNumber}`;

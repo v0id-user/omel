@@ -15,6 +15,11 @@ mock.module('@/features/crm/interactions/server/repository', () => ({
   deleteInteraction: mockDeleteInteraction,
 }));
 
+mock.module('@/features/crm/shared/server/ownership', () => ({
+  assertReferencesInOrganization: mock(() => Promise.resolve()),
+  getMemberRole: mock(() => Promise.resolve('owner')),
+}));
+
 mock.module('@/features/crm/activity/server/service', () => ({
   logCRMActivity: mockLogCRMActivity,
 }));
@@ -57,13 +62,12 @@ describe('interactions service', () => {
   });
 
   it('updates an interaction and logs activity', async () => {
-    await service.updateInteraction('interaction-1', 'user-1', {
+    await service.updateInteraction('org-1', 'user-1', {
       id: 'interaction-1',
       content: 'تم تحديث التفاعل',
     });
 
-    expect(mockUpdateInteraction).toHaveBeenCalledWith('interaction-1', 'user-1', {
-      id: 'interaction-1',
+    expect(mockUpdateInteraction).toHaveBeenCalledWith('org-1', 'interaction-1', 'user-1', {
       content: 'تم تحديث التفاعل',
     });
     expect(mockLogCRMActivity).toHaveBeenCalledTimes(1);

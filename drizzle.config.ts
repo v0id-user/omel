@@ -1,4 +1,6 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
+config({ path: ['.env.local', '.env'], quiet: true });
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
@@ -11,5 +13,4 @@ export default defineConfig({
   schemaFilter: ['public'],
   strict: false,
   verbose: true,
-  tablesFilter: ['customers', 'contacts', 'interactions', 'deals', 'tasks'],
 });

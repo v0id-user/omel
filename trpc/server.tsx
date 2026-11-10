@@ -10,7 +10,7 @@ export const getQueryClient = cache(makeQueryClient);
 
 // Cache the context creation to ensure consistent context during SSR
 export const getContext = cache(async () => {
-  return createTRPCContext();
+  return createTRPCContext({ resHeaders: new Headers() });
 });
 
 const caller = createCallerFactory(appRouter)(async () => {

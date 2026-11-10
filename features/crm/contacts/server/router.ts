@@ -13,59 +13,38 @@ import * as service from './service';
 
 export const contactRouter = createTRPCRouter({
   new: protectedProcedure.input(createContactInputSchema).mutation(async ({ ctx, input }) => {
-    return service.createNewContact(
-      ctx.session.session.activeOrganizationId!,
-      ctx.session.user.id,
-      input
-    );
+    return service.createNewContact(ctx.organizationId, ctx.session.user.id, input);
   }),
 
   update: protectedProcedure.input(updateContactInputSchema).mutation(async ({ ctx, input }) => {
-    return service.updateContact(input.id, ctx.session.user.id, input);
+    return service.updateContact(ctx.organizationId, ctx.session.user.id, input);
   }),
 
   getByPage: protectedProcedure.input(contactPageInputSchema).query(async ({ ctx, input }) => {
-    return service.getContactsByPage(
-      ctx.session.session.activeOrganizationId!,
-      input.page,
-      input.limit
-    );
+    return service.getContactsByPage(ctx.organizationId, input.page, input.limit);
   }),
 
   getBulk: protectedProcedure.input(bulkContactsInputSchema).query(async ({ ctx, input }) => {
-    return service.getBulkContacts(ctx.session.session.activeOrganizationId!, input.limit);
+    return service.getBulkContacts(ctx.organizationId, input.limit);
   }),
 
   search: protectedProcedure.input(searchContactsInputSchema).query(async ({ ctx, input }) => {
-    return service.searchContacts(
-      ctx.session.session.activeOrganizationId!,
-      input.searchTerm,
-      input.page,
-      input.limit
-    );
+    return service.searchContacts(ctx.organizationId, input.searchTerm, input.page, input.limit);
   }),
 
   getByIds: protectedProcedure.input(contactIdsInputSchema).query(async ({ ctx, input }) => {
-    return service.getContactsByIds(ctx.session.session.activeOrganizationId!, input.ids);
+    return service.getContactsByIds(ctx.organizationId, input.ids);
   }),
 
   delete: protectedProcedure.input(contactDeleteInputSchema).mutation(async ({ ctx, input }) => {
-    return service.deleteContact(
-      ctx.session.session.activeOrganizationId!,
-      input.id,
-      ctx.session.user.id
-    );
+    return service.deleteContact(ctx.organizationId, input.id, ctx.session.user.id);
   }),
 
   deleteMany: protectedProcedure.input(contactIdsInputSchema).mutation(async ({ ctx, input }) => {
-    return service.deleteContactsByIds(
-      ctx.session.session.activeOrganizationId!,
-      input.ids,
-      ctx.session.user.id
-    );
+    return service.deleteContactsByIds(ctx.organizationId, input.ids, ctx.session.user.id);
   }),
 
   pages: protectedProcedure.input(contactPagesInputSchema).query(async ({ ctx, input }) => {
-    return service.getTotalContactPages(ctx.session.session.activeOrganizationId!, input.length);
+    return service.getTotalContactPages(ctx.organizationId, input.length);
   }),
 });

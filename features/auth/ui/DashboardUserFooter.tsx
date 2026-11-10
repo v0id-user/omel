@@ -23,6 +23,7 @@ import {
   MoreVerticalIcon,
   UserCircleIcon,
 } from 'lucide-react';
+import { useUserInfoStore } from '@/store/persist/userInfo';
 import { authClient } from '@/lib/betterauth/auth-client';
 
 const menuItems = {
@@ -54,8 +55,8 @@ const menuItems = {
       icon: LogOutIcon,
       label: 'تسجيل الخروج',
       onClick: async () => {
-        console.log('Handle logout');
         await authClient.signOut();
+        useUserInfoStore.persist.clearStorage();
         window.location.href = '/sign-in';
       },
     },

@@ -14,7 +14,6 @@ import { trpc } from '@/trpc/client';
 import { Spinner } from '@/components/omel/Spinner';
 import { toast } from 'react-hot-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { log } from '@/utils/logs';
 
 export default function ContactsPage() {
   const router = useRouter();
@@ -112,20 +111,8 @@ export default function ContactsPage() {
   }, [clientsError]);
 
   const handleEdit = (ids: string[]) => {
-    console.log(
-      log({
-        component: 'ClientsPage',
-        message: 'handleEdit called with ids:' + ids,
-      })
-    );
     setSelectedContactIds(ids);
     setEditDialogOpen(true);
-    console.log(
-      log({
-        component: 'ClientsPage',
-        message: 'Edit dialog should be open now',
-      })
-    );
   };
 
   const handleDelete = (ids: string[]) => {

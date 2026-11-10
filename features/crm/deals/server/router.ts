@@ -19,30 +19,30 @@ import {
 
 export const dealRouter = createTRPCRouter({
   list: protectedProcedure.input(listDealsInputSchema.optional()).query(async ({ ctx, input }) => {
-    return listDealsForOrganization(ctx.session.session.activeOrganizationId!, input ?? {});
+    return listDealsForOrganization(ctx.organizationId, input ?? {});
   }),
 
   summary: protectedProcedure.query(async ({ ctx }) => {
-    return getDealSummary(ctx.session.session.activeOrganizationId!);
+    return getDealSummary(ctx.organizationId);
   }),
 
   getById: protectedProcedure.input(dealByIdInputSchema).query(async ({ ctx, input }) => {
-    return getDealById(ctx.session.session.activeOrganizationId!, input.id);
+    return getDealById(ctx.organizationId, input.id);
   }),
 
   getByContact: protectedProcedure.input(dealByContactInputSchema).query(async ({ ctx, input }) => {
-    return getDealsByContactId(ctx.session.session.activeOrganizationId!, input.contactId);
+    return getDealsByContactId(ctx.organizationId, input.contactId);
   }),
 
   new: protectedProcedure.input(createDealInputSchema).mutation(async ({ ctx, input }) => {
-    return createNewDeal(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input);
+    return createNewDeal(ctx.organizationId, ctx.session.user.id, input);
   }),
 
   update: protectedProcedure.input(updateDealInputSchema).mutation(async ({ ctx, input }) => {
-    return updateDeal(input.id, ctx.session.user.id, input);
+    return updateDeal(ctx.organizationId, ctx.session.user.id, input);
   }),
 
   delete: protectedProcedure.input(dealDeleteInputSchema).mutation(async ({ ctx, input }) => {
-    return deleteDeal(ctx.session.session.activeOrganizationId!, ctx.session.user.id, input.id);
+    return deleteDeal(ctx.organizationId, ctx.session.user.id, input.id);
   }),
 });

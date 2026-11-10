@@ -18,37 +18,26 @@ export const interactionRouter = createTRPCRouter({
   list: protectedProcedure
     .input(listInteractionsInputSchema.optional())
     .query(async ({ ctx, input }) => {
-      return listInteractionsForOrganization(
-        ctx.session.session.activeOrganizationId!,
-        input ?? {}
-      );
+      return listInteractionsForOrganization(ctx.organizationId, input ?? {});
     }),
 
   getById: protectedProcedure.input(interactionByIdInputSchema).query(async ({ ctx, input }) => {
-    return getInteractionById(ctx.session.session.activeOrganizationId!, input.id);
+    return getInteractionById(ctx.organizationId, input.id);
   }),
 
   new: protectedProcedure.input(createInteractionInputSchema).mutation(async ({ ctx, input }) => {
-    return createNewInteraction(
-      ctx.session.session.activeOrganizationId!,
-      ctx.session.user.id,
-      input
-    );
+    return createNewInteraction(ctx.organizationId, ctx.session.user.id, input);
   }),
 
   update: protectedProcedure
     .input(updateInteractionInputSchema)
     .mutation(async ({ ctx, input }) => {
-      return updateInteraction(input.id, ctx.session.user.id, input);
+      return updateInteraction(ctx.organizationId, ctx.session.user.id, input);
     }),
 
   delete: protectedProcedure
     .input(interactionDeleteInputSchema)
     .mutation(async ({ ctx, input }) => {
-      return deleteInteraction(
-        ctx.session.session.activeOrganizationId!,
-        ctx.session.user.id,
-        input.id
-      );
+      return deleteInteraction(ctx.organizationId, ctx.session.user.id, input.id);
     }),
 });

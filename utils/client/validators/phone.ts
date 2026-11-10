@@ -1,4 +1,3 @@
-import { log } from '@/utils/logs';
 import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 
 const ALLOWED_COUNTRIES = [
@@ -23,8 +22,6 @@ const ALLOWED_COUNTRIES = [
 ];
 
 function clientValidatePhoneInput(phone: string) {
-  console.log('Validating phone number:', phone);
-
   if (!phone) {
     return 'يجب إدخال رقم الهاتف';
   }
@@ -36,12 +33,6 @@ function clientValidatePhoneInput(phone: string) {
 
   try {
     const phoneNumber = parsePhoneNumberFromString(phone);
-    console.log(
-      log({
-        component: 'clientValidatePhoneInput',
-        message: `Parsed phone number: ${phoneNumber} Passed phone number: ${phone}`,
-      })
-    );
 
     if (!phoneNumber) {
       return 'رقم الهاتف يبدو غير صحيحا';
@@ -52,22 +43,13 @@ function clientValidatePhoneInput(phone: string) {
     const country = phoneNumber.country;
     const isAllowedCountry = country && ALLOWED_COUNTRIES.includes(country);
 
-    console.log('Phone validation results:', {
-      isValid,
-      country,
-      isAllowedCountry,
-    });
-
     if (isValid && country && isAllowedCountry) {
-      console.log('Phone number is valid', phone, phoneNumber);
       return undefined;
     }
-    console.log('Phone number is invalid', phone, phoneNumber);
   } catch (error) {
     console.error('Phone validation error:', error);
   }
 
-  console.log('Phone number is invalid', phone);
   return 'يجب إدخال رقم الهاتف بشكل صالح';
 }
 

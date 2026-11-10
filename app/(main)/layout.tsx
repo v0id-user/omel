@@ -15,8 +15,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <SidebarProvider>
       <ClientDashBoard />
-      <SidebarInset>
-        <main className="flex-1 overflow-y-auto">
+      <SidebarInset className="min-w-0">
+        <main className="min-w-0 flex-1 overflow-y-auto">
           <DashboardBreadcrumb />
           <HydrateClient>{children}</HydrateClient>
         </main>

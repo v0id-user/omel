@@ -1,5 +1,9 @@
 import { TRPCError } from '@trpc/server';
+import { eq } from 'drizzle-orm';
+import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/lib/betterauth/auth';
+import { db } from '@/database/db';
+import { users } from '@/database/schemas/auth-schema';
 import { validateEmail } from '@/utils/emails';
 import { validatePhoneArab } from '@/utils/phone';
 import { sendEmail, EmailTemplate } from '@/trigger/sendEmail';
@@ -118,19 +122,14 @@ function determineOrganizationName(input: NewCRMUserInfoInput) {
 }
 
 function generateSlug(value: string) {
-  const slug = value
+  const latinPart = value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
 
-  if (!slug) {
-    throw new TRPCError({
-      code: 'BAD_REQUEST',
-      message: 'اسم المؤسسة غير صالح',
-    });
-  }
-
-  return slug;
+  // Arabic names have no Latin characters, so every slug gets a short unique suffix.
+  return `${latinPart || 'org'}-${createId().slice(0, 8)}`;
 }
 
 async function createUser(input: NewCRMUserInfoInput, name: string) {
@@ -171,15 +170,8 @@ async function createUser(input: NewCRMUserInfoInput, name: string) {
   }
 }
 
-async function deleteUser(token: string, password: string) {
-  try {
-    await auth.api.deleteUser({
-      body: {
-        password,
-        ...(token ? { token } : {}),
-      },
-    });
-  } catch {}
+async function deleteUser(userId: string) {
+  await db.delete(users).where(eq(users.id, userId));
 }
 
 function createOrganizationMetadata(
@@ -243,24 +235,10 @@ export async function createNewCRM(input: NewCRMUserInfoInput): Promise<CRMCreat
     await validateUserInput(input);
 
     const { organizationName, fullName } = determineOrganizationName(input);
-    const { user, token, headers: signUpHeaders } = await createUser(input, fullName);
+    const organizationSlug = generateSlug(organizationName);
+    const { user, headers: signUpHeaders } = await createUser(input, fullName);
 
     try {
-      const organizationSlug = generateSlug(organizationName);
-      const slugAvailable = await auth.api.checkOrganizationSlug({
-        body: {
-          slug: organizationSlug,
-        },
-      });
-
-      if (!slugAvailable) {
-        await deleteUser(token, input.password);
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Organization name already taken',
-        });
-      }
-
       const metadata = createOrganizationMetadata(input, user.id);
       const { organizationId, headers: organizationHeaders } = await createOrganization(
         organizationName,
@@ -286,7 +264,7 @@ export async function createNewCRM(input: NewCRMUserInfoInput): Promise<CRMCreat
         headers: toHeadersObject(signUpHeaders, organizationHeaders),
       };
     } catch (error) {
-      await deleteUser(token, input.password);
+      await deleteUser(user.id);
       toUnexpectedTRPCError(error, 'فشل في إنشاء حساب جديد');
     }
   } catch (error) {

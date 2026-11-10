@@ -31,10 +31,7 @@ function useProcessForm() {
           buttonText: 'التحقق من البريد الإلكتروني...',
         });
 
-        console.log(userInfo);
-
         const isValid = await validator(ValidationType.Email, userInfo.email);
-        console.log(isValid);
 
         if (!isValid) {
           setFormState({
@@ -59,7 +56,6 @@ function useProcessForm() {
       },
 
       [FormStep.AskForPersonalInfo]: async () => {
-        console.log(userInfo.personalInfo);
         setFormState({
           buttonText: 'التحقق من رقم الهاتف...',
         });
@@ -78,10 +74,8 @@ function useProcessForm() {
           toast.error('رقم الهاتف غير صالح');
           return false;
         }
-        console.log('Phone number', userInfo.personalInfo.phone);
         const isValidPhone = await validator(ValidationType.Phone, userInfo.personalInfo.phone);
         if (!isValidPhone) {
-          console.log(isValidPhone, 'validator says not valid');
           setFormState({
             buttonText: 'استمر',
           });
@@ -95,7 +89,6 @@ function useProcessForm() {
       },
 
       [FormStep.AskForCompanyInfo]: async () => {
-        console.log(userInfo);
         if (!userInfo.companyInfo.name) {
           toast.error('اسم الشركة مطلوب');
           return false;
@@ -130,7 +123,6 @@ function useProcessForm() {
             buttonText: 'يتم إنشاء تجربتك...',
           });
           const createCRMResponse = await createCRMRpc.mutateAsync(userInfo);
-          console.log('CRM created successfully:', createCRMResponse);
 
           const data = await authClient.organization.setActive({
             organizationId: createCRMResponse.organizationId,
@@ -182,19 +174,11 @@ function useProcessForm() {
       },
     };
 
-    if (
-      process.env.NEXT_PUBLIC_ENV === 'dev' &&
-      process.env.NEXT_PUBLIC_SIGNUP_DEV_BYPASS === 'true'
-    ) {
-      setFormStep(formStep + 1);
-      return true;
-    }
     const formProcessor = processes[formStep];
     const canProcess = await formProcessor();
     if (!canProcess) return;
 
     setFormStep(formStep + 1);
-    console.log('Form step', formStep);
   };
 
   return { processStep, isLoading };

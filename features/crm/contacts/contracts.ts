@@ -1,16 +1,18 @@
 import { z } from 'zod';
 import { CONTACT_SOURCES, CONTACT_STATUSES, CONTACT_TYPES } from '@/database/types/contacts';
 
-const optionalStringSchema = z.string().optional().nullable();
+const optionalStringSchema = z.string().max(2000).optional().nullable();
+const idSchema = z.string().min(1).max(64);
+const tagsSchema = z.array(z.string().max(50)).max(20).optional().nullable();
 
 export const contactTypeSchema = z.enum(CONTACT_TYPES);
 export const contactStatusSchema = z.enum(CONTACT_STATUSES);
 export const contactSourceSchema = z.enum(CONTACT_SOURCES);
 
 export const createContactInputSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().min(1),
-  phone: z.string().min(1),
+  name: z.string().min(1).max(200),
+  email: z.string().min(1).max(254),
+  phone: z.string().min(1).max(32),
   address: optionalStringSchema,
   city: optionalStringSchema,
   region: optionalStringSchema,
@@ -18,22 +20,22 @@ export const createContactInputSchema = z.object({
   postalCode: optionalStringSchema,
   contactType: contactTypeSchema.optional(),
   domain: optionalStringSchema,
-  additionalPhones: z.array(z.string()).optional().nullable(),
+  additionalPhones: z.array(z.string().max(32)).max(10).optional().nullable(),
   taxId: optionalStringSchema,
   businessType: optionalStringSchema,
   employees: optionalStringSchema,
   status: contactStatusSchema.optional(),
   source: contactSourceSchema.optional(),
   ownerId: optionalStringSchema,
-  tags: z.array(z.string()).optional().nullable(),
+  tags: tagsSchema,
   notes: optionalStringSchema,
   lastContactedAt: z.date().optional().nullable(),
   nextFollowUpAt: z.date().optional().nullable(),
 });
 
 export const updateContactInputSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
+  id: idSchema,
+  name: z.string().min(1).max(200),
   email: optionalStringSchema,
   phone: optionalStringSchema,
   address: optionalStringSchema,
@@ -43,14 +45,14 @@ export const updateContactInputSchema = z.object({
   postalCode: optionalStringSchema,
   contactType: contactTypeSchema.optional().nullable(),
   domain: optionalStringSchema,
-  additionalPhones: z.array(z.string()).optional().nullable(),
+  additionalPhones: z.array(z.string().max(32)).max(10).optional().nullable(),
   taxId: optionalStringSchema,
   businessType: optionalStringSchema,
   employees: optionalStringSchema,
   status: contactStatusSchema.optional(),
   source: contactSourceSchema.optional(),
   ownerId: optionalStringSchema,
-  tags: z.array(z.string()).optional().nullable(),
+  tags: tagsSchema,
   notes: optionalStringSchema,
   lastContactedAt: z.date().optional().nullable(),
   nextFollowUpAt: z.date().optional().nullable(),
@@ -66,7 +68,7 @@ export const contactPageInputSchema = z.object({
 });
 
 export const contactIdsInputSchema = z.object({
-  ids: z.array(z.string()).min(1).max(50),
+  ids: z.array(idSchema).min(1).max(50),
 });
 
 export const contactDeleteInputSchema = z.object({
@@ -78,7 +80,7 @@ export const bulkContactsInputSchema = z.object({
 });
 
 export const searchContactsInputSchema = z.object({
-  searchTerm: z.string().min(1).trim(),
+  searchTerm: z.string().trim().min(1).max(100),
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
 });

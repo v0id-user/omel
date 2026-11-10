@@ -71,6 +71,10 @@ export const auth = betterAuth({
     },
   },
   secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+  trustedOrigins: process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : [],
+  // Accounts are created through crm.new.create, which validates input and creates the organization.
+  disabledPaths: ['/sign-up/email'],
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
@@ -82,8 +86,7 @@ export const auth = betterAuth({
     window: 100,
     storage: 'database',
     customRules: {
-      '/two-factor/*': async request => {
-        console.log('Two factor request:', request);
+      '/two-factor/*': async () => {
         return {
           window: 10,
           max: 3,

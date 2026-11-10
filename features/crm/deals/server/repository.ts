@@ -107,7 +107,12 @@ export async function createDeal(
     .returning({ id: deals.id });
 }
 
-export async function updateDeal(dealId: string, updatedBy: string, input: UpdateDealInput) {
+export async function updateDeal(
+  organizationId: string,
+  dealId: string,
+  updatedBy: string,
+  input: Omit<UpdateDealInput, 'id'>
+) {
   return db
     .update(deals)
     .set({
@@ -121,7 +126,9 @@ export async function updateDeal(dealId: string, updatedBy: string, input: Updat
       updatedBy,
       updatedAt: new Date(),
     })
-    .where(and(eq(deals.id, dealId), isNull(deals.deletedAt)))
+    .where(
+      and(eq(deals.organizationId, organizationId), eq(deals.id, dealId), isNull(deals.deletedAt))
+    )
     .returning({ id: deals.id });
 }
 

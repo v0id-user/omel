@@ -137,7 +137,7 @@ Omel treats a change as ready when it passes:
 4. frontend regression tests
 5. production build
 
-Deployment should happen only after CI succeeds. For this repo, the deployment target is Vercel.
+Deployment should happen only after CI succeeds.
 
 ## Commands
 
