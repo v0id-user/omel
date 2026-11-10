@@ -1,5 +1,5 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import {
   isNull,
   SQL,
@@ -14,8 +14,8 @@ import {
   asc,
 } from 'drizzle-orm';
 
-const sql = neon(process.env.DATABASE_URL!);
-const baseDb = drizzle({ client: sql });
+const client = postgres(process.env.DATABASE_URL!, { prepare: false });
+const baseDb = drizzle({ client });
 
 // Util to drop the "deletedAt" field from the inferred model (if it exists)
 type RemoveDeletedAt<T> = T extends { deletedAt?: unknown } ? Omit<T, 'deletedAt'> : T;
