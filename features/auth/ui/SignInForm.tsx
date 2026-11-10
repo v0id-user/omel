@@ -11,7 +11,6 @@ import { FormStep } from '@/enums/auth';
 import { useClientValidations, ValidationType } from '@/hooks/validators';
 import { authClient } from '@/lib/betterauth/auth-client';
 import { mapSignInErrorToArabic } from '@/lib/betterauth/auth-errors';
-import { log } from '@/utils/logs';
 import { EmailField, PasswordField } from './AuthFields';
 
 export default function SignInForm() {
@@ -60,22 +59,6 @@ export default function SignInForm() {
         email: userInfo.email,
         password: userInfo.password,
       });
-
-      console.log(
-        log({
-          component: 'sign-in',
-          message: 'signInResponse',
-          data: signInResponse,
-        })
-      );
-
-      console.log(
-        log({
-          component: 'sign-in',
-          message: 'signInError',
-          data: signInError,
-        })
-      );
 
       if (signInError) {
         toast.error(mapSignInErrorToArabic(signInError));

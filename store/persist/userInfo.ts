@@ -87,7 +87,6 @@ const clearCorruptedStorage = () => {
     const value = localStorage.getItem(userInfoKey);
     if (value && !value.startsWith(MAGIC_MARKER) && !value.startsWith('{')) {
       localStorage.removeItem(userInfoKey);
-      console.log('Cleared corrupted storage');
     }
   } catch {}
 };

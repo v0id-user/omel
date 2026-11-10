@@ -16,7 +16,6 @@ import { CompanyDetailsStep } from './forms/CompanyDetailsStep';
 import { CompletionStep } from './forms/CompletionStep';
 import { trpc } from '@/trpc/client';
 import { companyFields } from './config/fieldConfigs';
-import { log } from '@/utils/logs';
 import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/unstable-core-do-not-import';
 import { useList } from 'react-use';
 
@@ -51,24 +50,12 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   const { mutate: createContact, isPending } = trpc.crm.dashboard.contact.new.useMutation({
     onSuccess: () => {
-      console.log(
-        log({
-          component: 'AddClientsDialog',
-          message: 'Contact created successfully',
-        })
-      );
       toast.success('تم إضافة العميل بنجاح');
       // re fetch data
       utils.crm.dashboard.contact.invalidate();
       onClose();
     },
     onError: error => {
-      console.log(
-        log({
-          component: 'AddClientsDialog',
-          message: `Contact creation failed: ${error.message}`,
-        })
-      );
       console.error(error);
       switch (error.data?.code) {
         case 'BAD_REQUEST':
@@ -101,12 +88,6 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
       }
     },
     retry: (failureCount, error) => {
-      console.log(
-        log({
-          component: 'trpc.crm.dashboard.contact.new.useMutation',
-          message: `got an error ${error}`,
-        })
-      );
       if (
         error.data?.code === 'BAD_REQUEST' ||
         error.shape?.code === TRPC_ERROR_CODES_BY_KEY.BAD_REQUEST
@@ -122,13 +103,6 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Handle input changes
   const handleChange = (field: string, value: string) => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Field changed: ${field} = ${value}`,
-      })
-    );
-
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       if (parent === 'companyFields' && clientData.companyFields) {
@@ -158,13 +132,6 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Handle client type selection
   const handleClientTypeChange = (type: ClientType) => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Client type changed to: ${type}`,
-      })
-    );
-
     setClientData({
       ...clientData,
       clientType: type,
@@ -178,49 +145,21 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
 
   // Add additional phone for company
   const handleAddPhone = () => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: 'Adding additional phone field',
-      })
-    );
-
     pushPhone('');
   };
 
   // Remove an additional phone
   const handleRemovePhone = (index: number) => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Removing phone at index: ${index}`,
-      })
-    );
-
     removePhoneAt(index);
   };
 
   // Handle phone input change for additional phones
   const handlePhoneChange = (index: number, value: string) => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Additional phone changed at index ${index}: ${value}`,
-      })
-    );
-
     updatePhoneAt(index, value);
   };
 
   // Validate the current step
   const validateStep = (): boolean => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Validating step: ${currentStep}`,
-      })
-    );
-
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 'basicInfo') {
@@ -266,25 +205,11 @@ export function AddClientsDialog({ isOpen, onClose }: ClientsDialogProps) {
     setErrors(newErrors);
     const isValid = Object.keys(newErrors).length === 0;
 
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Step validation result: ${isValid ? 'valid' : 'invalid'}`,
-      })
-    );
-
     return isValid;
   };
 
   // Move to the next step
   const nextStep = () => {
-    console.log(
-      log({
-        component: 'AddClientsDialog',
-        message: `Moving to next step from: ${currentStep}`,
-      })
-    );
-
     if (!validateStep()) return;
 
     if (currentStep === 'type') {
