@@ -1,9 +1,9 @@
 import { auth } from '@/lib/betterauth/auth';
-import { ratelimit } from '@/lib/ratelimt';
+import { publicRatelimit, ratelimit } from '@/lib/ratelimt';
+import { getMemberRole } from '@/features/crm/shared/server/ownership';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
-import { cache } from 'react';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import superjson from 'superjson';
 
@@ -27,10 +27,16 @@ export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
 
   return {
     session,
+    clientIp: getClientIp(requestHeaders),
     req: opts.req,
     resHeaders: opts.resHeaders,
   };
 };
+
+function getClientIp(requestHeaders: Headers) {
+  const forwardedFor = requestHeaders.get('x-forwarded-for');
+  return forwardedFor?.split(',')[0]?.trim() || requestHeaders.get('x-real-ip') || 'unknown';
+}
 
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;
 
@@ -43,6 +49,13 @@ const t = initTRPC.context<TRPCContext>().create({
    * @see https://trpc.io/docs/server/data-transformers
    */
   transformer: superjson,
+  errorFormatter({ shape, error }) {
+    // Unexpected server errors can carry SQL and driver details; keep those in the logs only.
+    if (process.env.NODE_ENV === 'production' && error.code === 'INTERNAL_SERVER_ERROR') {
+      return { ...shape, message: 'حدث خطأ غير متوقع' };
+    }
+    return shape;
+  },
 });
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;
@@ -52,6 +65,14 @@ export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'لا يوجد رؤوس الاستجابة',
+    });
+  }
+
+  const { success: passedRatelimit } = await publicRatelimit.limit(ctx.clientIp);
+  if (!passedRatelimit) {
+    throw new TRPCError({
+      code: 'TOO_MANY_REQUESTS',
+      message: 'لقد قمت بإرسال طلبات كثيرة جدًا. يرجى المحاولة مرة أخرى لاحقًا.',
     });
   }
 
@@ -66,10 +87,20 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     });
   }
 
-  if (!ctx.session.session.activeOrganizationId) {
+  const organizationId = ctx.session.session.activeOrganizationId;
+  if (!organizationId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'لا يوجد مؤسسة مفعلة',
+    });
+  }
+
+  // The session keeps its active organization after a member is removed, so check membership on every call.
+  const memberRole = await getMemberRole(organizationId, ctx.session.user.id);
+  if (!memberRole) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'لست عضوًا في هذه المؤسسة',
     });
   }
 
@@ -82,5 +113,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     });
   }
 
-  return next({ ctx: { ...ctx, session: ctx.session } });
+  return next({
+    ctx: { ...ctx, session: ctx.session, organizationId, memberRole },
+  });
 });

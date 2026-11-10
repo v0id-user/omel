@@ -6,6 +6,7 @@ import {
   listInteractionsInputSchema,
 } from '../contracts';
 import * as repository from './repository';
+import { assertReferencesInOrganization } from '@/features/crm/shared/server/ownership';
 
 export async function listInteractionsForOrganization(
   organizationId: string,
@@ -24,6 +25,11 @@ export async function createNewInteraction(
   createdBy: string,
   input: CreateInteractionInput
 ) {
+  await assertReferencesInOrganization(organizationId, {
+    contactIds: [input.contactId],
+    dealIds: [input.dealId],
+    taskIds: [input.taskId],
+  });
   const [result] = await repository.createInteraction(organizationId, createdBy, input);
 
   if (result?.id) {
@@ -44,11 +50,22 @@ export async function createNewInteraction(
 }
 
 export async function updateInteraction(
-  interactionId: string,
+  organizationId: string,
   updatedBy: string,
   input: UpdateInteractionInput
 ) {
-  const [result] = await repository.updateInteraction(interactionId, updatedBy, input);
+  const { id: interactionId, ...interactionInput } = input;
+  await assertReferencesInOrganization(organizationId, {
+    contactIds: [interactionInput.contactId],
+    dealIds: [interactionInput.dealId],
+    taskIds: [interactionInput.taskId],
+  });
+  const [result] = await repository.updateInteraction(
+    organizationId,
+    interactionId,
+    updatedBy,
+    interactionInput
+  );
 
   if (result?.id) {
     await logCRMActivity({
@@ -56,7 +73,7 @@ export async function updateInteraction(
       targetId: result.id,
       targetType: 'interaction',
       action: 'updated',
-      metadata: input,
+      metadata: { fields: Object.keys(interactionInput) },
     });
   }
 

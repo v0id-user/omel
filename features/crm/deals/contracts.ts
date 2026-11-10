@@ -1,23 +1,25 @@
 import { z } from 'zod';
 import { DEAL_STAGES, DEAL_STATUSES } from '@/database/types/deal';
 
-const optionalStringSchema = z.string().optional().nullable();
+const optionalStringSchema = z.string().max(2000).optional().nullable();
+const idSchema = z.string().min(1).max(64);
+const tagsSchema = z.array(z.string().max(50)).max(20).optional().nullable();
 
 export const dealStageSchema = z.enum(DEAL_STAGES);
 export const dealStatusSchema = z.enum(DEAL_STATUSES);
 
 export const createDealInputSchema = z.object({
-  title: z.string().min(1),
+  title: z.string().min(1).max(200),
   description: optionalStringSchema,
-  amount: z.string().min(1),
+  amount: z.string().regex(/^\d{1,13}(\.\d{1,2})?$/),
   currency: z.string().min(1).max(8).default('SAR'),
   stage: dealStageSchema.optional(),
   status: dealStatusSchema.optional(),
   probability: z.number().min(0).max(100).optional(),
   expectedCloseDate: z.date().optional().nullable(),
   contactId: optionalStringSchema,
-  ownerId: z.string().min(1),
-  tags: z.array(z.string()).optional().nullable(),
+  ownerId: idSchema,
+  tags: tagsSchema,
 });
 
 export const updateDealInputSchema = createDealInputSchema.partial().extend({
@@ -33,7 +35,7 @@ export const listDealsInputSchema = z.object({
   status: dealStatusSchema.optional(),
   ownerId: z.string().min(1).optional(),
   contactId: z.string().min(1).optional(),
-  search: z.string().trim().optional(),
+  search: z.string().trim().max(100).optional(),
   limit: z.number().min(1).max(100).default(100),
 });
 

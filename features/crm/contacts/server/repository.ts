@@ -52,6 +52,7 @@ export async function createContact(
 }
 
 export async function updateContact(
+  organizationId: string,
   contactId: string,
   updatedBy: string,
   input: Omit<UpdateContactInput, 'id'>
@@ -59,7 +60,13 @@ export async function updateContact(
   return db
     .update(contacts)
     .set({ ...input, updatedBy, updatedAt: new Date() })
-    .where(and(eq(contacts.id, contactId), isNull(contacts.deletedAt)))
+    .where(
+      and(
+        eq(contacts.organizationId, organizationId),
+        eq(contacts.id, contactId),
+        isNull(contacts.deletedAt)
+      )
+    )
     .returning({ id: contacts.id });
 }
 

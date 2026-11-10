@@ -46,6 +46,11 @@ mock.module('@/utils/phone/validate', () => ({
   validatePhoneArab: mock(() => true),
 }));
 
+mock.module('@/features/crm/shared/server/ownership', () => ({
+  assertReferencesInOrganization: mock(() => Promise.resolve()),
+  getMemberRole: mock(() => Promise.resolve('owner')),
+}));
+
 mock.module('@/features/crm/activity/server/service', () => ({
   logCRMActivity: mockLogCRMActivity,
 }));
@@ -161,7 +166,7 @@ describe('contacts service', () => {
 
   describe('deleteContact', () => {
     it('calls repository delete', async () => {
-      await service.deleteContact('org-1', 'contact-123');
+      await service.deleteContact('org-1', 'contact-123', 'user-1');
       expect(mockDeleteContact).toHaveBeenCalledTimes(1);
       expect(mockDeleteContact).toHaveBeenCalledWith('org-1', 'contact-123');
     });
@@ -169,7 +174,7 @@ describe('contacts service', () => {
 
   describe('deleteContactsByIds', () => {
     it('calls repository bulk delete', async () => {
-      await service.deleteContactsByIds('org-1', ['c1', 'c2']);
+      await service.deleteContactsByIds('org-1', ['c1', 'c2'], 'user-1');
       expect(mockDeleteContactsByIds).toHaveBeenCalledTimes(1);
       expect(mockDeleteContactsByIds).toHaveBeenCalledWith('org-1', ['c1', 'c2']);
     });

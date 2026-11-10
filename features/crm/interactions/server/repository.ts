@@ -116,9 +116,10 @@ export async function createInteraction(
 }
 
 export async function updateInteraction(
+  organizationId: string,
   interactionId: string,
   updatedBy: string,
-  input: UpdateInteractionInput
+  input: Omit<UpdateInteractionInput, 'id'>
 ) {
   return db
     .update(interactions)
@@ -128,7 +129,13 @@ export async function updateInteraction(
       updatedBy,
       updatedAt: new Date(),
     })
-    .where(and(eq(interactions.id, interactionId), isNull(interactions.deletedAt)))
+    .where(
+      and(
+        eq(interactions.organizationId, organizationId),
+        eq(interactions.id, interactionId),
+        isNull(interactions.deletedAt)
+      )
+    )
     .returning({ id: interactions.id });
 }
 

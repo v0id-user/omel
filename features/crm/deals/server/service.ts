@@ -6,6 +6,7 @@ import {
 } from '../contracts';
 import { logCRMActivity } from '@/features/crm/activity/server/service';
 import * as repository from './repository';
+import { assertReferencesInOrganization } from '@/features/crm/shared/server/ownership';
 
 export async function listDealsForOrganization(
   organizationId: string,
@@ -28,6 +29,10 @@ export async function createNewDeal(
   createdBy: string,
   input: CreateDealInput
 ) {
+  await assertReferencesInOrganization(organizationId, {
+    contactIds: [input.contactId],
+    memberIds: [input.ownerId],
+  });
   const [result] = await repository.createDeal(organizationId, createdBy, input);
 
   if (result?.id) {
@@ -47,8 +52,17 @@ export async function createNewDeal(
   return result;
 }
 
-export async function updateDeal(dealId: string, updatedBy: string, input: UpdateDealInput) {
-  const [result] = await repository.updateDeal(dealId, updatedBy, input);
+export async function updateDeal(
+  organizationId: string,
+  updatedBy: string,
+  input: UpdateDealInput
+) {
+  const { id: dealId, ...dealInput } = input;
+  await assertReferencesInOrganization(organizationId, {
+    contactIds: [dealInput.contactId],
+    memberIds: [dealInput.ownerId],
+  });
+  const [result] = await repository.updateDeal(organizationId, dealId, updatedBy, dealInput);
 
   if (result?.id) {
     await logCRMActivity({
@@ -56,7 +70,7 @@ export async function updateDeal(dealId: string, updatedBy: string, input: Updat
       targetId: result.id,
       targetType: 'deal',
       action: 'updated',
-      metadata: input,
+      metadata: { fields: Object.keys(dealInput) },
     });
   }
 

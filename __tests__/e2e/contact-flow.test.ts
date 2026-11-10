@@ -21,9 +21,17 @@ mock.module('@/lib/betterauth/auth', () => ({
 }));
 
 mock.module('@/lib/ratelimt', () => ({
-  ratelimit: {
-    limit: () => Promise.resolve({ success: true }),
-  },
+  ratelimit: { limit: () => Promise.resolve({ success: true }) },
+  publicRatelimit: { limit: () => Promise.resolve({ success: true }) },
+  signupRatelimit: { limit: () => Promise.resolve({ success: true }) },
+}));
+
+const mockGetMemberRole = mock((): Promise<string | null> => Promise.resolve('owner'));
+const mockAssertReferences = mock((): Promise<void> => Promise.resolve());
+
+mock.module('@/features/crm/shared/server/ownership', () => ({
+  assertReferencesInOrganization: mockAssertReferences,
+  getMemberRole: mockGetMemberRole,
 }));
 
 mock.module('superjson', () => ({
@@ -58,7 +66,7 @@ mock.module('@/features/crm/contacts/server/repository', () => ({
     };
     return Promise.resolve([{ id }]);
   }),
-  updateContact: mock((contactId: string, _updatedBy: string, input: any) => {
+  updateContact: mock((_orgId: string, contactId: string, _updatedBy: string, input: any) => {
     if (contactStore[contactId]) {
       Object.assign(contactStore[contactId], input, { updatedAt: new Date() });
     }
@@ -124,7 +132,7 @@ mock.module('@/features/crm/tasks/server/repository', () => ({
     });
     return Promise.resolve(created);
   }),
-  updateTask: mock((taskId: string, _updatedBy: string, input: any) => {
+  updateTask: mock((_orgId: string, taskId: string, _updatedBy: string, input: any) => {
     if (taskStore[taskId]) {
       Object.assign(taskStore[taskId], input, { updatedAt: new Date() });
     }
@@ -184,7 +192,7 @@ mock.module('@/features/crm/deals/server/repository', () => ({
     };
     return Promise.resolve([{ id }]);
   }),
-  updateDeal: mock((dealId: string, _updatedBy: string, input: any) => {
+  updateDeal: mock((_orgId: string, dealId: string, _updatedBy: string, input: any) => {
     if (dealStore[dealId]) {
       Object.assign(dealStore[dealId], input, { updatedAt: new Date() });
     }
@@ -247,12 +255,14 @@ mock.module('@/features/crm/interactions/server/repository', () => ({
     };
     return Promise.resolve([{ id }]);
   }),
-  updateInteraction: mock((interactionId: string, _updatedBy: string, input: any) => {
-    if (interactionStore[interactionId]) {
-      Object.assign(interactionStore[interactionId], input, { updatedAt: new Date() });
+  updateInteraction: mock(
+    (_orgId: string, interactionId: string, _updatedBy: string, input: any) => {
+      if (interactionStore[interactionId]) {
+        Object.assign(interactionStore[interactionId], input, { updatedAt: new Date() });
+      }
+      return Promise.resolve([{ id: interactionId }]);
     }
-    return Promise.resolve([{ id: interactionId }]);
-  }),
+  ),
   deleteInteraction: mock((_orgId: string, interactionId: string) => {
     if (interactionStore[interactionId]) {
       interactionStore[interactionId].deletedAt = new Date();
@@ -290,6 +300,7 @@ function createAuthenticatedContext(): TRPCContext {
         twoFactorEnabled: false,
       },
     },
+    clientIp: '127.0.0.1',
     req: undefined,
     resHeaders: new Headers(),
   } as TRPCContext;
@@ -518,5 +529,59 @@ describe('E2E: Unauthenticated access is blocked', () => {
     } catch (err: any) {
       expect(err.code).toBe('UNAUTHORIZED');
     }
+  });
+});
+
+describe('E2E: Organization isolation', () => {
+  beforeEach(() => {
+    mockGetMemberRole.mockClear();
+    mockAssertReferences.mockClear();
+  });
+
+  it('rejects a session whose user is no longer a member of the active organization', async () => {
+    mockGetMemberRole.mockImplementationOnce(() => Promise.resolve(null));
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+
+    try {
+      await caller.crm.dashboard.contact.getByPage({ page: 1, limit: 10 });
+      throw new Error('Should have thrown');
+    } catch (err: any) {
+      expect(err.code).toBe('FORBIDDEN');
+    }
+    expect(mockGetMemberRole).toHaveBeenCalledWith('e2e-org-id', 'e2e-user-id');
+  });
+
+  it('rejects a deal that links a contact from another organization', async () => {
+    mockAssertReferences.mockImplementationOnce(() =>
+      Promise.reject(Object.assign(new Error('foreign'), { code: 'BAD_REQUEST' }))
+    );
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+    const dealsBefore = Object.keys(dealStore).length;
+
+    await expect(
+      caller.crm.dashboard.deal.new({
+        title: 'Foreign link',
+        amount: '100',
+        currency: 'SAR',
+        ownerId: 'e2e-user-id',
+        contactId: 'contact-from-other-org',
+      })
+    ).rejects.toThrow();
+
+    expect(mockAssertReferences).toHaveBeenCalledWith('e2e-org-id', {
+      contactIds: ['contact-from-other-org'],
+      memberIds: ['e2e-user-id'],
+    });
+    expect(Object.keys(dealStore).length).toBe(dealsBefore);
+  });
+
+  it('scopes updates to the caller organization', async () => {
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+    await caller.crm.dashboard.task.update({ id: 'task-x', description: 'x' });
+
+    const { updateTask } = await import('@/features/crm/tasks/server/repository');
+    expect(updateTask).toHaveBeenLastCalledWith('e2e-org-id', 'task-x', 'e2e-user-id', {
+      description: 'x',
+    });
   });
 });

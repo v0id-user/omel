@@ -44,6 +44,7 @@ export async function createTasks(
 }
 
 export async function updateTask(
+  organizationId: string,
   taskId: string,
   updatedBy: string,
   input: Partial<CreateTaskInput>
@@ -51,7 +52,9 @@ export async function updateTask(
   return db
     .update(tasks)
     .set({ ...input, updatedBy, updatedAt: new Date() })
-    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
+    .where(
+      and(eq(tasks.organizationId, organizationId), eq(tasks.id, taskId), isNull(tasks.deletedAt))
+    )
     .returning({ id: tasks.id });
 }
 

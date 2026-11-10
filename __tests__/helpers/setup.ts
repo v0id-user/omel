@@ -10,9 +10,14 @@ export function setupTRPCMocks() {
   }));
 
   mock.module('@/lib/ratelimt', () => ({
-    ratelimit: {
-      limit: () => Promise.resolve({ success: true }),
-    },
+    ratelimit: { limit: () => Promise.resolve({ success: true }) },
+    publicRatelimit: { limit: () => Promise.resolve({ success: true }) },
+    signupRatelimit: { limit: () => Promise.resolve({ success: true }) },
+  }));
+
+  mock.module('@/features/crm/shared/server/ownership', () => ({
+    assertReferencesInOrganization: () => Promise.resolve(),
+    getMemberRole: () => Promise.resolve('owner'),
   }));
 
   mock.module('superjson', () => ({

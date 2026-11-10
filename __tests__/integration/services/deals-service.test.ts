@@ -29,6 +29,11 @@ mock.module('@/features/crm/deals/server/repository', () => ({
   getDealSummary: mockGetDealSummary,
 }));
 
+mock.module('@/features/crm/shared/server/ownership', () => ({
+  assertReferencesInOrganization: mock(() => Promise.resolve()),
+  getMemberRole: mock(() => Promise.resolve('owner')),
+}));
+
 mock.module('@/features/crm/activity/server/service', () => ({
   logCRMActivity: mockLogCRMActivity,
 }));
@@ -74,13 +79,12 @@ describe('deals service', () => {
   });
 
   it('updates a deal and logs activity', async () => {
-    await service.updateDeal('deal-1', 'user-1', {
+    await service.updateDeal('org-1', 'user-1', {
       id: 'deal-1',
       stage: 'won',
     });
 
-    expect(mockUpdateDeal).toHaveBeenCalledWith('deal-1', 'user-1', {
-      id: 'deal-1',
+    expect(mockUpdateDeal).toHaveBeenCalledWith('org-1', 'deal-1', 'user-1', {
       stage: 'won',
     });
     expect(mockLogCRMActivity).toHaveBeenCalledTimes(1);
